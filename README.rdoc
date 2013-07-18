@@ -1,0 +1,16 @@
+Any application will need a Queue Service to execute jobs asynchronously. Its purpose is to receive
+multi-step job descriptions in JSON (essentially consisting of a series of requests to make, e.g. 
+"make a PUT to this URL with this body, then a POST to this URL with this body, then a DELETE to this 
+URL". The steps are named.
+ 
+The Queue Service accepts the job, enqueues it in a FIFO queue, and immediately returns a QueueJob 
+resource to the caller.
+ 
+The QueueJob resource can be polled via GET to check the status of the job. This is a very efficient 
+operation since the result is cached aggressively in Varnish. Thus, a web client can poll a QueueJob 
+several times a second if necessary, e.g. to update a progress bar or to check for errors.
+ 
+A QueueJob can also be DELETEd from the queue.
+ 
+Use cases: to start an update operation that might take time: book a ticket, send an email, upload and 
+thumbnail a photograph, perform a search, etc.
