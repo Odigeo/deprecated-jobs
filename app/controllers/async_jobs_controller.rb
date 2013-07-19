@@ -14,7 +14,7 @@ class AsyncJobsController < ApplicationController
     expires_in 0, 's-maxage' => 30.minutes
     if stale?(collection_etag(AsyncJob))
       @async_jobs = AsyncJob.index(params, params[:group], params[:search])
-      render partial: "async_job", collection: @async_jobs
+      render partial: "async_jobs", object: @async_jobs
     end
   end
 
