@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/OceanDev/ocean.git
-  revision: f3b0e0592ad4a059850bf2a47b2d113175c9c554
+  revision: 594461769fc6d908563c24b32f81b3e3ac93af45
   specs:
-    ocean (1.7.4)
+    ocean (1.8.0)
       faraday
       faraday_middleware
       ffi-rzmq
@@ -78,7 +78,7 @@ GEM
     minitest (4.7.5)
     multi_json (1.7.7)
     multipart-post (1.2.0)
-    mysql2 (0.3.12)
+    mysql2 (0.3.13)
     net-purge (0.1.0)
     polyglot (0.3.3)
     protected_attributes (1.0.3)

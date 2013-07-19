@@ -17,8 +17,8 @@ class <%= controller_class_name %>Controller < ApplicationController
   def index
     expires_in 0, 's-maxage' => 30.minutes
     if stale?(collection_etag(<%= class_name %>))
-      @<%= plural_table_name %> = <%= class_name %>.index(params, params[:group], params[:search])
-      render partial: "<%= singular_table_name %>", collection: @<%= plural_table_name %>
+      <%= plural_table_name %> = <%= class_name %>.index(params, params[:group], params[:search])
+      api_render <%= plural_table_name %>
     end
   end
 
@@ -27,7 +27,7 @@ class <%= controller_class_name %>Controller < ApplicationController
   def show
     expires_in 0, 's-maxage' => 30.minutes
     if stale?(@<%= singular_table_name %>)
-      render partial: "<%= singular_table_name %>", object: @<%= singular_table_name %>
+      api_render @<%= singular_table_name %>
     end
   end
 
@@ -66,7 +66,7 @@ class <%= controller_class_name %>Controller < ApplicationController
       return
     end
     if @<%= singular_table_name %>.valid?
-      render partial: "<%= singular_table_name %>", object: @<%= singular_table_name %>
+      api_render @<%= singular_table_name %>
     else
       render_validation_errors(@<%= singular_table_name %>)
     end

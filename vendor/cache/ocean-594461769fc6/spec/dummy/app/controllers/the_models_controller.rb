@@ -12,8 +12,8 @@ class TheModelsController < ApplicationController
   def index
     expires_in 0, 's-maxage' => 30.minutes
     if stale?(collection_etag(TheModel))
-      @the_models = TheModel.index(params, params[:group], params[:search])
-      render partial: "the_model", collection: @the_models
+      the_models = TheModel.index(params, params[:group], params[:search])
+      api_render the_models
     end
   end
 
@@ -22,7 +22,7 @@ class TheModelsController < ApplicationController
   def show
     expires_in 0, 's-maxage' => 30.minutes
     if stale?(@the_model)
-      render partial: "the_model", object: @the_model
+      api_render @the_model
     end
   end
 
@@ -61,7 +61,7 @@ class TheModelsController < ApplicationController
       return
     end
     if @the_model.valid?
-      render partial: "the_model", object: @the_model
+      api_render @the_model
     else
       render_validation_errors(@the_model)
     end
