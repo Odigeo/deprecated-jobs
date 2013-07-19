@@ -11,7 +11,7 @@ describe AsyncJobsController do
                                                :body => {'authentication' => {'user_id' => 123}}))
       request.headers['HTTP_ACCEPT'] = "application/json"
       request.headers['X-API-Token'] = "incredibly-fake!"
-      @args = build(:async_job).attributes
+      @args = build(:async_job).attributes   # 'uuid' needs to be unique in the DB
     end
     
     

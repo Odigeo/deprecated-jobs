@@ -25,13 +25,14 @@ class AsyncJob < ActiveRecord::Base
 
 
   # Attributes
-
+  attr_accessible :uuid, :restarts, :state, :started_at, :finished_at,
+                  :payload, :lock_version
 
   # Validations
 
 
   # Callbacks
-  after_initialize { |j| j.uuid = SecureRandom.uuid }
+  after_initialize { |j| j.uuid ||= SecureRandom.uuid }
   
   
 end

@@ -16,13 +16,13 @@ describe AsyncJobsController do
 
     
     it "should return JSON" do
-      get :show, id: @async_job
+      get :show, id: @async_job.uuid
       response.content_type.should == "application/json"
     end
     
     it "should return a 400 if the X-API-Token header is missing" do
       request.headers['X-API-Token'] = nil
-      get :show, id: @async_job
+      get :show, id: @async_job.uuid
       response.status.should == 400
       response.content_type.should == "application/json"
     end
@@ -34,7 +34,7 @@ describe AsyncJobsController do
     end
     
     it "should return a 200 when successful" do
-      get :show, id: @async_job
+      get :show, id: @async_job.uuid
       response.status.should == 200
       response.should render_template(partial: "_async_job", count: 1)
     end

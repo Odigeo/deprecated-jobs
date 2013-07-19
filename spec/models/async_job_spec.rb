@@ -27,6 +27,11 @@ describe AsyncJob do
       create(:async_job).uuid.should be_a String
     end
 
+    it "should require UUIDs to be unique" do
+      create(:async_job, uuid: "blahonga")
+      lambda { create(:async_job, uuid: "blahonga") }.should raise_error
+    end
+
     it "should have a restart count" do
       create(:async_job).restarts.should be_an Integer
     end
@@ -36,7 +41,7 @@ describe AsyncJob do
     end
 
     it "should have a start time" do
-      create(:async_job, started_at: nil).started_at.should == nil
+      create(:async_job, started_at: Time.now.utc).started_at.should be_a Time
     end
 
     it "should have a finish time" do

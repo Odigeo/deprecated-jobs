@@ -1,11 +1,12 @@
 class AsyncJobsController < ApplicationController
 
   ocean_resource_controller extra_actions: {},
-                            required_attributes: [:uuid, :lock_version]
+                            required_attributes: [:uuid, :restarts, :state, :started_at, 
+                                                  :finished_at, :payload, :lock_version]
 
   respond_to :json
   
-  before_action :find_async_job, :only => [:show, :update, :destroy]
+  before_action :find_async_job, :only => [:show, :destroy]
     
   
   # GET /async_jobs
@@ -56,7 +57,8 @@ class AsyncJobsController < ApplicationController
   private
      
   def find_async_job
-    @async_job = AsyncJob.find_by_id params[:id]
+    the_id = params['uuid'] || params['id']  # 'id' when received from the Rails router, uuid othw
+    @async_job = AsyncJob.find_by_uuid the_id
     return true if @async_job
     render_api_error 404, "AsyncJob not found"
     false
