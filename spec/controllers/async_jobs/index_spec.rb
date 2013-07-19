@@ -40,6 +40,11 @@ describe AsyncJobsController do
       get :index, search: 'ue'
       response.status.should == 200
     end
+
+    it "should return a collection" do
+      get :index
+      JSON.parse(response.body).should be_an Array
+    end
         
   end
   
