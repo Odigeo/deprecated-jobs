@@ -46,28 +46,6 @@ class AsyncJobsController < ApplicationController
   end
 
 
-  # PUT /async_jobs/1
-  def update
-    if missing_attributes?
-      render_api_error 422, "Missing resource attributes"
-      return
-    end
-    begin
-      @async_job.assign_attributes(filtered_params AsyncJob)
-      set_updater(@async_job)
-      @async_job.save
-    rescue ActiveRecord::StaleObjectError
-      render_api_error 409, "Stale AsyncJob"
-      return
-    end
-    if @async_job.valid?
-      render partial: "async_job", object: @async_job
-    else
-      render_validation_errors(@async_job)
-    end
-  end
-
-
   # DELETE /async_jobs/1
   def destroy
     @async_job.destroy

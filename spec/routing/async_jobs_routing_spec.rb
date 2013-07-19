@@ -16,7 +16,7 @@ describe AsyncJobsController do
     end
 
     it "routes to #update" do
-      put("/v1/async_jobs/1").should route_to("async_jobs#update", :id => "1")
+      put("/v1/async_jobs/1").should_not be_routable
     end
 
     it "routes to #destroy" do
