@@ -32,6 +32,31 @@ describe "async_jobs/_async_job" do
   end
 
 
+  it "should have a UUID" do
+    @u['uuid'].should be_a String
+  end
+
+  it "should have a restart count" do
+    @u['restarts'].should be_an Integer
+  end
+
+  it "should have a state" do
+    @u['state'].should be_a String
+  end
+
+  it "should have a start time" do
+    @u['started_at'].should == nil
+  end
+
+  it "should have a finish time" do
+    @u['finished_at'].should == nil
+  end
+
+  it "should have a payload" do
+    @u['payload'].should == "{}"
+  end
+
+
   it "should have a created_at time" do
     @u['created_at'].should be_a String
   end
