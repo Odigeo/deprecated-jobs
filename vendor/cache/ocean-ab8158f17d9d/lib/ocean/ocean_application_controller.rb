@@ -81,24 +81,21 @@ module OceanApplicationController
     end
   end
 
-  def api_render(member_or_collection, partial: nil)
-    if !member_or_collection.is_a?(Array) && !member_or_collection.is_a?(ActiveRecord::Relation)
-      m = member_or_collection
-      partial ||= m.class.name.pluralize.underscore + '/' + m.class.name.underscore
-      render partial: partial, object: m
+  def api_render(x, partial: nil)
+    if !x.is_a?(Array) && !x.is_a?(ActiveRecord::Relation)
+      partial ||= x.class.name.pluralize.underscore + '/' + x.class.name.underscore
+      render partial: partial, object: x
       return
-    elsif member_or_collection == []
+    elsif x == []
       render text: '[]'
       return
     else
-      c = member_or_collection
-      partial ||= c.first.class.name.pluralize.underscore + '/' + c.first.class.name.underscore
+      partial ||= x.first.class.name.pluralize.underscore + '/' + x.first.class.name.underscore
       partials = []
-      c.each do |m|
+      x.each do |m|
         partials << render_to_string(partial: partial, locals: {m.class.name.underscore.to_sym => m})
       end
-      result = '[' + partials.join(',') + ']'
-      render text: result
+      render text: '[' + partials.join(',') + ']'
     end
   end
   

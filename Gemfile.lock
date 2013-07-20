@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/OceanDev/ocean.git
-  revision: 594461769fc6d908563c24b32f81b3e3ac93af45
+  revision: ab8158f17d9d50a0b03bb4c4c80768984cdb4a96
   specs:
     ocean (1.8.0)
       faraday
