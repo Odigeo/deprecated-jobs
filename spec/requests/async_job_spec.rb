@@ -50,15 +50,16 @@ describe AsyncJob do
       AsyncJob.count.should == 0
       job = create :async_job
       AsyncJob.count.should == 1
-      delete "/v1/async_jobs/#{job.uuid}", {}, {'HTTP_ACCEPT' => "application/json",
-                                                'X-API-TOKEN' => "incredibly-fake"}
+      delete "/v1/async_jobs/#{job.uuid}", 
+            {}, 
+            {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should be(204)
       AsyncJob.count.should == 0
     end 
 
     it "should return a 404 if the UUID isn't found" do
-      delete "/v1/async_jobs/totallynonexistent", {}, {'HTTP_ACCEPT' => "application/json",
-                                                       'X-API-TOKEN' => "incredibly-fake"}
+      delete "/v1/async_jobs/totallynonexistent", {}, 
+             {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should be(404)
       j = JSON.parse(response.body)
       j['async_job'].should == nil
@@ -72,13 +73,32 @@ describe AsyncJob do
     it "should create an AsyncJob given proper parameters" do
       post "/v1/async_jobs", 
           {}, 
-          {'HTTP_ACCEPT' => "application/json",
-           'X-API-TOKEN' => "incredibly-fake"}
+          {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 201
       j = JSON.parse(response.body)
       j['async_job'].should be_a Hash
       AsyncJob.find_by_uuid(j['async_job']['uuid']).should be_an AsyncJob
     end
+
+    it "should barf on a non-array steps attribute" do
+      post "/v1/async_jobs", 
+          {'steps' => {x: 1, y: 2}}, 
+          {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
+      response.status.should == 422
+      j = JSON.parse(response.body)
+      j['async_job'].should == nil
+      j['steps'].should == ["must be an Array"]
+   end
+
+   it "should return a finished job immediately if no steps" do
+      post "/v1/async_jobs", 
+          {'steps' => []}, 
+          {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
+      response.status.should == 201
+      j = JSON.parse(response.body)['async_job']
+      j.should be_a Hash
+      j['finished_at'].should_not == nil
+   end
 
   end
   

@@ -36,5 +36,4 @@ class AsyncJob < ActiveRecord::Base
   # Callbacks
   after_initialize { |j| j.uuid ||= SecureRandom.uuid }
   
-  
 end
