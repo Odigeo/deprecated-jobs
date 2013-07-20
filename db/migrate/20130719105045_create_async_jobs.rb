@@ -6,7 +6,7 @@ class CreateAsyncJobs < ActiveRecord::Migration
       t.string   :state,         null: false, default: ""
       t.datetime :started_at,    null: true,  default: nil
       t.datetime :finished_at,   null: true,  default: nil
-      t.text     :payload,       null: false, default: "{}"
+      t.text     :payload
       t.integer  :lock_version,  null: false, default: 0
       t.integer  :created_by,    null: false, default: 0
       t.integer  :updated_by,    null: false, default: 0

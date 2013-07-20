@@ -8,7 +8,7 @@
 #  state        :string(255)      default(""), not null
 #  started_at   :datetime
 #  finished_at  :datetime
-#  payload      :text             default("{}"), not null
+#  payload      :text
 #  lock_version :integer          default(0), not null
 #  created_by   :integer          default(0), not null
 #  updated_by   :integer          default(0), not null
@@ -19,7 +19,7 @@
 class AsyncJob < ActiveRecord::Base
 
   ocean_resource_model index: [:uuid], search: :uuid
-
+  serialize :payload, Array
 
   # Relations
 

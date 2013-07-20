@@ -8,7 +8,7 @@
 #  state        :string(255)      default(""), not null
 #  started_at   :datetime
 #  finished_at  :datetime
-#  payload      :text             default("{}"), not null
+#  payload      :text
 #  lock_version :integer          default(0), not null
 #  created_by   :integer          default(0), not null
 #  updated_by   :integer          default(0), not null
@@ -49,7 +49,7 @@ describe AsyncJob do
     end
 
     it "should have a payload" do
-      create(:async_job, payload: "{}").payload.should == "{}"
+      create(:async_job, payload: [1,2,3]).payload.should == [1,2,3]
     end
 
      it "should have a creation time" do

@@ -53,7 +53,7 @@ describe "async_jobs/_async_job" do
   end
 
   it "should have a payload" do
-    @u['payload'].should == "{}"
+    @u['payload'].should == []
   end
 
 

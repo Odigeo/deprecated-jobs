@@ -14,15 +14,15 @@
 ActiveRecord::Schema.define(version: 20130719105045) do
 
   create_table "async_jobs", force: true do |t|
-    t.string   "uuid",                        null: false
-    t.integer  "restarts",     default: 0,    null: false
-    t.string   "state",        default: "",   null: false
+    t.string   "uuid",                      null: false
+    t.integer  "restarts",     default: 0,  null: false
+    t.string   "state",        default: "", null: false
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.text     "payload",      default: "{}", null: false
-    t.integer  "lock_version", default: 0,    null: false
-    t.integer  "created_by",   default: 0,    null: false
-    t.integer  "updated_by",   default: 0,    null: false
+    t.text     "payload"
+    t.integer  "lock_version", default: 0,  null: false
+    t.integer  "created_by",   default: 0,  null: false
+    t.integer  "updated_by",   default: 0,  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
