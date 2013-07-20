@@ -29,7 +29,9 @@ class AsyncJob < ActiveRecord::Base
                   :payload, :lock_version
 
   # Validations
-
+  validates_each :payload do |record, attr, value|
+    record.errors.add(attr, 'must be an Array') unless value.is_a?(Array)
+  end 
 
   # Callbacks
   after_initialize { |j| j.uuid ||= SecureRandom.uuid }
