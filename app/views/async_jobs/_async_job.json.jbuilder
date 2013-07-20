@@ -8,7 +8,7 @@
 #  state        :string(255)      default(""), not null
 #  started_at   :datetime
 #  finished_at  :datetime
-#  payload      :text             default("{}"), not null
+#  steps        :text             
 #  lock_version :integer          default(0), not null
 #  created_by   :integer          default(0), not null
 #  updated_by   :integer          default(0), not null
@@ -23,7 +23,7 @@ json.async_job do |json|
 	json.(async_job, :uuid, 
 	                 :restarts, 
 	                 :state, 
-	                 :payload,
+	                 :steps,
 	                 :lock_version) 
 	json.created_at  async_job.created_at.utc.iso8601
 	json.updated_at  async_job.updated_at.utc.iso8601

@@ -52,8 +52,8 @@ describe "async_jobs/_async_job" do
     @u['finished_at'].should == nil
   end
 
-  it "should have a payload" do
-    @u['payload'].should == []
+  it "should have a steps array" do
+    @u['steps'].should == []
   end
 
 

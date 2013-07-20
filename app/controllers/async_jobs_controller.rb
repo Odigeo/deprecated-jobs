@@ -2,7 +2,7 @@ class AsyncJobsController < ApplicationController
 
   ocean_resource_controller extra_actions: {},
                             required_attributes: [:uuid, :restarts, :state, :started_at, 
-                                                  :finished_at, :payload, :lock_version]
+                                                  :finished_at, :steps, :lock_version]
 
   respond_to :json
   

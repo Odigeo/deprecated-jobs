@@ -8,7 +8,7 @@
 #  state        :string(255)      default(""), not null
 #  started_at   :datetime
 #  finished_at  :datetime
-#  payload      :text
+#  steps        :text
 #  lock_version :integer          default(0), not null
 #  created_by   :integer          default(0), not null
 #  updated_by   :integer          default(0), not null
@@ -48,8 +48,8 @@ describe AsyncJob do
       create(:async_job, finished_at: nil).finished_at.should == nil
     end
 
-    it "should have a payload" do
-      create(:async_job, payload: [1,2,3]).payload.should == [1,2,3]
+    it "should have a steps array" do
+      create(:async_job, steps: [1,2,3]).steps.should == [1,2,3]
     end
 
      it "should have a creation time" do

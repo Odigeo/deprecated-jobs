@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20130719105045) do
     t.string   "state",        default: "", null: false
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.text     "payload"
+    t.text     "steps"
     t.integer  "lock_version", default: 0,  null: false
     t.integer  "created_by",   default: 0,  null: false
     t.integer  "updated_by",   default: 0,  null: false
