@@ -1,9 +1,36 @@
+# == Schema Information
+#
+# Table name: async_jobs
+#
+#  id                   :integer          not null, primary key
+#  uuid                 :string(255)      not null
+#  restarts             :integer          default(0), not null
+#  state                :string(255)      default(""), not null
+#  started_at           :datetime
+#  finished_at          :datetime
+#  steps                :text
+#  lock_version         :integer          default(0), not null
+#  created_by           :integer          default(0), not null
+#  updated_by           :integer          default(0), not null
+#  created_at           :datetime
+#  updated_at           :datetime
+#  invisible_until      :datetime
+#  last_completed_step  :integer
+#  max_seconds_in_queue :integer          default(86400), not null
+#  destroy_at           :datetime
+#
+
 require 'spec_helper'
 
 describe "async_jobs/_async_job" do
   
   before :each do                     # Must be :each (:all causes all tests to fail)
-    render partial: "async_jobs/async_job", locals: {async_job: create(:async_job)}
+    aj = create :async_job, 
+           started_at: 1.hour.ago.utc,
+           finished_at: 10.minutes.ago.utc,
+           invisible_until: 1.hour.from_now.utc,
+           last_completed_step: 2
+    render partial: "async_jobs/async_job", locals: {async_job: aj}
     @json = JSON.parse(rendered)
     @u = @json['async_job']
     @links = @u['_links'] rescue {}
@@ -45,11 +72,11 @@ describe "async_jobs/_async_job" do
   end
 
   it "should have a start time" do
-    @u['started_at'].should == nil
+    @u['started_at'].should be_a String
   end
 
   it "should have a finish time" do
-    @u['finished_at'].should == nil
+    @u['finished_at'].should be_a String
   end
 
   it "should have a steps array" do
@@ -68,5 +95,21 @@ describe "async_jobs/_async_job" do
   it "should have a lock_version field" do
     @u['lock_version'].should be_an Integer
   end
+
+  it "should have an invisible_until field" do
+    @u['invisible_until'].should be_a String
+  end
       
+  it "should have an last_completed_step field" do
+    @u['last_completed_step'].should == 2
+  end
+      
+  it "should have a max_seconds_in_queue of 1 day" do
+    @u['max_seconds_in_queue'].should == 1.day
+  end
+
+  it "should have a destroy_at time" do
+    @u['destroy_at'].should be_a String
+  end
+
 end

@@ -2,18 +2,22 @@
 #
 # Table name: async_jobs
 #
-#  id           :integer          not null, primary key
-#  uuid         :string(255)      not null
-#  restarts     :integer          default(0), not null
-#  state        :string(255)      default(""), not null
-#  started_at   :datetime
-#  finished_at  :datetime
-#  steps        :text
-#  lock_version :integer          default(0), not null
-#  created_by   :integer          default(0), not null
-#  updated_by   :integer          default(0), not null
-#  created_at   :datetime
-#  updated_at   :datetime
+#  id                   :integer          not null, primary key
+#  uuid                 :string(255)      not null
+#  restarts             :integer          default(0), not null
+#  state                :string(255)      default(""), not null
+#  started_at           :datetime
+#  finished_at          :datetime
+#  steps                :text
+#  lock_version         :integer          default(0), not null
+#  created_by           :integer          default(0), not null
+#  updated_by           :integer          default(0), not null
+#  created_at           :datetime
+#  updated_at           :datetime
+#  invisible_until      :datetime
+#  last_completed_step  :integer
+#  max_seconds_in_queue :integer          default(86400), not null
+#  destroy_at           :datetime
 #
 
 require 'spec_helper'
@@ -68,6 +72,29 @@ describe AsyncJob do
       create(:async_job).updated_by.should be_an Integer
     end
 
+    it "should have an invisible_until time" do
+      create(:async_job).invisible_until.should == nil
+      create(:async_job, invisible_until: 30.minutes.from_now.utc).invisible_until.should be_a Time
+    end
+
+    it "should have a last_completed_step attribute" do
+      create(:async_job).last_completed_step.should == nil
+      create(:async_job, last_completed_step: 2).last_completed_step.should == 2
+    end
+
+    it "should have a max_seconds_in_queue of 1 day" do
+      create(:async_job).max_seconds_in_queue.should == 1.day
+    end
+
+    it "should have a destroy_at time" do
+      create(:async_job).destroy_at.should be_a Time
+    end
+
+    it "should set a destroy_at time automatically from the max_seconds_in_queue value" do
+      j = create :async_job
+      j.destroy_at.to_i.should == (j.created_at + j.max_seconds_in_queue).to_i
+    end
+
   end
 
 
@@ -77,7 +104,15 @@ describe AsyncJob do
       AsyncJob.destroy_all
     end
 
+  end
 
+
+  it "should have a visible scope" do
+    AsyncJob.visible.should == []
+  end
+
+  it "should have an invisible scope" do
+    AsyncJob.invisible.should == []
   end
 
 
