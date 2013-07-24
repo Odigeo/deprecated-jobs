@@ -17,6 +17,7 @@
 #  last_completed_step  :integer
 #  max_seconds_in_queue :integer          default(86400), not null
 #  destroy_at           :datetime
+#  poison_limit         :integer          default(5), not null
 #
 
 class AsyncJob < ActiveRecord::Base
@@ -29,7 +30,7 @@ class AsyncJob < ActiveRecord::Base
 
   # Attributes
   attr_accessible :uuid, :lock_version,
-                  :steps, :max_seconds_in_queue
+                  :steps, :max_seconds_in_queue, :poison_limit
 
   # Scopes
   scope :visible,   -> {     where("invisible_until IS NULL or invisible_until < ?", Time.now.utc) }

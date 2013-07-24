@@ -1,3 +1,25 @@
+# == Schema Information
+#
+# Table name: async_jobs
+#
+#  id                   :integer          not null, primary key
+#  uuid                 :string(255)      not null
+#  restarts             :integer          default(0), not null
+#  started_at           :datetime
+#  finished_at          :datetime
+#  steps                :text
+#  lock_version         :integer          default(0), not null
+#  created_by           :integer          default(0), not null
+#  updated_by           :integer          default(0), not null
+#  created_at           :datetime
+#  updated_at           :datetime
+#  invisible_until      :datetime
+#  last_completed_step  :integer
+#  max_seconds_in_queue :integer          default(86400), not null
+#  destroy_at           :datetime
+#  poison_limit         :integer          default(5), not null
+#
+
 require 'spec_helper'
 
 describe AsyncJob do
@@ -67,6 +89,11 @@ describe AsyncJob do
     it "should set a destroy_at time automatically from the max_seconds_in_queue value" do
       j = create :async_job
       j.destroy_at.to_i.should == (j.created_at + j.max_seconds_in_queue).to_i
+    end
+
+    it "should have a default poison_limit of 5" do
+      create(:async_job).poison_limit.should == 5
+      create(:async_job, poison_limit: 10).poison_limit.should == 10
     end
 
   end
