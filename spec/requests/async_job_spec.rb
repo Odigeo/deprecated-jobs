@@ -72,12 +72,13 @@ describe AsyncJob do
 
     it "should create an AsyncJob given proper parameters" do
       post "/v1/async_jobs", 
-          {}, 
+          {'max_seconds_in_queue' => 1.week}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 201
       j = JSON.parse(response.body)
       j['async_job'].should be_a Hash
       AsyncJob.find_by_uuid(j['async_job']['uuid']).should be_an AsyncJob
+      j['async_job']['max_seconds_in_queue'].should == 1.week
     end
 
     it "should barf on a non-array steps attribute" do

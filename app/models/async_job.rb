@@ -5,7 +5,6 @@
 #  id                   :integer          not null, primary key
 #  uuid                 :string(255)      not null
 #  restarts             :integer          default(0), not null
-#  state                :string(255)      default(""), not null
 #  started_at           :datetime
 #  finished_at          :datetime
 #  steps                :text
@@ -29,8 +28,8 @@ class AsyncJob < ActiveRecord::Base
 
 
   # Attributes
-  attr_accessible :uuid, :restarts, :state, :started_at, 
-                  :finished_at, :steps, :lock_version
+  attr_accessible :uuid, :lock_version,
+                  :steps, :max_seconds_in_queue
 
   # Scopes
   scope :visible,   -> {     where("invisible_until IS NULL or invisible_until < ?", Time.now.utc) }

@@ -11,12 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130724123346) do
+ActiveRecord::Schema.define(version: 20130724130420) do
 
   create_table "async_jobs", force: true do |t|
     t.string   "uuid",                                 null: false
     t.integer  "restarts",             default: 0,     null: false
-    t.string   "state",                default: "",    null: false
     t.datetime "started_at"
     t.datetime "finished_at"
     t.text     "steps"

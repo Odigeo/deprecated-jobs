@@ -1,8 +1,7 @@
 class AsyncJobsController < ApplicationController
 
   ocean_resource_controller extra_actions: {},
-                            required_attributes: [:uuid, :restarts, :state, :started_at, 
-                                                  :finished_at, :steps, :lock_version]
+                            required_attributes: []  # PUT isn't used: no required args
 
   respond_to :json
   
