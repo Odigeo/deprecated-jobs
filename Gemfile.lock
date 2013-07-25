@@ -42,6 +42,10 @@ GEM
       rake
     arel (4.0.0)
     atomic (1.1.10)
+    aws-sdk (1.14.0)
+      json (~> 1.4)
+      nokogiri (< 1.6.0)
+      uuidtools (~> 2.1)
     builder (3.1.4)
     diff-lcs (1.2.4)
     erubis (2.7.0)
@@ -60,16 +64,12 @@ GEM
     ffi (1.9.0)
     ffi-rzmq (1.0.1)
       ffi
-    foreigner (1.4.2)
-      activerecord (>= 3.0.0)
     hike (1.2.3)
     i18n (0.6.4)
-    immigrant (0.1.4)
-      activerecord (>= 3.0)
-      foreigner (>= 1.2.1)
     jbuilder (1.4.2)
       activesupport (>= 3.0.0)
       multi_json (>= 1.2.0)
+    json (1.8.0)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -80,6 +80,7 @@ GEM
     multipart-post (1.2.0)
     mysql2 (0.3.13)
     net-purge (0.1.0)
+    nokogiri (1.5.10)
     polyglot (0.3.3)
     protected_attributes (1.0.3)
       activemodel (>= 4.0.0, < 5.0)
@@ -137,15 +138,15 @@ GEM
     typhoeus (0.6.3)
       ethon (~> 0.5.11)
     tzinfo (0.3.37)
+    uuidtools (2.1.4)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   annotate (>= 2.5.0)
+  aws-sdk (~> 1.0)
   factory_girl_rails (~> 4.0)
-  foreigner
-  immigrant
   jbuilder
   memory_test_fix
   mysql2

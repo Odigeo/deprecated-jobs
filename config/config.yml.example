@@ -31,6 +31,11 @@ LOAD_BALANCERS: []
 # This is the list of IP numbers for the ZeroMQ log hosts. (Only used in production.)
 LOG_HOSTS: []
 
+# Amazon Web Services config
+AWS_ACCESS_KEY_ID:     yyyyyyyyyyyyyyyyy
+AWS_SECRET_ACCESS_KEY: zzzzzzzzzzzzzzzzz
+AWS_REGION:            eu-west-1
+
 
 ##########################################################################################
 # This section allows you to specify values specific for a particular Rails

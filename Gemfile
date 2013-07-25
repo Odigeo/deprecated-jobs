@@ -2,8 +2,11 @@ source 'https://rubygems.org'
 
 gem "ocean", git: "git://github.com/OceanDev/ocean.git"
 gem "rails", "4.0.0"
+
+gem 'aws-sdk', '~> 1.0'
+
 gem "mysql2"
-gem "foreigner"
+
 gem "jbuilder"
 
 group :test, :development do
@@ -12,7 +15,6 @@ group :test, :development do
   gem "rspec-rails", "~> 2.0"
   gem "simplecov", require: false
   gem "factory_girl_rails", "~> 4.0"
-  gem "immigrant"
   gem "annotate", ">=2.5.0"
 end
 
