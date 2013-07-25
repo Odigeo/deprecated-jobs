@@ -4,6 +4,7 @@ gem "ocean", git: "git://github.com/OceanDev/ocean.git"
 gem "rails", "4.0.0"
 
 gem 'aws-sdk', '~> 1.0'
+#gem 'dynamoid'
 
 gem "mysql2"
 
