@@ -1,4 +1,5 @@
 class CreateAsyncJobs < ActiveRecord::Migration
+
   def change
     create_table :async_jobs do |t|
       t.string   :uuid,          null: false
@@ -16,4 +17,5 @@ class CreateAsyncJobs < ActiveRecord::Migration
 
     add_index :async_jobs, :uuid, unique: true
   end
+  
 end
