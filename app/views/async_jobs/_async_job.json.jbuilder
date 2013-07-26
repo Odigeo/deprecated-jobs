@@ -11,8 +11,8 @@ json.async_job do |json|
 	                 :lock_version) 
 	json.created_at           async_job.created_at.utc.iso8601
 	json.updated_at           async_job.updated_at.utc.iso8601
+	json.destroy_at           async_job.destroy_at.utc.iso8601
+	json.visible_at           async_job.visible_at.utc.iso8601
 	json.started_at           async_job.started_at.utc.iso8601 if async_job.started_at
 	json.finished_at          async_job.finished_at.utc.iso8601 if async_job.finished_at
-	json.destroy_at           async_job.destroy_at.utc.iso8601
-	json.invisible_until      async_job.invisible_until.utc.iso8601 if async_job.invisible_until
 end

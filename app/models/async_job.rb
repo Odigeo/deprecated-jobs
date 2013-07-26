@@ -13,11 +13,11 @@
 #  updated_by           :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
-#  invisible_until      :datetime
 #  last_completed_step  :integer
 #  max_seconds_in_queue :integer          default(86400), not null
 #  destroy_at           :datetime
 #  poison_limit         :integer          default(5), not null
+#  visible_at           :datetime
 #
 
 class AsyncJob < ActiveRecord::Base
@@ -33,16 +33,20 @@ class AsyncJob < ActiveRecord::Base
                   :steps, :max_seconds_in_queue, :poison_limit
 
   # Scopes
-  scope :visible,   -> {     where("invisible_until IS NULL or invisible_until < ?", Time.now.utc) }
-  scope :invisible, -> { where.not("invisible_until IS NULL or invisible_until < ?", Time.now.utc) }
+  scope :visible,   -> { where("visible_at <= ?", Time.now.utc) }
+  scope :invisible, -> { where("visible_at > ?", Time.now.utc) }
 
   # Validations
   validates_each :steps do |record, attr, value|
     record.errors.add(attr, 'must be an Array') unless value.is_a?(Array)
   end 
+  validates :visible_at, presence: true
 
   # Callbacks
   after_initialize  { |j| j.uuid ||= SecureRandom.uuid }
-  before_validation { |j| j.destroy_at ||= Time.now.utc + j.max_seconds_in_queue }
+  before_validation do |j| 
+    j.destroy_at ||= Time.now.utc + j.max_seconds_in_queue
+    j.visible_at ||= Time.now.utc
+  end
 
 end

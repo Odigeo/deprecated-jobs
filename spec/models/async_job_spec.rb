@@ -13,11 +13,11 @@
 #  updated_by           :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
-#  invisible_until      :datetime
 #  last_completed_step  :integer
 #  max_seconds_in_queue :integer          default(86400), not null
 #  destroy_at           :datetime
 #  poison_limit         :integer          default(5), not null
+#  visible_at           :datetime
 #
 
 require 'spec_helper'
@@ -68,9 +68,10 @@ describe AsyncJob do
       create(:async_job).updated_by.should be_an Integer
     end
 
-    it "should have an invisible_until time" do
-      create(:async_job).invisible_until.should == nil
-      create(:async_job, invisible_until: 30.minutes.from_now.utc).invisible_until.should be_a Time
+    it "should have an visible_at time defaulting to time of creation" do
+      j = create :async_job
+      j.visible_at.to_i.should == j.created_at.to_i
+      create(:async_job, visible_at: 30.minutes.from_now.utc).visible_at.should be_a Time
     end
 
     it "should have a last_completed_step attribute" do

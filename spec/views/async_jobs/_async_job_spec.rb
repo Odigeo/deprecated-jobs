@@ -6,7 +6,7 @@ describe "async_jobs/_async_job" do
     aj = create :async_job, 
            started_at: 1.hour.ago.utc,
            finished_at: 10.minutes.ago.utc,
-           invisible_until: 1.hour.from_now.utc,
+           visible_at: 1.hour.from_now.utc,
            last_completed_step: 2
     render partial: "async_jobs/async_job", locals: {async_job: aj}
     @json = JSON.parse(rendered)
@@ -70,8 +70,8 @@ describe "async_jobs/_async_job" do
     @u['lock_version'].should be_an Integer
   end
 
-  it "should have an invisible_until field" do
-    @u['invisible_until'].should be_a String
+  it "should have an visible_at field" do
+    @u['visible_at'].should be_a String
   end
       
   it "should have an last_completed_step field" do
