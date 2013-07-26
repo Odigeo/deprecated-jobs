@@ -83,18 +83,15 @@ module OceanApplicationController
 
   def api_render(x, partial: nil)
     if !x.is_a?(Array) && !x.is_a?(ActiveRecord::Relation)
-      partial ||= x.class.name.pluralize.underscore + '/' + x.class.name.underscore
+      partial ||= x.to_partial_path
       render partial: partial, object: x
       return
     elsif x == []
       render text: '[]'
       return
     else
-      partial ||= x.first.class.name.pluralize.underscore + '/' + x.first.class.name.underscore
-      partials = []
-      x.each do |m|
-        partials << render_to_string(partial: partial, locals: {m.class.name.underscore.to_sym => m})
-      end
+      partials = x.collect { |m| render_to_string(partial: partial || m.to_partial_path, 
+                                                  locals: {m.class.model_name.i18n_key => m}) }
       render text: '[' + partials.join(',') + ']'
     end
   end

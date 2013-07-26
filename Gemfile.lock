@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/OceanDev/ocean.git
-  revision: ab8158f17d9d50a0b03bb4c4c80768984cdb4a96
+  revision: 502ec6b56ec5170aaa45b3c349efd83b1ed13d08
   specs:
-    ocean (1.8.0)
+    ocean (1.8.1)
       faraday
       faraday_middleware
       ffi-rzmq
@@ -42,7 +42,7 @@ GEM
       rake
     arel (4.0.0)
     atomic (1.1.10)
-    aws-sdk (1.14.0)
+    aws-sdk (1.14.1)
       json (~> 1.4)
       nokogiri (< 1.6.0)
       uuidtools (~> 2.1)
