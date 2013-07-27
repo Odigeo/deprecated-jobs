@@ -81,6 +81,12 @@ describe TheModel do
         TheModel.index({}, nil, 'B').length.should == 2
         TheModel.index({}, nil, 'the_model').length.should == 3
       end
+
+      it "should return an empty collection when using search where it's been disabled" do
+        TheModel.stub(index_search_property: false)
+        TheModel.index({}, nil, 'B').length.should == 0
+        TheModel.index({}, nil, 'the_model').length.should == 0
+      end
       
       it "key/value pairs not in the index_only array should quietly be ignored" do
         TheModel.index(name: 'bar', aardvark: 12).length.should == 1

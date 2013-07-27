@@ -22,11 +22,8 @@
 
 class AsyncJob < ActiveRecord::Base
 
-  ocean_resource_model index: [:uuid], search: :uuid
+  ocean_resource_model index: [:uuid], search: false
   serialize :steps, Array
-
-  # Relations
-
 
   # Attributes
   attr_accessible :uuid, :lock_version,

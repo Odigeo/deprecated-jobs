@@ -20,7 +20,10 @@ module ApiResource
       end
       query = all.where(conds)
       query = query.group(group_by) if group_by.present? && index_only.include?(group_by.to_sym)
-      query = query.where("#{index_search_property} LIKE ?", "%#{substring}%") if substring
+      if substring.present?
+        return query.none if index_search_property.blank?
+        query = query.where("#{index_search_property} LIKE ?", "%#{substring}%")
+      end
       query
     end
     

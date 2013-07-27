@@ -147,9 +147,9 @@ describe AsyncJob do
         AsyncJob.index(uuid: 'baz').length.should == 1
       end
       
-      it "should allow searches on uuid" do
-        AsyncJob.index({}, nil, 'b').length.should == 2
-        AsyncJob.index({}, nil, 'z').length.should == 1
+      it "should not allow searches" do
+        AsyncJob.index({}, nil, 'b').length.should == 0
+        AsyncJob.index({}, nil, 'z').length.should == 0
       end
       
       it "key/value pairs not in the index_only array should quietly be ignored" do

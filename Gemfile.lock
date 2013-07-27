@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/OceanDev/ocean.git
-  revision: 502ec6b56ec5170aaa45b3c349efd83b1ed13d08
+  revision: 83c6801cbd0892e2906df131114d16f3841db73f
   specs:
-    ocean (1.8.1)
+    ocean (1.8.2)
       faraday
       faraday_middleware
       ffi-rzmq
@@ -57,8 +57,8 @@ GEM
     factory_girl_rails (4.2.1)
       factory_girl (~> 4.2.0)
       railties (>= 3.0.0)
-    faraday (0.8.7)
-      multipart-post (~> 1.1)
+    faraday (0.8.8)
+      multipart-post (~> 1.2.0)
     faraday_middleware (0.9.0)
       faraday (>= 0.7.4, < 0.9)
     ffi (1.9.0)
