@@ -72,7 +72,8 @@ describe AsyncJob do
 
     it "should create an AsyncJob given proper parameters" do
       post "/v1/async_jobs", 
-          {'max_seconds_in_queue' => 1.week}, 
+          {'max_seconds_in_queue' => 1.week,
+           'credentials' => 'bWFnbmV0bzp4YXZpZXI='}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 201
       j = JSON.parse(response.body)
@@ -93,12 +94,35 @@ describe AsyncJob do
 
    it "should return a finished job immediately if no steps" do
       post "/v1/async_jobs", 
-          {'steps' => []}, 
+          {'steps' => [],
+           'credentials' => 'bWFnbmV0bzp4YXZpZXI='}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 201
       j = JSON.parse(response.body)['async_job']
       j.should be_a Hash
       j['finished_at'].should_not == nil
+   end
+
+   it "should return a 422 if the credentials are missing" do
+      post "/v1/async_jobs", 
+          {'steps' => [1, 2, 3],
+           'credentials' => nil}, 
+          {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
+      response.status.should == 422
+      j = JSON.parse(response.body)
+      j['async_job'].should == nil
+      j['credentials'].should == ["must be specified"]
+   end
+
+   it "should return a 422 if the credentials are malformed" do
+      post "/v1/async_jobs", 
+          {'steps' => [1, 2, 3],
+           'credentials' => "certainly-not-correctly-formed"}, 
+          {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
+      response.status.should == 422
+      j = JSON.parse(response.body)
+      j['async_job'].should == nil
+      j['credentials'].should == ["are malformed"]
    end
 
   end

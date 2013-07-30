@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130726123249) do
+ActiveRecord::Schema.define(version: 20130730085014) do
 
   create_table "async_jobs", force: true do |t|
     t.string   "uuid",                                 null: false
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20130726123249) do
     t.datetime "destroy_at"
     t.integer  "poison_limit",         default: 5,     null: false
     t.datetime "visible_at"
+    t.string   "credentials",          default: "",    null: false
   end
 
   add_index "async_jobs", ["uuid"], name: "index_async_jobs_on_uuid", unique: true

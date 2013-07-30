@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :async_job do
+    credentials "bWFnbmV0bzp4YXZpZXI="
   end
 end

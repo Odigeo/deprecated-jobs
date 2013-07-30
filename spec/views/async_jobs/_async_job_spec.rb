@@ -86,4 +86,8 @@ describe "async_jobs/_async_job" do
     @u['destroy_at'].should be_a String
   end
 
+  it "should NOT expose the credentials" do
+    @u['credentials'].should == nil
+  end
+
 end

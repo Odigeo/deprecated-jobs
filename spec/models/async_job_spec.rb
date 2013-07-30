@@ -18,6 +18,7 @@
 #  destroy_at           :datetime
 #  poison_limit         :integer          default(5), not null
 #  visible_at           :datetime
+#  credentials          :string(255)      default(""), not null
 #
 
 require 'spec_helper'
@@ -95,6 +96,16 @@ describe AsyncJob do
     it "should have a default poison_limit of 5" do
       create(:async_job).poison_limit.should == 5
       create(:async_job, poison_limit: 10).poison_limit.should == 10
+    end
+
+    it "should have a required credentials attribute" do
+      create(:async_job).credentials.should be_a String
+      build(:async_job, credentials: nil).should_not be_valid
+    end
+
+    it "should require the credentials to be unscramblable (is that a word?)" do
+      build(:async_job, credentials: 'bWFnbmV0bzp4YXZpZXI=').should be_valid
+      build(:async_job, credentials: 'blahonga').should_not be_valid
     end
 
   end

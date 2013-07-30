@@ -18,6 +18,7 @@
 #  destroy_at           :datetime
 #  poison_limit         :integer          default(5), not null
 #  visible_at           :datetime
+#  credentials          :string(255)      default(""), not null
 #
 
 class AsyncJob < ActiveRecord::Base
@@ -27,7 +28,8 @@ class AsyncJob < ActiveRecord::Base
 
   # Attributes
   attr_accessible :uuid, :lock_version,
-                  :steps, :max_seconds_in_queue, :poison_limit
+                  :steps, :max_seconds_in_queue, :poison_limit,
+                  :credentials
 
   # Scopes
   scope :visible,   -> { where("visible_at <= ?", Time.now.utc) }
@@ -38,6 +40,12 @@ class AsyncJob < ActiveRecord::Base
     record.errors.add(attr, 'must be an Array') unless value.is_a?(Array)
   end 
   validates :visible_at, presence: true
+  validates :credentials, presence: { message: "must be specified" }
+  validates_each :credentials, on: :create do |job, attr, val|
+    username, password = Api.decode_credentials val
+    job.errors.add(attr, "are malformed") if val.present? && (username.blank? || password.blank?)
+  end
+
 
   # Callbacks
   after_initialize  { |j| j.uuid ||= SecureRandom.uuid }
