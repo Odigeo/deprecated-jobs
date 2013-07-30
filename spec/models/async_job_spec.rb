@@ -108,6 +108,14 @@ describe AsyncJob do
       build(:async_job, credentials: 'blahonga').should_not be_valid
     end
 
+    it "should only require the credentials at creation time" do
+      j = create :async_job, credentials: 'bWFnbmV0bzp4YXZpZXI='
+      j.should be_valid
+      j.credentials = ""
+      j.should be_valid
+      j.save!
+    end
+
   end
 
 

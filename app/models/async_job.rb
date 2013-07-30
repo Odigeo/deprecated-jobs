@@ -40,10 +40,10 @@ class AsyncJob < ActiveRecord::Base
     record.errors.add(attr, 'must be an Array') unless value.is_a?(Array)
   end 
   validates :visible_at, presence: true
-  validates :credentials, presence: { message: "must be specified" }
-  validates_each :credentials, on: :create do |job, attr, val|
+  validates :credentials, presence: { message: "must be specified", on: :create }
+  validates_each :credentials, on: :create, allow_blank: true do |job, attr, val|
     username, password = Api.decode_credentials val
-    job.errors.add(attr, "are malformed") if val.present? && (username.blank? || password.blank?)
+    job.errors.add(attr, "are malformed") if username.blank? || password.blank?
   end
 
 
