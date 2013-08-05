@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/OceanDev/ocean.git
-  revision: 83c6801cbd0892e2906df131114d16f3841db73f
+  revision: 84b82b7e3682482907cd0c9a38f461ddf00d88f4
   specs:
     ocean (1.8.2)
       faraday
@@ -41,7 +41,7 @@ GEM
     annotate (2.5.0)
       rake
     arel (4.0.0)
-    atomic (1.1.10)
+    atomic (1.1.12)
     aws-sdk (1.14.1)
       json (~> 1.4)
       nokogiri (< 1.6.0)
@@ -76,7 +76,7 @@ GEM
     memory_test_fix (0.2.2)
     mime-types (1.23)
     minitest (4.7.5)
-    multi_json (1.7.7)
+    multi_json (1.7.8)
     multipart-post (1.2.0)
     mysql2 (0.3.13)
     net-purge (0.1.0)
