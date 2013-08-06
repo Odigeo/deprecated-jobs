@@ -11,10 +11,15 @@ describe AsyncJob do
   describe "index" do
 
 	  it "should return a 200 with an array as a body" do
+      create :async_job
+      create :async_job
+      create :async_job
 	    get "/v1/async_jobs", {}, {'HTTP_ACCEPT' => "application/json",
 	                               'X-API-TOKEN' => "incredibly-fake"}
 	    response.status.should be(200)
-	    response.body.should == "[]"
+      j = JSON.parse(response.body)
+	    j.length.should == 3
+      j.each { |asj| asj['async_job'].should be_a Hash }
 	  end
 
 	end

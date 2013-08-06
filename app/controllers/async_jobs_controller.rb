@@ -43,7 +43,7 @@ class AsyncJobsController < ApplicationController
         render_api_error 422, "AsyncJob already exists"
         return
       end
-      render_new_resource @async_job, partial: "async_jobs/async_job"
+      api_render @async_job, new: true
     else
       render_validation_errors @async_job
     end

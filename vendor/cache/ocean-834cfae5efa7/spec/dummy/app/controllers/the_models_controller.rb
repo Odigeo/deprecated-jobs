@@ -39,7 +39,7 @@ class TheModelsController < ApplicationController
         render_api_error 422, "TheModel already exists"
         return
       end
-      render_new_resource @the_model, partial: "the_models/the_model"
+      api_render @the_model, new: true
     else
       render_validation_errors @the_model
     end

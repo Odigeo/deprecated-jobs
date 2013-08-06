@@ -73,18 +73,14 @@ module OceanApplicationController
     render json: r.errors, :status => 422
   end
   
-  def render_new_resource(r, partial: nil)
-    if partial
-      render partial: partial, object: r, :status => 201, :location => r
-    else
-      render r, :status => 201, :location => r
-    end
-  end
-
-  def api_render(x, partial: nil)
+  def api_render(x, partial: nil, new: false)
     if !x.is_a?(Array) && !x.is_a?(ActiveRecord::Relation)
       partial ||= x.to_partial_path
-      render partial: partial, object: x
+      if new
+        render partial: partial, object: x, status: 201, location: x
+      else
+        render partial: partial, object: x
+      end
       return
     elsif x == []
       render text: '[]'

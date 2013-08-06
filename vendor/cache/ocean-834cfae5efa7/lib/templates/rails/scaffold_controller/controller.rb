@@ -44,7 +44,7 @@ class <%= controller_class_name %>Controller < ApplicationController
         render_api_error 422, "<%= class_name %> already exists"
         return
       end
-      render_new_resource @<%= singular_table_name %>, partial: "<%= plural_table_name %>/<%= singular_table_name %>"
+      api_render @<%= singular_table_name %>, new: true
     else
       render_validation_errors @<%= singular_table_name %>
     end
