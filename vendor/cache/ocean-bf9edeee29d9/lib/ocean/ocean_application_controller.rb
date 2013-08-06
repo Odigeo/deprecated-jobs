@@ -73,9 +73,9 @@ module OceanApplicationController
     render json: r.errors, :status => 422
   end
   
-  def api_render(x, partial: nil, new: false)
+  def api_render(x, new: false)
     if !x.is_a?(Array) && !x.is_a?(ActiveRecord::Relation)
-      partial ||= x.to_partial_path
+      partial = x.to_partial_path
       if new
         render partial: partial, object: x, status: 201, location: x
       else
@@ -86,7 +86,7 @@ module OceanApplicationController
       render text: '[]'
       return
     else
-      partials = x.collect { |m| render_to_string(partial: partial || m.to_partial_path, 
+      partials = x.collect { |m| render_to_string(partial: m.to_partial_path, 
                                                   locals: {m.class.model_name.i18n_key => m}) }
       render text: '[' + partials.join(',') + ']'
     end

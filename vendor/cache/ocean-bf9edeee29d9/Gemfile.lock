@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ocean (1.9.0)
+    ocean (1.9.1)
       faraday
       faraday_middleware
       ffi-rzmq
