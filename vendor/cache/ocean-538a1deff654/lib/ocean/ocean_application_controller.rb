@@ -40,7 +40,8 @@ module OceanApplicationController
     qs = Api.authorization_string(@@extra_actions, controller_name, action_name)
     response = Api.permitted?(@x_api_token, query: qs)                                   
     if response.status == 200
-      @auth_api_user_id = response.body['authentication']['user_id']
+      @auth_api_user_id = response.body['authentication']['user_id']  # Deprecate and remove
+      @auth_api_user_uri = response.body['authentication']['_links']['creator']['href']  # Keep
       return true
     end
     error_messages = response.body['_api_error']
@@ -61,8 +62,8 @@ module OceanApplicationController
   #
   # JSON renderers
   #
-  def render_api_error(status_code, *message)
-    render json: {_api_error: [*message]}, status: status_code
+  def render_api_error(status_code, *messages)
+    render json: {_api_error: messages}, status: status_code
   end
   
   def render_head_204

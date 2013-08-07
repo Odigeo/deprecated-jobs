@@ -7,8 +7,7 @@ describe <%= class_name.pluralize %>Controller do
   describe "POST" do
     
     before :each do
-      Api.stub(:permitted?).and_return(double(:status => 200, 
-                                               :body => {'authentication' => {'user_id' => 123}}))
+      permit_with 200
       request.headers['HTTP_ACCEPT'] = "application/json"
       request.headers['X-API-Token'] = "incredibly-fake!"
       @args = build(:<%= singular_name %>).attributes

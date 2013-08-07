@@ -3,8 +3,7 @@ require 'spec_helper'
 describe AsyncJob do
 
   before :each do
-    Api.stub(:permitted?).and_return(double(:status => 200, 
-                                            :body => {'authentication' => {'user_id' => 123}}))
+    permit_with 200
   end
 
 

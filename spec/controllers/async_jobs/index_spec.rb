@@ -7,8 +7,7 @@ describe AsyncJobsController do
   describe "INDEX" do
     
     before :each do
-      Api.stub(:permitted?).and_return(double(:status => 200, 
-                                               :body => {'authentication' => {'user_id' => 123}}))
+      permit_with 200
       create :async_job
       create :async_job
       create :async_job

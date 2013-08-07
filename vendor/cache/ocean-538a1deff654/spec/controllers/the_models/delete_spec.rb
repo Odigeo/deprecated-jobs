@@ -7,8 +7,7 @@ describe TheModelsController do
   describe "DELETE" do
     
     before :each do
-      Api.stub(:permitted?).and_return(double(:status => 200, 
-                                               :body => {'authentication' => {'user_id' => 123}}))
+      permit_with 200
       Api.stub(:call_p)
       @the_model = create :the_model
       request.headers['HTTP_ACCEPT'] = "application/json"

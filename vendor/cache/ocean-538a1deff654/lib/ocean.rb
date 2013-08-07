@@ -23,3 +23,16 @@ module Ocean
     end 
   end
 end
+
+
+#
+# For stubbing authorisation calls in RSpec
+#
+def permit_with(status, user_id: 123, creator_uri: "https://api.example.com/v1/api_users/#{user_id}")
+  Api.stub(:permitted?).
+    and_return(double(:status => status, 
+                      :body => {'authentication' => 
+                                 {'user_id' => user_id,
+                                  '_links' => { 'creator' => {'href' => creator_uri,
+                                                              'type' => 'application/json'}}}}))
+end
