@@ -41,8 +41,10 @@ class OceanScaffoldGenerator < Rails::Generators::NamedBase
     remove_file "app/views/#{plural_name}/_form.html.erb"
     remove_file "app/views/#{plural_name}/edit.html.erb"
     remove_file "app/views/#{plural_name}/index.html.erb"
+    remove_file "app/views/#{plural_name}/index.json.jbuilder"
     remove_file "app/views/#{plural_name}/new.html.erb"
     remove_file "app/views/#{plural_name}/show.html.erb"
+    remove_file "app/views/#{plural_name}/show.json.jbuilder"
   end
   
   def add_json_views

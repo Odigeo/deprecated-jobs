@@ -54,8 +54,9 @@ module OceanApplicationController
   # Updating created_by and updated_by
   #
   def set_updater(obj)
-    obj.created_by = @auth_api_user_id if obj.created_by.blank? || obj.created_by == 0
-    obj.updated_by = @auth_api_user_id
+    id_or_uri = obj.created_by.is_a?(Integer) ? @auth_api_user_id : @auth_api_user_uri
+    obj.created_by = id_or_uri if obj.created_by.blank? || obj.created_by == 0
+    obj.updated_by = id_or_uri
   end
   
   
