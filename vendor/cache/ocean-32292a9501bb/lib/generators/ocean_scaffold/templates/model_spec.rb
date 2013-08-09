@@ -34,11 +34,6 @@ describe <%= class_name %> do
 
   describe "relations" do
 
-    before :each do
-      <%= class_name %>.destroy_all
-    end
-
-
   end
 
 
@@ -83,29 +78,4 @@ describe <%= class_name %> do
     end
   end
 
-  
-  # describe "should permit menu grouping" do
-  #   
-  #   it "to list the existing apps" do
-  #     media = <%= class_name %>.index({}, :app)
-  #     media.length.should == 2
-  #   end
-  #   
-  #   it "to give all the contexts in an app" do
-  #     media = <%= class_name %>.index({app: 'bar'}, :context)
-  #     media.length.should == 2
-  #   end
-  #   
-  #   it "to give all the names in an app and context" do
-  #     media = <%= class_name %>.index({app: 'bar', context: 'zoo'}, :name)
-  #     media.length.should == 1
-  #   end
-  #   
-  #   it "to list all the locales" do
-  #     media = <%= class_name %>.index({}, :locale)
-  #     media.length.should == 4
-  #   end
-  #   
-  # end
-    
 end

@@ -32,6 +32,14 @@ describe "<%= plural_name %>/_<%= singular_name %>" do
   end
 
 
+  it "should have a name" do
+    @u['name'].should be_a String
+  end
+
+  it "should have a description" do
+    @u['description'].should be_a String
+  end
+
   it "should have a created_at time" do
     @u['created_at'].should be_a String
   end

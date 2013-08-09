@@ -8,7 +8,7 @@ describe <%= class_name.pluralize %>Controller do
     end
 
     it "routes to #show" do
-      get("/v1/<%= plural_name %>/1").should route_to("<%= plural_name %>#show", :id => "1")
+      get("/v1/<%= plural_name %>/1").should route_to("<%= plural_name %>#show", id: "1")
     end
 
     it "routes to #create" do
@@ -16,11 +16,11 @@ describe <%= class_name.pluralize %>Controller do
     end
 
     it "routes to #update" do
-      put("/v1/<%= plural_name %>/1").should route_to("<%= plural_name %>#update", :id => "1")
+      put("/v1/<%= plural_name %>/1").should route_to("<%= plural_name %>#update", id: "1")
     end
 
     it "routes to #destroy" do
-      delete("/v1/<%= plural_name %>/1").should route_to("<%= plural_name %>#destroy", :id => "1")
+      delete("/v1/<%= plural_name %>/1").should route_to("<%= plural_name %>#destroy", id: "1")
     end
 
   end

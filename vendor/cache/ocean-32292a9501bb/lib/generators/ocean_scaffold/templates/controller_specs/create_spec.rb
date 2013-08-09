@@ -25,6 +25,22 @@ describe <%= class_name.pluralize %>Controller do
       response.status.should == 400
     end
     
+    it "should return a 201 when successful" do
+      post :create, @args
+      response.should render_template(partial: "_<%= singular_name %>", count: 1)
+      response.status.should == 201
+    end
+
+    it "should contain a Location header when successful" do
+      post :create, @args
+      response.headers['Location'].should be_a String
+    end
+
+    it "should return the new resource in the body when successful" do
+      post :create, @args
+      response.body.should be_a String
+    end
+    
     #
     # Uncomment this test as soon as there is one or more DB attributes that define
     # the uniqueness of a record.
@@ -50,22 +66,6 @@ describe <%= class_name.pluralize %>Controller do
     #   JSON.parse(response.body).should == {"name"=>["is too short (minimum is 3 characters)"]}
     # end
                 
-    it "should return a 201 when successful" do
-      post :create, @args
-      response.should render_template(partial: "_<%= singular_name %>", count: 1)
-      response.status.should == 201
-    end
-
-    it "should contain a Location header when successful" do
-      post :create, @args
-      response.headers['Location'].should be_a String
-    end
-
-    it "should return the new resource in the body when successful" do
-      post :create, @args
-      response.body.should be_a String
-    end
-    
   end
   
 end

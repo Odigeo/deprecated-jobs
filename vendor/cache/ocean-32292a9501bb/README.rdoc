@@ -36,7 +36,7 @@ All tests should pass.
 To create an aggressively cached Ocean resource based on an SQL model, do the following:
 
  rails g scaffold quux name:string description:string \ 
-                       lock_version:integer created_by:integer updated_by:integer
+                       lock_version:integer created_by:string updated_by:string
 
 This will create the basic model and associated model and controller scaffolding code, 
 which we will modify shortly. Now run
