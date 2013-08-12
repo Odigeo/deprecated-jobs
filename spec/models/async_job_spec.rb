@@ -155,24 +155,24 @@ describe AsyncJob do
       
     
       it "should return an array of AsyncJob instances" do
-        ix = AsyncJob.index
+        ix = AsyncJob.collection
         ix.length.should == 3
         ix[0].should be_a AsyncJob
       end
     
       it "should allow matches on uuid" do
-        AsyncJob.index(uuid: 'NOWAI').length.should == 0
-        AsyncJob.index(uuid: 'bar').length.should == 1
-        AsyncJob.index(uuid: 'baz').length.should == 1
+        AsyncJob.collection(uuid: 'NOWAI').length.should == 0
+        AsyncJob.collection(uuid: 'bar').length.should == 1
+        AsyncJob.collection(uuid: 'baz').length.should == 1
       end
       
       it "should not allow searches" do
-        AsyncJob.index({}, nil, 'b').length.should == 0
-        AsyncJob.index({}, nil, 'z').length.should == 0
+        AsyncJob.collection(search: 'b').length.should == 0
+        AsyncJob.collection(search: 'z').length.should == 0
       end
       
       it "key/value pairs not in the index_only array should quietly be ignored" do
-        AsyncJob.index(uuid: 'bar', aardvark: 12).length.should == 1
+        AsyncJob.collection(uuid: 'bar', aardvark: 12).length.should == 1
       end
         
     end

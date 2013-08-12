@@ -39,13 +39,8 @@ describe <%= class_name %> do
 
 
   describe "search" do
-    describe ".index_only" do
-      it "should return an array of permitted search query args" do
-        <%= class_name %>.index_only.should be_an Array
-      end
-    end
   
-    describe ".index" do
+    describe ".collection" do
     
       before :each do
         create :<%= singular_name %>, name: 'foo', description: "The Foo object"
@@ -55,24 +50,24 @@ describe <%= class_name %> do
       
     
       it "should return an array of <%= class_name %> instances" do
-        ix = <%= class_name %>.index
+        ix = <%= class_name %>.collection
         ix.length.should == 3
         ix[0].should be_a <%= class_name %>
       end
     
       it "should allow matches on name" do
-        <%= class_name %>.index(name: 'NOWAI').length.should == 0
-        <%= class_name %>.index(name: 'bar').length.should == 1
-        <%= class_name %>.index(name: 'baz').length.should == 1
+        <%= class_name %>.collection(name: 'NOWAI').length.should == 0
+        <%= class_name %>.collection(name: 'bar').length.should == 1
+        <%= class_name %>.collection(name: 'baz').length.should == 1
       end
       
       it "should allow searches on description" do
-        <%= class_name %>.index({}, nil, 'a').length.should == 2
-        <%= class_name %>.index({}, nil, 'object').length.should == 3
+        <%= class_name %>.collection(search: 'a').length.should == 2
+        <%= class_name %>.collection(search: 'object').length.should == 3
       end
       
       it "key/value pairs not in the index_only array should quietly be ignored" do
-        <%= class_name %>.index(name: 'bar', aardvark: 12).length.should == 1
+        <%= class_name %>.collection(name: 'bar', aardvark: 12).length.should == 1
       end
         
     end

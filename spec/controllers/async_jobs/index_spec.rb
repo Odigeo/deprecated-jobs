@@ -34,12 +34,6 @@ describe AsyncJobsController do
       response.should render_template(partial: "_async_job", count: 3)
     end
 
-    it "should accept match and search parameters" do
-      AsyncJob.should_receive(:index).with(anything, nil, 'ue').and_return([])
-      get :index, search: 'ue'
-      response.status.should == 200
-    end
-
     it "should return a collection" do
       get :index
       JSON.parse(response.body).should be_an Array

@@ -42,13 +42,13 @@ describe TheModelsController do
     end
 
     it "should accept match and search parameters" do
-      TheModel.should_receive(:index).with(anything, nil, 'ue').and_return([])
+      TheModel.should_receive(:collection).with({"app"=>"foo", "search"=>"ue", "controller"=>"the_models", "action"=>"index"}).and_return([])
       get :index, app: 'foo', search: 'ue'
       response.status.should == 200
     end
     
     it "should accept a group parameter" do
-      TheModel.should_receive(:index).with(anything, 'name', nil).and_return([])
+      TheModel.should_receive(:collection).with({"app"=>"foo", "group"=>"name", "controller"=>"the_models", "action"=>"index"}).and_return([])
       get :index, app: 'foo', group: :name
       response.status.should == 200
     end

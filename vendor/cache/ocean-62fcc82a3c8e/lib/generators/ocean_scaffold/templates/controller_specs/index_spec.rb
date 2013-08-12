@@ -35,13 +35,17 @@ describe <%= class_name.pluralize %>Controller do
     end
 
     it "should accept match and search parameters" do
-      <%= class_name %>.should_receive(:index).with(anything, nil, 'ue').and_return([])
+      <%= class_name %>.should_receive(:collection).
+        with({"app"=>"foo", "search"=>"ue", "controller"=><%= plural_name %>, "action"=>"index"}).
+        and_return([])
       get :index, app: 'foo', search: 'ue'
       response.status.should == 200
     end
     
     it "should accept a group parameter" do
-      <%= class_name %>.should_receive(:index).with(anything, 'name', nil).and_return([])
+      <%= class_name %>.should_receive(:collection).
+        with({"app"=>"foo", "group"=>"name", "controller"=><%= plural_name %>, "action"=>"index"}).
+        and_return([])
       get :index, app: 'foo', group: :name
       response.status.should == 200
     end

@@ -56,7 +56,7 @@ describe TheModel do
 
   describe "search" do
   
-    describe ".index" do
+    describe ".collection" do
     
       before :each do
         create :the_model, name: 'foo', description: "The Foo the_model"
@@ -66,30 +66,30 @@ describe TheModel do
 
     
       it "should return an array of TheModel instances" do
-        ix = TheModel.index
+        ix = TheModel.collection
         ix.length.should == 3
         ix[0].should be_a TheModel
       end
     
       it "should allow matches on name" do
-        TheModel.index(name: 'NOWAI').length.should == 0
-        TheModel.index(name: 'bar').length.should == 1
-        TheModel.index(name: 'baz').length.should == 1
+        TheModel.collection(name: 'NOWAI').length.should == 0
+        TheModel.collection(name: 'bar').length.should == 1
+        TheModel.collection(name: 'baz').length.should == 1
       end
       
       it "should allow searches on description" do
-        TheModel.index({}, nil, 'B').length.should == 2
-        TheModel.index({}, nil, 'the_model').length.should == 3
+        TheModel.collection(search: 'B').length.should == 2
+        TheModel.collection(search: 'the_model').length.should == 3
       end
 
       it "should return an empty collection when using search where it's been disabled" do
         TheModel.stub(index_search_property: false)
-        TheModel.index({}, nil, 'B').length.should == 0
-        TheModel.index({}, nil, 'the_model').length.should == 0
+        TheModel.collection(search: 'B').length.should == 0
+        TheModel.collection(search: 'the_model').length.should == 0
       end
       
       it "key/value pairs not in the index_only array should quietly be ignored" do
-        TheModel.index(name: 'bar', aardvark: 12).length.should == 1
+        TheModel.collection(name: 'bar', aardvark: 12).length.should == 1
       end
         
     end

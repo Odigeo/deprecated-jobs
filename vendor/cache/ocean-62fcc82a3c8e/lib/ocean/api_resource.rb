@@ -34,7 +34,7 @@ module ApiResource
     # 
     # In future, this method will take args to control pagination of results.
     #
-    def index(conds={}, group_by=nil, substring=nil)
+    def collection_internal(conds={}, group_by=nil, substring=nil)
       # TODO: pagination
       if index_only != []
         new_conds = {}
@@ -54,8 +54,8 @@ module ApiResource
     # This is the successor to +index+. The difference is that +collection+ is called with
     # all params in the same bag, thus simplifying the call from the controller.
     #
-    def collection(bag)
-      index bag, bag[:group], bag[:search]
+    def collection(bag={})
+      collection_internal bag, bag[:group], bag[:search]
     end
     
 

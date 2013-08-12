@@ -35,8 +35,8 @@ describe TheModel do
   	@c.index_only.should == [:foo, :bar]
   end
 
-  it "should have an index class method" do
-  	@c.index
+  it "should have a collection class method" do
+  	@c.collection
   end
 
 
