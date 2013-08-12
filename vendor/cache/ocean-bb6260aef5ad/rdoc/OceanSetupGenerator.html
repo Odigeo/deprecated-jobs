@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>class OceanSetupGenerator - Ocean</title>
+
+<link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="./js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
+
+
+<body id="top" class="class">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="./index.html">Home</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>lib/generators/ocean_setup/ocean_setup_generator.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    <nav id="parent-class-section" class="section">
+  <h3 class="section-header">Parent</h3>
+  
+  <p class="link">Rails::Generators::NamedBase
+  
+</nav>
+
+    
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li ><a href="#method-i-install_alive_controller_and_specs">#install_alive_controller_and_specs</a>
+    
+    <li ><a href="#method-i-install_application_controller">#install_application_controller</a>
+    
+    <li ><a href="#method-i-install_application_helper">#install_application_helper</a>
+    
+    <li ><a href="#method-i-install_error_handling_and_specs">#install_error_handling_and_specs</a>
+    
+    <li ><a href="#method-i-install_generator_defaults">#install_generator_defaults</a>
+    
+    <li ><a href="#method-i-install_initializers">#install_initializers</a>
+    
+    <li ><a href="#method-i-install_routes_file">#install_routes_file</a>
+    
+    <li ><a href="#method-i-install_spec_helper_and_support_files">#install_spec_helper_and_support_files</a>
+    
+    <li ><a href="#method-i-remove_unwanted_stuff">#remove_unwanted_stuff</a>
+    
+    <li ><a href="#method-i-replace_gemfile">#replace_gemfile</a>
+    
+    <li ><a href="#method-i-setup_git">#setup_git</a>
+    
+    <li ><a href="#method-i-turn_off_asset_pipeline">#turn_off_asset_pipeline</a>
+    
+    <li ><a href="#method-i-turn_off_sessions_and_cookies">#turn_off_sessions_and_cookies</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="./README_rdoc.html">README</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./ActionController.html">ActionController</a>
+  
+    <li><a href="./ActiveRecord.html">ActiveRecord</a>
+  
+    <li><a href="./ActiveSupport.html">ActiveSupport</a>
+  
+    <li><a href="./AliveController.html">AliveController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./ApiResource.html">ApiResource</a>
+  
+    <li><a href="./ApiResource/ClassMethods.html">ApiResource::ClassMethods</a>
+  
+    <li><a href="./ApplicationController.html">ApplicationController</a>
+  
+    <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
+  
+    <li><a href="./ErrorsController.html">ErrorsController</a>
+  
+    <li><a href="./Faraday.html">Faraday</a>
+  
+    <li><a href="./Logger.html">Logger</a>
+  
+    <li><a href="./Object.html">Object</a>
+  
+    <li><a href="./Ocean.html">Ocean</a>
+  
+    <li><a href="./Ocean/OceanResourceController.html">Ocean::OceanResourceController</a>
+  
+    <li><a href="./Ocean/OceanResourceController/ClassMethods.html">Ocean::OceanResourceController::ClassMethods</a>
+  
+    <li><a href="./Ocean/OceanResourceModel.html">Ocean::OceanResourceModel</a>
+  
+    <li><a href="./Ocean/OceanResourceModel/ClassMethods.html">Ocean::OceanResourceModel::ClassMethods</a>
+  
+    <li><a href="./Ocean/Railtie.html">Ocean::Railtie</a>
+  
+    <li><a href="./Ocean/Railtie/File.html">Ocean::Railtie::File</a>
+  
+    <li><a href="./Ocean/Railtie/Rails.html">Ocean::Railtie::Rails</a>
+  
+    <li><a href="./Ocean/Railtie/Rails/Rack.html">Ocean::Railtie::Rails::Rack</a>
+  
+    <li><a href="./OceanApplicationController.html">OceanApplicationController</a>
+  
+    <li><a href="./OceanScaffoldGenerator.html">OceanScaffoldGenerator</a>
+  
+    <li><a href="./OceanSetupGenerator.html">OceanSetupGenerator</a>
+  
+    <li><a href="./RSpec.html">RSpec</a>
+  
+    <li><a href="./SelectiveRackLogger.html">SelectiveRackLogger</a>
+  
+    <li><a href="./ZeroLog.html">ZeroLog</a>
+  
+    <li><a href="./ZeromqLogger.html">ZeromqLogger</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="class">class OceanSetupGenerator</h1>
+
+  <div id="description" class="description">
+    
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    <!-- Methods -->
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Instance Methods</h3>
+
+    
+      <div id="method-i-install_alive_controller_and_specs" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">install_alive_controller_and_specs</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="install_alive_controller_and_specs-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 36</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">install_alive_controller_and_specs</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;alive_controller.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/app/controllers/alive_controller.rb&quot;</span>
+  <span class="ruby-identifier">route</span> <span class="ruby-string">&#39;get &quot;/alive&quot; =&gt; &quot;alive#index&quot;&#39;</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;alive_routing_spec.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/routing/alive_routing_spec.rb&quot;</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;alive_spec.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/requests/alive_spec.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- install_alive_controller_and_specs-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- install_alive_controller_and_specs-method -->
+
+    
+      <div id="method-i-install_application_controller" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">install_application_controller</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="install_application_controller-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 19</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">install_application_controller</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;application_controller.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/app/controllers/application_controller.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- install_application_controller-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- install_application_controller-method -->
+
+    
+      <div id="method-i-install_application_helper" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">install_application_helper</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="install_application_helper-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 23</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">install_application_helper</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;application_helper.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/app/helpers/application_helper.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- install_application_helper-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- install_application_helper-method -->
+
+    
+      <div id="method-i-install_error_handling_and_specs" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">install_error_handling_and_specs</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="install_error_handling_and_specs-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 49</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">install_error_handling_and_specs</span>
+  <span class="ruby-identifier">application</span> <span class="ruby-node">&quot;# Handle our own exceptions internally, so we can return JSON error bodies
+  config.exceptions_app = -&gt;(env) { ErrorsController.action(:show).call(env) }
+  &quot;</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;errors_controller.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/app/controllers/errors_controller.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- install_error_handling_and_specs-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- install_error_handling_and_specs-method -->
+
+    
+      <div id="method-i-install_generator_defaults" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">install_generator_defaults</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="install_generator_defaults-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 63</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">install_generator_defaults</span>
+  <span class="ruby-identifier">application</span> <span class="ruby-node">&quot;# Defaults for generators
+  config.generators do |g|
+    g.assets false
+    g.stylesheets false
+    g.helper false
+    g.test_framework :rspec, :fixture =&gt; true
+    g.fixture_replacement :factory_girl    
+  end
+  &quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- install_generator_defaults-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- install_generator_defaults-method -->
+
+    
+      <div id="method-i-install_initializers" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">install_initializers</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="install_initializers-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 75</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">install_initializers</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;api_constants.rb&quot;</span>,   <span class="ruby-node">&quot;#{Rails.root}/config/initializers/api_constants.rb&quot;</span>
+  <span class="ruby-identifier">template</span>  <span class="ruby-string">&quot;config.yml.example&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/config/config.yml.example&quot;</span>
+  <span class="ruby-identifier">template</span>  <span class="ruby-string">&quot;config.yml.example&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/config/config.yml&quot;</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;ocean_constants.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/config/initializers/ocean_constants.rb&quot;</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;zeromq_logger.rb&quot;</span>,   <span class="ruby-node">&quot;#{Rails.root}/config/initializers/zeromq_logger.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- install_initializers-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- install_initializers-method -->
+
+    
+      <div id="method-i-install_routes_file" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">install_routes_file</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="install_routes_file-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 32</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">install_routes_file</span>
+  <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;routes.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/config/routes.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- install_routes_file-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- install_routes_file-method -->
+
+    
+      <div id="method-i-install_spec_helper_and_support_files" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">install_spec_helper_and_support_files</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="install_spec_helper_and_support_files-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 27</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">install_spec_helper_and_support_files</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;spec_helper.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/spec_helper.rb&quot;</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;hyperlinks.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/support/hyperlinks.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- install_spec_helper_and_support_files-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- install_spec_helper_and_support_files-method -->
+
+    
+      <div id="method-i-remove_unwanted_stuff" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">remove_unwanted_stuff</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="remove_unwanted_stuff-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 5</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">remove_unwanted_stuff</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/app/assets&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/lib/assets&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/app/views/layouts&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/config/locales&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/public&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/config/initializers/session_store.rb&quot;</span>
+  <span class="ruby-comment">#remove_file &quot;#{Rails.root}/config/initializers/secret_token.rb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/test&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/vendor/assets&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/vendor/plugins&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/tmp/cache/assets&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- remove_unwanted_stuff-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- remove_unwanted_stuff-method -->
+
+    
+      <div id="method-i-replace_gemfile" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">replace_gemfile</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="replace_gemfile-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">replace_gemfile</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;#{Rails.root}/Gemfile&quot;</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;Gemfile&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/Gemfile&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- replace_gemfile-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- replace_gemfile-method -->
+
+    
+      <div id="method-i-setup_git" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setup_git</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="setup_git-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 88</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">setup_git</span>
+  <span class="ruby-identifier">copy_file</span> <span class="ruby-string">&quot;gitignore&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/.gitignore&quot;</span>
+  <span class="ruby-identifier">git</span> <span class="ruby-value">:init</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- setup_git-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- setup_git-method -->
+
+    
+      <div id="method-i-turn_off_asset_pipeline" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">turn_off_asset_pipeline</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="turn_off_asset_pipeline-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">turn_off_asset_pipeline</span>
+  <span class="ruby-identifier">application</span> <span class="ruby-node">&quot;# Disable the asset pipeline
+  config.assets.enabled = false    
+  &quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- turn_off_asset_pipeline-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- turn_off_asset_pipeline-method -->
+
+    
+      <div id="method-i-turn_off_sessions_and_cookies" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">turn_off_sessions_and_cookies</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="turn_off_sessions_and_cookies-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/ocean_setup_generator.rb, line 56</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">turn_off_sessions_and_cookies</span>
+  <span class="ruby-identifier">application</span> <span class="ruby-node">&quot;# Turn off sessions
+  config.session_store :disabled
+  config.middleware.delete ActionDispatch::Cookies
+  &quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- turn_off_sessions_and_cookies-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- turn_off_sessions_and_cookies-method -->
+
+    
+    </section><!-- public-instance-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 4.0.0.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>module OceanApplicationController - Ocean</title>
+
+<link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="./js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
+
+
+<body id="top" class="module">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="./index.html">Home</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>lib/ocean/ocean_application_controller.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li ><a href="#method-i-api_render">#api_render</a>
+    
+    <li ><a href="#method-i-authorize_action">#authorize_action</a>
+    
+    <li ><a href="#method-i-collection_etag">#collection_etag</a>
+    
+    <li ><a href="#method-i-default_url_options">#default_url_options</a>
+    
+    <li ><a href="#method-i-filtered_params">#filtered_params</a>
+    
+    <li ><a href="#method-i-find_connectee">#find_connectee</a>
+    
+    <li ><a href="#method-i-render_api_error">#render_api_error</a>
+    
+    <li ><a href="#method-i-render_head_204">#render_head_204</a>
+    
+    <li ><a href="#method-i-render_validation_errors">#render_validation_errors</a>
+    
+    <li ><a href="#method-i-require_x_api_token">#require_x_api_token</a>
+    
+    <li ><a href="#method-i-set_updater">#set_updater</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="./README_rdoc.html">README</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./ActionController.html">ActionController</a>
+  
+    <li><a href="./ActiveRecord.html">ActiveRecord</a>
+  
+    <li><a href="./ActiveSupport.html">ActiveSupport</a>
+  
+    <li><a href="./AliveController.html">AliveController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./ApiResource.html">ApiResource</a>
+  
+    <li><a href="./ApiResource/ClassMethods.html">ApiResource::ClassMethods</a>
+  
+    <li><a href="./ApplicationController.html">ApplicationController</a>
+  
+    <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
+  
+    <li><a href="./ErrorsController.html">ErrorsController</a>
+  
+    <li><a href="./Faraday.html">Faraday</a>
+  
+    <li><a href="./Logger.html">Logger</a>
+  
+    <li><a href="./Object.html">Object</a>
+  
+    <li><a href="./Ocean.html">Ocean</a>
+  
+    <li><a href="./Ocean/OceanResourceController.html">Ocean::OceanResourceController</a>
+  
+    <li><a href="./Ocean/OceanResourceController/ClassMethods.html">Ocean::OceanResourceController::ClassMethods</a>
+  
+    <li><a href="./Ocean/OceanResourceModel.html">Ocean::OceanResourceModel</a>
+  
+    <li><a href="./Ocean/OceanResourceModel/ClassMethods.html">Ocean::OceanResourceModel::ClassMethods</a>
+  
+    <li><a href="./Ocean/Railtie.html">Ocean::Railtie</a>
+  
+    <li><a href="./Ocean/Railtie/File.html">Ocean::Railtie::File</a>
+  
+    <li><a href="./Ocean/Railtie/Rails.html">Ocean::Railtie::Rails</a>
+  
+    <li><a href="./Ocean/Railtie/Rails/Rack.html">Ocean::Railtie::Rails::Rack</a>
+  
+    <li><a href="./OceanApplicationController.html">OceanApplicationController</a>
+  
+    <li><a href="./OceanScaffoldGenerator.html">OceanScaffoldGenerator</a>
+  
+    <li><a href="./OceanSetupGenerator.html">OceanSetupGenerator</a>
+  
+    <li><a href="./RSpec.html">RSpec</a>
+  
+    <li><a href="./SelectiveRackLogger.html">SelectiveRackLogger</a>
+  
+    <li><a href="./ZeroLog.html">ZeroLog</a>
+  
+    <li><a href="./ZeromqLogger.html">ZeromqLogger</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="module">module OceanApplicationController</h1>
+
+  <div id="description" class="description">
+    
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    <!-- Methods -->
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Instance Methods</h3>
+
+    
+      <div id="method-i-api_render" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">api_render</span><span
+            class="method-args">(x, new: false)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>This is the main rendering function in <a href="Ocean.html">Ocean</a>. The
+argument <code>x</code> can be a resource or a collection of resources
+(which need not be of the same type).</p>
+
+<p>The keyword arg <code>new</code>, if true, sets the response HTTP status to
+201 and also adds a <code>Location</code> HTTP header with the URI of the
+resource.</p>
+
+<p>Rendering is done using partials only. These should by convention be
+located in their standard position, begin with an underscore, etc. The
+<code>ocean</code> gem generator for resources creates a partial in the
+proper location.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="api_render-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 110</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">api_render</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">new</span><span class="ruby-operator">:</span> <span class="ruby-keyword">false</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">x</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">x</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Relation</span>)
+    <span class="ruby-identifier">partial</span> = <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_partial_path</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">new</span>
+      <span class="ruby-identifier">render</span> <span class="ruby-identifier">partial</span><span class="ruby-operator">:</span> <span class="ruby-identifier">partial</span>, <span class="ruby-identifier">object</span><span class="ruby-operator">:</span> <span class="ruby-identifier">x</span>, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-value">201</span>, <span class="ruby-identifier">location</span><span class="ruby-operator">:</span> <span class="ruby-identifier">x</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">render</span> <span class="ruby-identifier">partial</span><span class="ruby-operator">:</span> <span class="ruby-identifier">partial</span>, <span class="ruby-identifier">object</span><span class="ruby-operator">:</span> <span class="ruby-identifier">x</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">return</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">==</span> []
+    <span class="ruby-identifier">render</span> <span class="ruby-identifier">text</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;[]&#39;</span>
+    <span class="ruby-keyword">return</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">partials</span> = <span class="ruby-identifier">x</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">render_to_string</span>(<span class="ruby-identifier">partial</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">to_partial_path</span>, 
+                                                <span class="ruby-identifier">locals</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">m</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">model_name</span>.<span class="ruby-identifier">i18n_key</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">m</span>}) }
+    <span class="ruby-identifier">render</span> <span class="ruby-identifier">text</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;[&#39;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">partials</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39;,&#39;</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&#39;]&#39;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- api_render-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- api_render-method -->
+
+    
+      <div id="method-i-authorize_action" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">authorize_action</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Performs authorisation of the current action. Returns true if allowed,
+false if not. Calls the Auth service using a <code>GET</code>, which means
+previous authorisations using the same token and args will be cached in
+Varnish.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="authorize_action-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">authorize_action</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;NO_OCEAN_AUTH&#39;</span>]
+  <span class="ruby-comment"># Obtain any nonstandard actions</span>
+  <span class="ruby-identifier">@@extra_actions</span>[<span class="ruby-identifier">controller_name</span>] <span class="ruby-operator">||=</span> <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">extra_actions</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">NameError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+    {}
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-comment"># Create a query string and call Auth</span>
+  <span class="ruby-identifier">qs</span> = <span class="ruby-constant">Api</span>.<span class="ruby-identifier">authorization_string</span>(<span class="ruby-identifier">@@extra_actions</span>, <span class="ruby-identifier">controller_name</span>, <span class="ruby-identifier">action_name</span>)
+  <span class="ruby-identifier">response</span> = <span class="ruby-constant">Api</span>.<span class="ruby-identifier">permitted?</span>(<span class="ruby-ivar">@x_api_token</span>, <span class="ruby-identifier">query</span><span class="ruby-operator">:</span> <span class="ruby-identifier">qs</span>)                                   
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">status</span> <span class="ruby-operator">==</span> <span class="ruby-value">200</span>
+    <span class="ruby-ivar">@auth_api_user_id</span> = <span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>[<span class="ruby-string">&#39;authentication&#39;</span>][<span class="ruby-string">&#39;user_id&#39;</span>]  <span class="ruby-comment"># Deprecate and remove</span>
+    <span class="ruby-ivar">@auth_api_user_uri</span> = <span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>[<span class="ruby-string">&#39;authentication&#39;</span>][<span class="ruby-string">&#39;_links&#39;</span>][<span class="ruby-string">&#39;creator&#39;</span>][<span class="ruby-string">&#39;href&#39;</span>]  <span class="ruby-comment"># Keep</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">error_messages</span> = <span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>[<span class="ruby-string">&#39;_api_error&#39;</span>]
+  <span class="ruby-identifier">render_api_error</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">status</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">error_messages</span>
+  <span class="ruby-keyword">false</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- authorize_action-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- authorize_action-method -->
+
+    
+      <div id="method-i-collection_etag" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">collection_etag</span><span
+            class="method-args">(coll)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Cache values for collections. Accepts a class or a scope.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="collection_etag-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 145</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">collection_etag</span>(<span class="ruby-identifier">coll</span>)
+  <span class="ruby-identifier">coll</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">constantize</span> <span class="ruby-comment"># Force a load of the class (for secondary collections)</span>
+  <span class="ruby-identifier">last_updated</span> = <span class="ruby-identifier">coll</span>.<span class="ruby-identifier">order</span>(<span class="ruby-value">:updated_at</span>).<span class="ruby-identifier">last</span>.<span class="ruby-identifier">updated_at</span>.<span class="ruby-identifier">utc</span> <span class="ruby-keyword">rescue</span> <span class="ruby-value">0</span>
+  <span class="ruby-comment"># We could also, in the absence of an updated_at attribute, use created_at.</span>
+  { <span class="ruby-identifier">etag</span><span class="ruby-operator">:</span> <span class="ruby-node">&quot;#{coll.name}:#{coll.count}:#{last_updated}&quot;</span>
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- collection_etag-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- collection_etag-method -->
+
+    
+      <div id="method-i-default_url_options" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">default_url_options</span><span
+            class="method-args">(options = nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>TODO</p>
+          
+          
+
+          
+          <div class="method-source-code" id="default_url_options-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 6</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">default_url_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-comment"># We should ALWAYS generate external URIs, even for internal calls.</span>
+  <span class="ruby-comment"># It&#39;s the responsibility of the other service to rewrite external</span>
+  <span class="ruby-comment"># to internal URIs when calling the internal API point.</span>
+  { <span class="ruby-value">:protocol</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;https&quot;</span>, <span class="ruby-value">:host</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">OCEAN_API_HOST</span> }
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- default_url_options-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- default_url_options-method -->
+
+    
+      <div id="method-i-filtered_params" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">filtered_params</span><span
+            class="method-args">(klass)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Filtering away all non-accessible attributes from params</p>
+          
+          
+
+          
+          <div class="method-source-code" id="filtered_params-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 133</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">filtered_params</span>(<span class="ruby-identifier">klass</span>)
+  <span class="ruby-identifier">result</span> = {}
+  <span class="ruby-identifier">params</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span> 
+    <span class="ruby-identifier">result</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-identifier">v</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">accessible_attributes</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">k</span>)
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">result</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- filtered_params-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- filtered_params-method -->
+
+    
+      <div id="method-i-find_connectee" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">find_connectee</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Finding the other resource for connect/disconnect</p>
+          
+          
+
+          
+          <div class="method-source-code" id="find_connectee-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 157</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">find_connectee</span>
+  <span class="ruby-identifier">href</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:href</span>]
+  <span class="ruby-identifier">render_api_error</span>(<span class="ruby-value">422</span>, <span class="ruby-string">&quot;href query arg is missing&quot;</span>) <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">href</span>.<span class="ruby-identifier">blank?</span>
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">routing</span> = <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">application</span>.<span class="ruby-identifier">routes</span>.<span class="ruby-identifier">recognize_path</span>(<span class="ruby-identifier">href</span>)
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">RoutingError</span>
+    <span class="ruby-identifier">render_api_error</span>(<span class="ruby-value">422</span>, <span class="ruby-string">&quot;href query arg isn&#39;t parseable&quot;</span>)
+    <span class="ruby-keyword">return</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@connectee_class</span> = <span class="ruby-identifier">routing</span>[<span class="ruby-value">:controller</span>].<span class="ruby-identifier">classify</span>.<span class="ruby-identifier">constantize</span>
+  <span class="ruby-ivar">@connectee</span> = <span class="ruby-ivar">@connectee_class</span>.<span class="ruby-identifier">find_by_id</span>(<span class="ruby-identifier">routing</span>[<span class="ruby-value">:id</span>])
+  <span class="ruby-identifier">render_api_error</span>(<span class="ruby-value">404</span>, <span class="ruby-string">&quot;Resource to connect not found&quot;</span>) <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@connectee</span>
+  <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- find_connectee-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- find_connectee-method -->
+
+    
+      <div id="method-i-render_api_error" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">render_api_error</span><span
+            class="method-args">(status_code, *messages)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>JSON renderers</p>
+          
+          
+
+          
+          <div class="method-source-code" id="render_api_error-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 81</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">render_api_error</span>(<span class="ruby-identifier">status_code</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">messages</span>)
+  <span class="ruby-identifier">render</span> <span class="ruby-identifier">json</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">_api_error</span><span class="ruby-operator">:</span> <span class="ruby-identifier">messages</span>}, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-identifier">status_code</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- render_api_error-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- render_api_error-method -->
+
+    
+      <div id="method-i-render_head_204" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">render_head_204</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="render_head_204-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 88</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">render_head_204</span>
+  <span class="ruby-identifier">render</span> <span class="ruby-identifier">text</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;&#39;</span>, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-value">204</span>, <span class="ruby-identifier">content_type</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;application/json&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- render_head_204-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- render_head_204-method -->
+
+    
+      <div id="method-i-render_validation_errors" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">render_validation_errors</span><span
+            class="method-args">(r)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="render_validation_errors-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 95</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">render_validation_errors</span>(<span class="ruby-identifier">r</span>)
+  <span class="ruby-identifier">render</span> <span class="ruby-identifier">json</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">errors</span>, <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">422</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- render_validation_errors-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- render_validation_errors-method -->
+
+    
+      <div id="method-i-require_x_api_token" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">require_x_api_token</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Ensures that there is an <code>X-API-Token</code> HTTP header in the
+request. Stores the token in @x_api_token for use during authorisation of
+the current controller action. If there&#39;s no <code>X-API-Token</code>
+header, the request is aborted and an <a href="Api.html">Api</a> error with
+status 400 is returned.</p>
+
+<p>400 error responses will always contain a body with error information
+explaining the <a href="Api.html">Api</a> error.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="require_x_api_token-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 23</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">require_x_api_token</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;NO_OCEAN_AUTH&#39;</span>]
+  <span class="ruby-ivar">@x_api_token</span> = <span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers</span>[<span class="ruby-string">&#39;X-API-Token&#39;</span>]
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@x_api_token</span>.<span class="ruby-identifier">present?</span>
+  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;X-API-Token missing&quot;</span>
+  <span class="ruby-identifier">render_api_error</span> <span class="ruby-value">400</span>, <span class="ruby-string">&quot;X-API-Token missing&quot;</span>
+  <span class="ruby-keyword">false</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- require_x_api_token-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- require_x_api_token-method -->
+
+    
+      <div id="method-i-set_updater" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">set_updater</span><span
+            class="method-args">(obj)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Updating created_by and updated_by</p>
+          
+          
+
+          
+          <div class="method-source-code" id="set_updater-source">
+            <pre><span class="ruby-comment"># File lib/ocean/ocean_application_controller.rb, line 71</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_updater</span>(<span class="ruby-identifier">obj</span>)
+  <span class="ruby-identifier">id_or_uri</span> = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">created_by</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Integer</span>) <span class="ruby-operator">?</span> <span class="ruby-ivar">@auth_api_user_id</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@auth_api_user_uri</span>
+  <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">created_by</span> = <span class="ruby-identifier">id_or_uri</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">created_by</span>.<span class="ruby-identifier">blank?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">created_by</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+  <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">updated_by</span> = <span class="ruby-identifier">id_or_uri</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- set_updater-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- set_updater-method -->
+
+    
+    </section><!-- public-instance-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 4.0.0.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

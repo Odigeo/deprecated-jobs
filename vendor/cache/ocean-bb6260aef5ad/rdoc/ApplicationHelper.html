@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>module ApplicationHelper - Ocean</title>
+
+<link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="./js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
+
+
+<body id="top" class="module">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="./index.html">Home</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>lib/generators/ocean_setup/templates/application_helper.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li ><a href="#method-i-api_user_url">#api_user_url</a>
+    
+    <li ><a href="#method-i-hyperlinks">#hyperlinks</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="./README_rdoc.html">README</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./ActionController.html">ActionController</a>
+  
+    <li><a href="./ActiveRecord.html">ActiveRecord</a>
+  
+    <li><a href="./ActiveSupport.html">ActiveSupport</a>
+  
+    <li><a href="./AliveController.html">AliveController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./ApiResource.html">ApiResource</a>
+  
+    <li><a href="./ApiResource/ClassMethods.html">ApiResource::ClassMethods</a>
+  
+    <li><a href="./ApplicationController.html">ApplicationController</a>
+  
+    <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
+  
+    <li><a href="./ErrorsController.html">ErrorsController</a>
+  
+    <li><a href="./Faraday.html">Faraday</a>
+  
+    <li><a href="./Logger.html">Logger</a>
+  
+    <li><a href="./Object.html">Object</a>
+  
+    <li><a href="./Ocean.html">Ocean</a>
+  
+    <li><a href="./Ocean/OceanResourceController.html">Ocean::OceanResourceController</a>
+  
+    <li><a href="./Ocean/OceanResourceController/ClassMethods.html">Ocean::OceanResourceController::ClassMethods</a>
+  
+    <li><a href="./Ocean/OceanResourceModel.html">Ocean::OceanResourceModel</a>
+  
+    <li><a href="./Ocean/OceanResourceModel/ClassMethods.html">Ocean::OceanResourceModel::ClassMethods</a>
+  
+    <li><a href="./Ocean/Railtie.html">Ocean::Railtie</a>
+  
+    <li><a href="./Ocean/Railtie/File.html">Ocean::Railtie::File</a>
+  
+    <li><a href="./Ocean/Railtie/Rails.html">Ocean::Railtie::Rails</a>
+  
+    <li><a href="./Ocean/Railtie/Rails/Rack.html">Ocean::Railtie::Rails::Rack</a>
+  
+    <li><a href="./OceanApplicationController.html">OceanApplicationController</a>
+  
+    <li><a href="./OceanScaffoldGenerator.html">OceanScaffoldGenerator</a>
+  
+    <li><a href="./OceanSetupGenerator.html">OceanSetupGenerator</a>
+  
+    <li><a href="./RSpec.html">RSpec</a>
+  
+    <li><a href="./SelectiveRackLogger.html">SelectiveRackLogger</a>
+  
+    <li><a href="./ZeroLog.html">ZeroLog</a>
+  
+    <li><a href="./ZeromqLogger.html">ZeromqLogger</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="module">module ApplicationHelper</h1>
+
+  <div id="description" class="description">
+    
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    <!-- Methods -->
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Instance Methods</h3>
+
+    
+      <div id="method-i-api_user_url" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">api_user_url</span><span
+            class="method-args">(api_user_id)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>This is needed everywhere except inside the Auth service to render creator
+and updater links correctly.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="api_user_url-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/templates/application_helper.rb, line 22</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">api_user_url</span>(<span class="ruby-identifier">api_user_id</span>)
+  <span class="ruby-node">&quot;#{OCEAN_API_URL}/#{Api.version_for :api_user}/api_users/#{api_user_id || 0}&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- api_user_url-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- api_user_url-method -->
+
+    
+      <div id="method-i-hyperlinks" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">hyperlinks</span><span
+            class="method-args">(links={})</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Used in Jbuilder templates to build hyperlinks</p>
+          
+          
+
+          
+          <div class="method-source-code" id="hyperlinks-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_setup/templates/application_helper.rb, line 6</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">hyperlinks</span>(<span class="ruby-identifier">links</span>={})
+  <span class="ruby-identifier">result</span> = {}
+  <span class="ruby-identifier">links</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">qi</span>, <span class="ruby-identifier">val</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">result</span>[<span class="ruby-identifier">qi</span>.<span class="ruby-identifier">to_s</span>] = { 
+               <span class="ruby-string">&quot;href&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">val</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">val</span>[<span class="ruby-value">:href</span>], 
+               <span class="ruby-string">&quot;type&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">?</span> <span class="ruby-string">&quot;application/json&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">val</span>[<span class="ruby-value">:type</span>]
+            }
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">result</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- hyperlinks-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- hyperlinks-method -->
+
+    
+    </section><!-- public-instance-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 4.0.0.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

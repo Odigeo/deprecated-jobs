@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>class OceanScaffoldGenerator - Ocean</title>
+
+<link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="./js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
+
+
+<body id="top" class="class">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="./index.html">Home</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>lib/generators/ocean_scaffold/ocean_scaffold_generator.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    <nav id="parent-class-section" class="section">
+  <h3 class="section-header">Parent</h3>
+  
+  <p class="link">Rails::Generators::NamedBase
+  
+</nav>
+
+    
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li ><a href="#method-i-add_json_controller_specs">#add_json_controller_specs</a>
+    
+    <li ><a href="#method-i-add_json_view_spec">#add_json_view_spec</a>
+    
+    <li ><a href="#method-i-add_json_views">#add_json_views</a>
+    
+    <li ><a href="#method-i-add_model_specs">#add_model_specs</a>
+    
+    <li ><a href="#method-i-extend_model">#extend_model</a>
+    
+    <li ><a href="#method-i-remove_html_controller_specs">#remove_html_controller_specs</a>
+    
+    <li ><a href="#method-i-remove_html_view_specs">#remove_html_view_specs</a>
+    
+    <li ><a href="#method-i-remove_html_views">#remove_html_views</a>
+    
+    <li ><a href="#method-i-remove_request_specs">#remove_request_specs</a>
+    
+    <li ><a href="#method-i-update_routing_specs">#update_routing_specs</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="./README_rdoc.html">README</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./ActionController.html">ActionController</a>
+  
+    <li><a href="./ActiveRecord.html">ActiveRecord</a>
+  
+    <li><a href="./ActiveSupport.html">ActiveSupport</a>
+  
+    <li><a href="./AliveController.html">AliveController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./ApiResource.html">ApiResource</a>
+  
+    <li><a href="./ApiResource/ClassMethods.html">ApiResource::ClassMethods</a>
+  
+    <li><a href="./ApplicationController.html">ApplicationController</a>
+  
+    <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
+  
+    <li><a href="./ErrorsController.html">ErrorsController</a>
+  
+    <li><a href="./Faraday.html">Faraday</a>
+  
+    <li><a href="./Logger.html">Logger</a>
+  
+    <li><a href="./Object.html">Object</a>
+  
+    <li><a href="./Ocean.html">Ocean</a>
+  
+    <li><a href="./Ocean/OceanResourceController.html">Ocean::OceanResourceController</a>
+  
+    <li><a href="./Ocean/OceanResourceController/ClassMethods.html">Ocean::OceanResourceController::ClassMethods</a>
+  
+    <li><a href="./Ocean/OceanResourceModel.html">Ocean::OceanResourceModel</a>
+  
+    <li><a href="./Ocean/OceanResourceModel/ClassMethods.html">Ocean::OceanResourceModel::ClassMethods</a>
+  
+    <li><a href="./Ocean/Railtie.html">Ocean::Railtie</a>
+  
+    <li><a href="./Ocean/Railtie/File.html">Ocean::Railtie::File</a>
+  
+    <li><a href="./Ocean/Railtie/Rails.html">Ocean::Railtie::Rails</a>
+  
+    <li><a href="./Ocean/Railtie/Rails/Rack.html">Ocean::Railtie::Rails::Rack</a>
+  
+    <li><a href="./OceanApplicationController.html">OceanApplicationController</a>
+  
+    <li><a href="./OceanScaffoldGenerator.html">OceanScaffoldGenerator</a>
+  
+    <li><a href="./OceanSetupGenerator.html">OceanSetupGenerator</a>
+  
+    <li><a href="./RSpec.html">RSpec</a>
+  
+    <li><a href="./SelectiveRackLogger.html">SelectiveRackLogger</a>
+  
+    <li><a href="./ZeroLog.html">ZeroLog</a>
+  
+    <li><a href="./ZeromqLogger.html">ZeromqLogger</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="class">class OceanScaffoldGenerator</h1>
+
+  <div id="description" class="description">
+    
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    <!-- Methods -->
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Instance Methods</h3>
+
+    
+      <div id="method-i-add_json_controller_specs" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">add_json_controller_specs</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="add_json_controller_specs-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 32</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_json_controller_specs</span>
+   <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;controller_specs/delete_spec.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/controllers/#{plural_name}/delete_spec.rb&quot;</span>
+   <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;controller_specs/show_spec.rb&quot;</span>,   <span class="ruby-node">&quot;#{Rails.root}/spec/controllers/#{plural_name}/show_spec.rb&quot;</span>
+   <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;controller_specs/index_spec.rb&quot;</span>,  <span class="ruby-node">&quot;#{Rails.root}/spec/controllers/#{plural_name}/index_spec.rb&quot;</span>
+   <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;controller_specs/create_spec.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/controllers/#{plural_name}/create_spec.rb&quot;</span>
+   <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;controller_specs/update_spec.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/controllers/#{plural_name}/update_spec.rb&quot;</span>
+ <span class="ruby-keyword">end</span></pre>
+          </div><!-- add_json_controller_specs-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- add_json_controller_specs-method -->
+
+    
+      <div id="method-i-add_json_view_spec" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">add_json_view_spec</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="add_json_view_spec-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 63</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_json_view_spec</span>
+  <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;view_specs/_resource_spec.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/views/#{plural_name}/_#{singular_name}_spec.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- add_json_view_spec-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- add_json_view_spec-method -->
+
+    
+      <div id="method-i-add_json_views" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">add_json_views</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="add_json_views-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 50</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_json_views</span>
+  <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;views/_resource.json.jbuilder&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/app/views/#{plural_name}/_#{singular_name}.json.jbuilder&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- add_json_views-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- add_json_views-method -->
+
+    
+      <div id="method-i-add_model_specs" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">add_model_specs</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="add_model_specs-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 24</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_model_specs</span>
+  <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;model_spec.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/models/#{singular_name}_spec.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- add_model_specs-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- add_model_specs-method -->
+
+    
+      <div id="method-i-extend_model" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">extend_model</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="extend_model-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 5</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier">extend_model</span>
+    <span class="ruby-identifier">inject_into_class</span> <span class="ruby-node">&quot;#{Rails.root}/app/models/#{singular_name}.rb&quot;</span>, 
+      <span class="ruby-identifier">class_name</span>.<span class="ruby-identifier">constantize</span>,
+      <span class="ruby-node">&quot;
+  ocean_resource_model index: [:name], search: :description
+
+
+  # Relations
+
+
+  # Attributes
+
+
+  # Validations
+  
+  
+&quot;</span>
+  <span class="ruby-keyword">end</span></pre>
+          </div><!-- extend_model-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- extend_model-method -->
+
+    
+      <div id="method-i-remove_html_controller_specs" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">remove_html_controller_specs</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="remove_html_controller_specs-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 28</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">remove_html_controller_specs</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;spec/controllers/#{plural_name}_controller_spec.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- remove_html_controller_specs-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- remove_html_controller_specs-method -->
+
+    
+      <div id="method-i-remove_html_view_specs" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">remove_html_view_specs</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="remove_html_view_specs-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 54</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">remove_html_view_specs</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;spec/views/#{plural_name}/index.html.erb_spec.rb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;spec/views/#{plural_name}/show.html.erb_spec.rb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;spec/views/#{plural_name}/new.html.erb_spec.rb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;spec/views/#{plural_name}/create.html.erb_spec.rb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;spec/views/#{plural_name}/update.html.erb_spec.rb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;spec/views/#{plural_name}/edit.html.erb_spec.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- remove_html_view_specs-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- remove_html_view_specs-method -->
+
+    
+      <div id="method-i-remove_html_views" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">remove_html_views</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="remove_html_views-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 40</span>
+ <span class="ruby-keyword">def</span> <span class="ruby-identifier">remove_html_views</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;app/views/#{plural_name}/_form.html.erb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;app/views/#{plural_name}/edit.html.erb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;app/views/#{plural_name}/index.html.erb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;app/views/#{plural_name}/index.json.jbuilder&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;app/views/#{plural_name}/new.html.erb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;app/views/#{plural_name}/show.html.erb&quot;</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;app/views/#{plural_name}/show.json.jbuilder&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- remove_html_views-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- remove_html_views-method -->
+
+    
+      <div id="method-i-remove_request_specs" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">remove_request_specs</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="remove_request_specs-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 67</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">remove_request_specs</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;spec/requests/#{plural_name}_spec.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- remove_request_specs-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- remove_request_specs-method -->
+
+    
+      <div id="method-i-update_routing_specs" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update_routing_specs</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="update_routing_specs-source">
+            <pre><span class="ruby-comment"># File lib/generators/ocean_scaffold/ocean_scaffold_generator.rb, line 71</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">update_routing_specs</span>
+  <span class="ruby-identifier">remove_file</span> <span class="ruby-node">&quot;spec/routing/#{plural_name}_routing_spec.rb&quot;</span>
+  <span class="ruby-identifier">template</span> <span class="ruby-string">&quot;resource_routing_spec.rb&quot;</span>, <span class="ruby-node">&quot;#{Rails.root}/spec/routing/#{plural_name}_routing_spec.rb&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- update_routing_specs-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- update_routing_specs-method -->
+
+    
+    </section><!-- public-instance-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 4.0.0.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

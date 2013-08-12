@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>README - Ocean</title>
+
+<link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="./js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
+
+
+<body class="file">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="./index.html">Home</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  
+<div id="table-of-contents">
+  <nav class="section">
+    <h3 class="section-header">Table of Contents</h3>
+    <ul>
+      <li><a href="#label-The+Ocean+gem">The Ocean gem</a>
+      <li><a href="#label-Creating+an+Ocean+Rails+app">Creating an Ocean Rails app</a>
+      <li><a href="#label-Creating+an+Ocean+Resource">Creating an Ocean Resource</a>
+    </ul>
+  </nav>
+</div>
+
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="./README_rdoc.html">README</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./ActionController.html">ActionController</a>
+  
+    <li><a href="./ActiveRecord.html">ActiveRecord</a>
+  
+    <li><a href="./ActiveSupport.html">ActiveSupport</a>
+  
+    <li><a href="./AliveController.html">AliveController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./ApiResource.html">ApiResource</a>
+  
+    <li><a href="./ApiResource/ClassMethods.html">ApiResource::ClassMethods</a>
+  
+    <li><a href="./ApplicationController.html">ApplicationController</a>
+  
+    <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
+  
+    <li><a href="./ErrorsController.html">ErrorsController</a>
+  
+    <li><a href="./Faraday.html">Faraday</a>
+  
+    <li><a href="./Logger.html">Logger</a>
+  
+    <li><a href="./Object.html">Object</a>
+  
+    <li><a href="./Ocean.html">Ocean</a>
+  
+    <li><a href="./Ocean/OceanResourceController.html">Ocean::OceanResourceController</a>
+  
+    <li><a href="./Ocean/OceanResourceController/ClassMethods.html">Ocean::OceanResourceController::ClassMethods</a>
+  
+    <li><a href="./Ocean/OceanResourceModel.html">Ocean::OceanResourceModel</a>
+  
+    <li><a href="./Ocean/OceanResourceModel/ClassMethods.html">Ocean::OceanResourceModel::ClassMethods</a>
+  
+    <li><a href="./Ocean/Railtie.html">Ocean::Railtie</a>
+  
+    <li><a href="./Ocean/Railtie/File.html">Ocean::Railtie::File</a>
+  
+    <li><a href="./Ocean/Railtie/Rails.html">Ocean::Railtie::Rails</a>
+  
+    <li><a href="./Ocean/Railtie/Rails/Rack.html">Ocean::Railtie::Rails::Rack</a>
+  
+    <li><a href="./OceanApplicationController.html">OceanApplicationController</a>
+  
+    <li><a href="./OceanScaffoldGenerator.html">OceanScaffoldGenerator</a>
+  
+    <li><a href="./OceanSetupGenerator.html">OceanSetupGenerator</a>
+  
+    <li><a href="./RSpec.html">RSpec</a>
+  
+    <li><a href="./SelectiveRackLogger.html">SelectiveRackLogger</a>
+  
+    <li><a href="./ZeroLog.html">ZeroLog</a>
+  
+    <li><a href="./ZeromqLogger.html">ZeromqLogger</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation" class="description">
+  
+<h2 id="label-The+Ocean+gem">The <a href="Ocean.html">Ocean</a> gem<span><a href="#label-The+Ocean+gem">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>This repository contains the <a href="Ocean.html">Ocean</a> ruby gem,
+containing common framework functionality for the Ruby on Rails part of the
+architecture.</p>
+
+<p><a href="Ocean.html">Ocean</a> requires Ruby 2.0 and Ruby on Rails 4.0.0 or
+later.</p>
+
+<p>Documentation: rdoc/index.html</p>
+
+<h3 id="label-Creating+an+Ocean+Rails+app">Creating an <a href="Ocean.html">Ocean</a> Rails app<span><a href="#label-Creating+an+Ocean+Rails+app">&para;</a> <a href="#documentation">&uarr;</a></span></h3>
+
+<p>The ocean gem provides an application template and generator to quickly and
+easily set up  a complete Rails application for <a
+href="Ocean.html">Ocean</a>. Simply execute the following in your terminal:</p>
+
+<pre>rails new the_app_name -m https://raw.github.com/OceanDev/ocean/master/template.rb</pre>
+
+<p>Answer yes to all overwrite queries.</p>
+
+<p>There is only one piece of manual setup to perform. You must supply the <a
+href="Ocean.html">Ocean</a> app with your site-specific data: the base
+domain name, the password for Auth, etc. To do this, simply edit
+<code>config/config.yml</code>.</p>
+
+<p>There is also a file called <code>config.yml.example</code> in the same
+directory for reference. Don&#39;t change it: it is under version control.
+The file you should change, <code>config/config.yml</code>, isn&#39;t, as
+it will contain site-specific and/or confidential data.</p>
+
+<p>Verify that your setup is OK by executing</p>
+
+<pre>rspec</pre>
+
+<p>All tests should pass.</p>
+
+<h3 id="label-Creating+an+Ocean+Resource">Creating an <a href="Ocean.html">Ocean</a> Resource<span><a href="#label-Creating+an+Ocean+Resource">&para;</a> <a href="#documentation">&uarr;</a></span></h3>
+
+<p>To create an aggressively cached <a href="Ocean.html">Ocean</a> resource
+based on an SQL model, do the following:</p>
+
+<pre>rails g scaffold quux name:string description:string \ 
+                      lock_version:integer created_by:string updated_by:string</pre>
+
+<p>This will create the basic model and associated model and controller
+scaffolding code,  which we will modify shortly. Now run</p>
+
+<pre>rake db:migrate</pre>
+
+<p>This will create the SQL table for the resource. Next, we need to replace
+the HTML-centric scaffold code generated above with RESTful JSON scaffold
+code for Ocean:</p>
+
+<pre>rails g ocean_scaffold quux</pre>
+
+<p>Answer yes to all overwrite queries. Now examine
+<code>config/routes.rb</code>. You will find a new resource declaration for
+quuxes. Move it inside the versioned scope:</p>
+
+<pre>scope &quot;v1&quot; do
+  resource :foos
+  resource :bars
+  resource :quuxes  # This is your new resource
+end</pre>
+
+<p>To verify that everything works as it should, run the tests:</p>
+
+<pre>rspec</pre>
+
+<p>All tests should pass. The test coverage should be very close to 100%. A
+FactoryGirl factory for the new model will be created, there will be model
+unit tests to check for the presence of all attributes and to verify
+collection searches, routing tests, controller tests for each action, and
+view tests to verify that the JSON representation is complete and correct.</p>
+
+<p>You can now proceed to tailor the new resource to your needs. You will want
+to add other attributes to the model or remove some or all of the default
+ones; you can change the JSON representation by modifying the view; and you
+might want to add or remove controller actions, e.g. to support secondary
+collections and relations to other resources. And as you no doubt are a
+responsible, informed developer, you will of course do all this using TDD
+and/or BDD techniques.</p>
+
+</div>
+
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 4.0.0.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

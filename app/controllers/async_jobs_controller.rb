@@ -12,8 +12,7 @@ class AsyncJobsController < ApplicationController
   def index
     expires_in 0, 's-maxage' => 30.minutes
     if stale?(collection_etag(AsyncJob))
-      async_jobs = AsyncJob.index(params, params[:group], params[:search])
-      api_render async_jobs
+      api_render AsyncJob.collection(params)
     end
   end
 
