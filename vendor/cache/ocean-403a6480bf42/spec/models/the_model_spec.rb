@@ -91,6 +91,13 @@ describe TheModel do
       it "key/value pairs not in the index_only array should quietly be ignored" do
         TheModel.collection(name: 'bar', aardvark: 12).length.should == 1
       end
+
+      it "should support pagination" do
+        TheModel.collection(page: 0, page_size: 2).order("name DESC").pluck(:name).should == ["foo", "baz"]
+        TheModel.collection(page: 1, page_size: 2).order("name DESC").pluck(:name).should == ["bar"]
+        TheModel.collection(page: 2, page_size: 2).should == []
+        TheModel.collection(page: -1, page_size: 2).should == []
+      end
         
     end
   end

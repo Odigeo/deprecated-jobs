@@ -262,7 +262,7 @@ are invalidated. This is useful when instantiating a new resource.</p>
 
           
           <div class="method-source-code" id="invalidate-source">
-            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 113</span>
+            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">invalidate</span>(<span class="ruby-identifier">avoid_self</span>=<span class="ruby-keyword">false</span>)
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">invalidate</span>
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">pluralize</span>.<span class="ruby-identifier">underscore</span>
@@ -305,7 +305,7 @@ are invalidated. This is useful when instantiating a new resource.</p>
 
           
           <div class="method-source-code" id="touch_both-source">
-            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 96</span>
+            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 106</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">touch_both</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-identifier">touch</span>
   <span class="ruby-identifier">other</span>.<span class="ruby-identifier">touch</span>

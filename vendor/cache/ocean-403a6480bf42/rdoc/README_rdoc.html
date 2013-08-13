@@ -196,12 +196,11 @@ code for Ocean:</p>
 
 <p>Answer yes to all overwrite queries. Now examine
 <code>config/routes.rb</code>. You will find a new resource declaration for
-quuxes. Move it inside the versioned scope:</p>
+quuxes. Move it inside the versioned scope and add and <code>except:</code>
+clause to exclude the Rails controller actions not used in a REST Api:</p>
 
 <pre>scope &quot;v1&quot; do
-  resource :foos
-  resource :bars
-  resource :quuxes  # This is your new resource
+  resource :quuxes, except: [:new, :edit]
 end</pre>
 
 <p>To verify that everything works as it should, run the tests:</p>

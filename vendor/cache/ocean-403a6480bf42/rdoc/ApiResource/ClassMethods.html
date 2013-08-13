@@ -69,7 +69,7 @@
     
     <li ><a href="#method-i-collection">#collection</a>
     
-    <li ><a href="#method-i-index">#index</a>
+    <li ><a href="#method-i-collection_internal">#collection_internal</a>
     
     <li ><a href="#method-i-invalidate">#invalidate</a>
     
@@ -189,41 +189,7 @@
         
         <div class="method-heading">
           <span class="method-name">collection</span><span
-            class="method-args">(bag)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>This is the successor to <code>index</code>. The difference is that
-<code>collection</code> is called with all params in the same bag.</p>
-          
-          
-
-          
-          <div class="method-source-code" id="collection-source">
-            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">collection</span>(<span class="ruby-identifier">bag</span>)
-  <span class="ruby-identifier">index</span> <span class="ruby-identifier">bag</span>, <span class="ruby-identifier">bag</span>[<span class="ruby-value">:group</span>], <span class="ruby-identifier">bag</span>[<span class="ruby-value">:search</span>]
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- collection-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- collection-method -->
-
-    
-      <div id="method-i-index" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">index</span><span
-            class="method-args">(conds={}, group_by=nil, substring=nil)</span>
+            class="method-args">(bag={})</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -237,61 +203,106 @@ href="../Ocean.html">Ocean</a> for requesting collections of resources,
 including conditions, <code>GROUP</code> and substring searches. It can be
 used directly on a class:</p>
 
-<pre>@collection = ApiUser.index(params, params[:group], params[:search])</pre>
+<pre>@collection = ApiUser.collection(params)</pre>
 
 <p>or on any Relation:</p>
 
-<pre>@collection = @api_user.groups.index(params, params[:group], params[:search])</pre>
+<pre>@collection = @api_user.groups.collection(params)</pre>
 
-<p>The whole params hash can safely be passed in as the first arg: the  the
-<code>conds</code> arg is filtered so that matches only are done against
-the attributes  declared in the controller using
-<code>ocean_resource_model</code>.</p>
+<p>Since a Relation is returned, further chaining is possible:</p>
 
-<p>The <code>conds</code> arg is a hash suitable for passing to an <a
-href="../ActiveRecord.html">ActiveRecord</a> <code>where</code>.</p>
+<pre>@collection = @api_user.groups.collection(params).active.order(&quot;email ASC&quot;)</pre>
 
-<p>The <code>group_by</code> arg, if present, adds a <code>GROUP</code> clause
-to the generated SQL.</p>
+<p>The whole params hash can safely be passed as the input arg: keys are
+filtered so  that matches only are done against the attributes declared in
+the controller using  <code>ocean_resource_model</code>.</p>
 
-<p>The <code>substring</code> arg, if present, searches for the value in the
-database string or text column declared in the controller&#39;s
+<p>The <code>group:</code> keyword arg, if present, adds a <code>GROUP</code>
+clause to the generated SQL.</p>
+
+<p>The <code>search:</code> keyword arg, if present, searches for the value in
+the database string or text column declared in the controller&#39;s
 <code>ocean_resource_model</code> declaration. The search is done using an
 SQL <code>LIKE</code> clause, with the substring framed by  wildcard
 characters. It&#39;s self-evident that this is not an efficient search
-method in larger datasets; in such cases, other search methods should be
+method for larger datasets; in such cases, other search methods should be
 employed.</p>
 
-<p>In future, this method will take args to control pagination of results.</p>
+<p>If <code>page:</code> is present, pagination will be added. If
+<code>page</code> is less than zero, an empty Relation will be returned.
+Otherwise, <code>page_size:</code> (default 25) will be used to calculate
+OFFSET and LIMIT.</p>
           
           
 
           
-          <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 37</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>(<span class="ruby-identifier">conds</span>={}, <span class="ruby-identifier">group_by</span>=<span class="ruby-keyword">nil</span>, <span class="ruby-identifier">substring</span>=<span class="ruby-keyword">nil</span>)
-  <span class="ruby-comment"># TODO: pagination</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">index_only</span> <span class="ruby-operator">!=</span> []
-    <span class="ruby-identifier">new_conds</span> = {}
-    <span class="ruby-identifier">index_only</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span> <span class="ruby-identifier">new_conds</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">conds</span>[<span class="ruby-identifier">key</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">conds</span>[<span class="ruby-identifier">key</span>].<span class="ruby-identifier">present?</span> }
-    <span class="ruby-identifier">conds</span> = <span class="ruby-identifier">new_conds</span>
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-identifier">query</span> = <span class="ruby-identifier">all</span>.<span class="ruby-identifier">where</span>(<span class="ruby-identifier">conds</span>)
-  <span class="ruby-identifier">query</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">group</span>(<span class="ruby-identifier">group_by</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">group_by</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">index_only</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">group_by</span>.<span class="ruby-identifier">to_sym</span>)
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">substring</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">none</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">index_search_property</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">query</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">where</span>(<span class="ruby-node">&quot;#{index_search_property} LIKE ?&quot;</span>, <span class="ruby-node">&quot;%#{substring}%&quot;</span>)
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-identifier">query</span>
+          <div class="method-source-code" id="collection-source">
+            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">collection</span>(<span class="ruby-identifier">bag</span>={})
+  <span class="ruby-identifier">collection_internal</span> <span class="ruby-identifier">bag</span>, <span class="ruby-identifier">bag</span>[<span class="ruby-value">:group</span>], <span class="ruby-identifier">bag</span>[<span class="ruby-value">:search</span>], <span class="ruby-identifier">bag</span>[<span class="ruby-value">:page</span>], <span class="ruby-identifier">bag</span>[<span class="ruby-value">:page_size</span>]
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- index-source -->
+          </div><!-- collection-source -->
           
         </div>
 
         
 
         
-      </div><!-- index-method -->
+      </div><!-- collection-method -->
+
+    
+      <div id="method-i-collection_internal" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">collection_internal</span><span
+            class="method-args">(conds={}, group, search, page, page_size)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="collection_internal-source">
+            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">collection_internal</span>(<span class="ruby-identifier">conds</span>={}, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">search</span>, <span class="ruby-identifier">page</span>, <span class="ruby-identifier">page_size</span>)
+  <span class="ruby-comment"># TODO: pagination</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">index_only</span> <span class="ruby-operator">!=</span> []
+    <span class="ruby-identifier">new_conds</span> = {}
+    <span class="ruby-identifier">index_only</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span> <span class="ruby-identifier">new_conds</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">conds</span>[<span class="ruby-identifier">key</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">conds</span>[<span class="ruby-identifier">key</span>].<span class="ruby-identifier">present?</span> }
+    <span class="ruby-identifier">conds</span> = <span class="ruby-identifier">new_conds</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-comment"># Fold in the conditions</span>
+  <span class="ruby-identifier">query</span> = <span class="ruby-identifier">all</span>.<span class="ruby-identifier">where</span>(<span class="ruby-identifier">conds</span>)
+  <span class="ruby-comment"># Take care of grouping</span>
+  <span class="ruby-identifier">query</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">group</span>(<span class="ruby-identifier">group</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">index_only</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">group</span>.<span class="ruby-identifier">to_sym</span>)
+  <span class="ruby-comment"># Searching</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">search</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">none</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">index_search_property</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-identifier">query</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">where</span>(<span class="ruby-node">&quot;#{index_search_property} LIKE ?&quot;</span>, <span class="ruby-node">&quot;%#{search}%&quot;</span>)
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-comment"># Pagination</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">page</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">none</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">page</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+    <span class="ruby-identifier">query</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">limit</span>(<span class="ruby-identifier">page_size</span> <span class="ruby-operator">||</span> <span class="ruby-value">25</span>).<span class="ruby-identifier">offset</span>(<span class="ruby-identifier">page_size</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">page</span>)
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-comment"># Finally, return the accumulated Relation</span>
+  <span class="ruby-identifier">query</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- collection_internal-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- collection_internal-method -->
 
     
       <div id="method-i-invalidate" class="method-detail ">
@@ -318,7 +329,7 @@ the <code>invalidate_collection:</code> arg to the
 
           
           <div class="method-source-code" id="invalidate-source">
-            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 79</span>
+            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 89</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">invalidate</span>
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">pluralize</span>.<span class="ruby-identifier">underscore</span>
   <span class="ruby-identifier">varnish_invalidate_collection</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">suffix</span><span class="ruby-operator">|</span>
@@ -357,7 +368,7 @@ the <code>invalidate_collection:</code> arg to the
 
           
           <div class="method-source-code" id="latest_api_version-source">
-            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 68</span>
+            <pre><span class="ruby-comment"># File lib/ocean/api_resource.rb, line 78</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">latest_api_version</span>
   <span class="ruby-constant">Api</span>.<span class="ruby-identifier">version_for</span>(<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">pluralize</span>.<span class="ruby-identifier">underscore</span>)
 <span class="ruby-keyword">end</span></pre>

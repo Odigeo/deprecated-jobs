@@ -12,52 +12,62 @@ module ApiResource
     # of resources, including conditions, +GROUP+ and substring searches. It can be used
     # directly on a class:
     #
-    #  @collection = ApiUser.index(params, params[:group], params[:search])
+    #  @collection = ApiUser.collection(params)
     #
     # or on any Relation:
     #
-    #  @collection = @api_user.groups.index(params, params[:group], params[:search])
+    #  @collection = @api_user.groups.collection(params)
     #
-    # The whole params hash can safely be passed in as the first arg: the 
-    # the +conds+ arg is filtered so that matches only are done against the attributes 
-    # declared in the controller using +ocean_resource_model+.
+    # Since a Relation is returned, further chaining is possible:
     #
-    # The +conds+ arg is a hash suitable for passing to an ActiveRecord +where+.
+    #  @collection = @api_user.groups.collection(params).active.order("email ASC")
     #
-    # The +group_by+ arg, if present, adds a +GROUP+ clause to the generated SQL.
+    # The whole params hash can safely be passed as the input arg: keys are filtered so 
+    # that matches only are done against the attributes declared in the controller using 
+    # +ocean_resource_model+.
     #
-    # The +substring+ arg, if present, searches for the value in the database string or
+    # The +group:+ keyword arg, if present, adds a +GROUP+ clause to the generated SQL.
+    #
+    # The +search:+ keyword arg, if present, searches for the value in the database string or
     # text column declared in the controller's +ocean_resource_model+ declaration.
     # The search is done using an SQL +LIKE+ clause, with the substring framed by 
     # wildcard characters. It's self-evident that this is not an efficient search method
-    # in larger datasets; in such cases, other search methods should be employed.
-    # 
-    # In future, this method will take args to control pagination of results.
+    # for larger datasets; in such cases, other search methods should be employed.
     #
-    def collection_internal(conds={}, group_by=nil, substring=nil)
+    # If +page:+ is present, pagination will be added. If +page+ is less than zero, an
+    # empty Relation will be returned. Otherwise, +page_size:+ (default 25) will be used
+    # to calculate OFFSET and LIMIT.
+    #
+    def collection(bag={})
+      collection_internal bag, bag[:group], bag[:search], bag[:page], bag[:page_size]
+    end
+
+
+    def collection_internal(conds={}, group, search, page, page_size)
       # TODO: pagination
       if index_only != []
         new_conds = {}
         index_only.each { |key| new_conds[key] = conds[key] if conds[key].present? }
         conds = new_conds
       end
+      # Fold in the conditions
       query = all.where(conds)
-      query = query.group(group_by) if group_by.present? && index_only.include?(group_by.to_sym)
-      if substring.present?
+      # Take care of grouping
+      query = query.group(group) if group.present? && index_only.include?(group.to_sym)
+      # Searching
+      if search.present?
         return query.none if index_search_property.blank?
-        query = query.where("#{index_search_property} LIKE ?", "%#{substring}%")
+        query = query.where("#{index_search_property} LIKE ?", "%#{search}%")
       end
+      # Pagination
+      if page.present?
+        return query.none if page < 0
+        query = query.limit(page_size || 25).offset(page_size * page)
+      end
+      # Finally, return the accumulated Relation
       query
     end
 
-    #
-    # This is the successor to +index+. The difference is that +collection+ is called with
-    # all params in the same bag, thus simplifying the call from the controller.
-    #
-    def collection(bag={})
-      collection_internal bag, bag[:group], bag[:search]
-    end
-    
 
     #
     # Returns the latest version for the resource class. E.g.:

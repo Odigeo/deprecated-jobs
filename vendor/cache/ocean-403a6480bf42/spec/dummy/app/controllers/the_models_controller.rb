@@ -1,7 +1,6 @@
 class TheModelsController < ApplicationController
 
-  ocean_resource_controller extra_actions: {},
-                            required_attributes: [:lock_version, :name, :description]
+  ocean_resource_controller required_attributes: [:lock_version, :name, :description]
 
   respond_to :json
   
