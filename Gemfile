@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem "rails", "4.0.0"
-gem "ocean-rails", git: "git://github.com/OceanDev/ocean-rails.git"
+gem "ocean-rails", "~> 1.0"
 
 gem 'aws-sdk', '~> 1.0'
 
