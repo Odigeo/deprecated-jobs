@@ -28,23 +28,13 @@ class AsyncJobsController < ApplicationController
   # POST /async_jobs
   def create
     @async_job = AsyncJob.new(filtered_params AsyncJob)
-    set_updater(@async_job)
-    if @async_job.valid?
-      begin
-        if @async_job.steps == []
-          @async_job.started_at = Time.now.utc
-          @async_job.finished_at = @async_job.started_at
-        end
-        @async_job.save!
-      rescue ActiveRecord::RecordNotUnique, ActiveRecord::StatementInvalid, 
-             SQLite3::ConstraintException 
-        render_api_error 422, "AsyncJob already exists"
-        return
-      end
-      api_render @async_job, new: true
-    else
-      render_validation_errors @async_job
+    if @async_job.steps == []
+      @async_job.started_at = Time.now.utc
+      @async_job.finished_at = @async_job.started_at
     end
+    set_updater(@async_job)
+    @async_job.save!
+    api_render @async_job, new: true
   end
 
 
