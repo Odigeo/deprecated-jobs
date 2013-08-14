@@ -32,7 +32,7 @@ describe AsyncJobsController do
       post :create, @args
       response.status.should == 422
       response.content_type.should == "application/json"
-      JSON.parse(response.body).should == {"_api_error" => ["AsyncJob already exists"]}
+      JSON.parse(response.body).should == {"_api_error" => ["Resource not unique"]}
     end
 
     #
