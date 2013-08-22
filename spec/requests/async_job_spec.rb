@@ -29,7 +29,8 @@ describe AsyncJob do
     it "should return an AsyncJob given its UUID" do
       job = create :async_job
       get "/v1/async_jobs/#{job.uuid}", {}, {'HTTP_ACCEPT' => "application/json",
-                                             'X-API-TOKEN' => "incredibly-fake"}
+                                             'X-API-TOKEN' => "incredibly-fake",
+                                             'If-None-Match' => 'e65ae6734803fa'}
       response.status.should be(200)
       j = JSON.parse(response.body)
       j['async_job'].should be_a Hash
@@ -38,7 +39,8 @@ describe AsyncJob do
 
     it "should return a 404 if the UUID isn't found" do
       get "/v1/async_jobs/totallynonexistent", {}, {'HTTP_ACCEPT' => "application/json",
-                                                    'X-API-TOKEN' => "incredibly-fake"}
+                                                    'X-API-TOKEN' => "incredibly-fake",
+                                                    'If-None-Match' => 'e65ae6734803fa'}
       response.status.should be(404)
       j = JSON.parse(response.body)
       j['async_job'].should == nil
