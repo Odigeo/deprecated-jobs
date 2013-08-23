@@ -4,6 +4,7 @@ class AsyncJobsController < ApplicationController
 
   respond_to :json
   
+  before_action :require_conditional, only: :show
   before_action :find_async_job, :only => [:show, :destroy]
     
   
@@ -18,10 +19,6 @@ class AsyncJobsController < ApplicationController
 
   # GET /async_jobs/1
   def show
-    if request.headers['If-None-Match'].blank? && request.headers['If-Modified-Since'].blank?
-      render_api_error 428, "Precondition Required: If-None-Match and/or If-Modified-Since missing"
-      return
-    end
     expires_in 0, 's-maxage' => 30.minutes
     if stale?(@async_job)
       api_render @async_job
