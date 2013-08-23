@@ -90,7 +90,7 @@ describe AsyncJob do
 
     it "should set a destroy_at time automatically from the max_seconds_in_queue value" do
       j = create :async_job
-      j.destroy_at.to_i.should == (j.created_at + j.max_seconds_in_queue).to_i
+      j.destroy_at.to_i.should be_within(1).of((j.created_at + j.max_seconds_in_queue).to_i)
     end
 
     it "should have a default poison_limit of 5" do
