@@ -6,7 +6,6 @@ describe "async_jobs/_async_job" do
     aj = create :async_job, 
            started_at: 1.hour.ago.utc,
            finished_at: 10.minutes.ago.utc,
-           visible_at: 1.hour.from_now.utc,
            last_completed_step: 2
     render partial: "async_jobs/async_job", locals: {async_job: aj}
     @json = JSON.parse(rendered)
@@ -69,10 +68,6 @@ describe "async_jobs/_async_job" do
   it "should have a lock_version field" do
     @u['lock_version'].should be_an Integer
   end
-
-  it "should have an visible_at field" do
-    @u['visible_at'].should be_a String
-  end
       
   it "should have an last_completed_step field" do
     @u['last_completed_step'].should == 2
@@ -88,6 +83,10 @@ describe "async_jobs/_async_job" do
 
   it "should NOT expose the credentials" do
     @u['credentials'].should == nil
+  end
+
+  it "should have a default_step_time of 30 seconds" do
+    @u['default_step_time'].should == 30
   end
 
 end
