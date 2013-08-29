@@ -3,11 +3,12 @@ require 'spec_helper'
 describe QueueMessage do
 
   before :each do
+    @async_job = create :async_job
     @msg = double(AWS::SQS::ReceivedMessage,
-             body:                "This is the message body.",
-             receive_count:       2,
+             body: @async_job.uuid,
+             receive_count: 2,
              :visibility_timeout= => 3600,
-             delete:              nil
+             delete: nil
       )
   end
 
@@ -23,7 +24,7 @@ describe QueueMessage do
   end
 
   it "should have a body reader" do
-    QueueMessage.new(@msg).body.should == "This is the message body."
+    QueueMessage.new(@msg).body.should == @async_job.uuid
   end
 
   it "should have a receive count reader" do
@@ -41,6 +42,21 @@ describe QueueMessage do
     QueueMessage.new(@msg).delete
   end
 
+
+  it "should have an async_job" do
+    QueueMessage.new(@msg).async_job.should be_an AsyncJob
+  end
+
+  it "should handle a missing async_job by returning nil" do
+    @async_job.destroy
+    QueueMessage.new(@msg).async_job.should == nil
+  end
+
+  # it "should have async_job always return the same object" do
+  #   aj1 = QueueMessage.new(@msg).async_job
+  #   aj2 = QueueMessage.new(@msg).async_job
+  #   aj1.should be aj2
+  # end
 
 
 end

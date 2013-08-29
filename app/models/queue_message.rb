@@ -24,4 +24,9 @@ class QueueMessage
     message.delete
   end
 
+
+  def async_job
+    @async_job ||= AsyncJob.where(uuid: body).first
+  end
+
 end
