@@ -24,7 +24,9 @@
 class AsyncJob < ActiveRecord::Base
 
   ocean_resource_model index: [:uuid], search: false
+
   serialize :steps, Array
+
 
   # Attributes
   attr_accessible :uuid, :lock_version,
@@ -33,11 +35,14 @@ class AsyncJob < ActiveRecord::Base
 
   # Scopes
 
+
   # Validations
   validates_each :steps do |record, attr, value|
     record.errors.add(attr, 'must be an Array') unless value.is_a?(Array)
   end 
+
   validates :credentials, presence: { message: "must be specified", on: :create }
+
   validates_each :credentials, on: :create, allow_blank: true do |job, attr, val|
     username, password = Api.decode_credentials val
     job.errors.add(attr, "are malformed") if username.blank? || password.blank?
@@ -45,7 +50,10 @@ class AsyncJob < ActiveRecord::Base
 
 
   # Callbacks
-  after_initialize  { |j| j.uuid ||= SecureRandom.uuid }
+  after_initialize do |j| 
+    j.uuid ||= SecureRandom.uuid
+  end
+
   before_validation do |j| 
     j.destroy_at ||= Time.now.utc + j.max_seconds_in_queue
   end
