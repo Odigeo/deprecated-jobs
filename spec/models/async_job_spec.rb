@@ -113,15 +113,6 @@ describe AsyncJob do
   end
 
 
-  describe "relations" do
-
-    before :each do
-      AsyncJob.destroy_all
-    end
-
-  end
-
-
   describe "search" do
     describe ".index_only" do
       it "should return an array of permitted search query args" do

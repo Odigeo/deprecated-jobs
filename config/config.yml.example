@@ -36,6 +36,12 @@ AWS_ACCESS_KEY_ID:     yyyyyyyyyyyyyyyyy
 AWS_SECRET_ACCESS_KEY: zzzzzzzzzzzzzzzzz
 AWS_REGION:            eu-west-1
 
+# AsyncJobQueue base name on AWS. Environment data will be added depending on the situation.
+ASYNCJOBQ_AWS_BASENAME: AsyncJobs
+
+# THe Chef environment we're running under: "dev", "master", "ci", "staging", "prod"
+CHEF_ENV: dev
+
 
 ##########################################################################################
 # This section allows you to specify values specific for a particular Rails

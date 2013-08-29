@@ -10,18 +10,50 @@ describe AsyncJobQueue do
   describe "creation" do 
 
     it "should work" do
-      AsyncJobQueue.new.should be_a(AsyncJobQueue)
+      AsyncJobQueue.new.should be_an AsyncJobQueue
     end
 
-    it "should allow a queue name to be specified" do
-      AsyncJobQueue.new(name: "ZalagadoolaQueue").name.should == "ZalagadoolaQueue"
+    it "should allow a queue basename to be specified" do
+      AsyncJobQueue.new(basename: "ZalagadoolaQueue").basename.should == "ZalagadoolaQueue"
     end
 
-    it "should have a random, unique name if not explicitly specified" do
-      AsyncJobQueue.new.name.should be_a String
-      AsyncJobQueue.new.name.should_not == AsyncJobQueue.new.name
+    it "should have a random, unique basename if not explicitly specified" do
+      AsyncJobQueue.new.basename.should be_a String
+      AsyncJobQueue.new.basename.should_not == AsyncJobQueue.new.basename
+    end
+
+    it "should have a fullname" do
+      AsyncJobQueue.new.fullname.should be_a String
     end
   end
+
+
+
+  describe ".adorn_name" do
+
+    it "should return a string" do
+      AsyncJobQueue.adorn_name("SomeBaseName").should be_a String
+    end
+
+    it "should return a string containing the basename" do
+      AsyncJobQueue.adorn_name("SomeBaseName").should match "SomeBaseName"
+    end
+
+    it "should return a string containing the Chef environment" do
+      AsyncJobQueue.adorn_name("SomeBaseName", chef_env: "zuul").should match "zuul"
+    end
+
+    it "should add IP and rails_env if the chef_env is 'dev' or 'ci' or if rails_env isn't 'production'" do
+      local_ip = UDPSocket.open {|s| s.connect("64.233.187.99", 1); s.addr.last}.gsub('.', '-')
+      AsyncJobQueue.adorn_name("Q", chef_env: "dev",  rails_env: 'production').should ==  "Q_dev_#{local_ip}_production"
+      AsyncJobQueue.adorn_name("Q", chef_env: "ci",   rails_env: 'production').should ==  "Q_ci_#{local_ip}_production"
+      AsyncJobQueue.adorn_name("Q", chef_env: "zuul", rails_env: 'development').should == "Q_zuul_#{local_ip}_development"
+      AsyncJobQueue.adorn_name("Q", chef_env: "zuul", rails_env: 'test').should ==        "Q_zuul_#{local_ip}_test"
+      AsyncJobQueue.adorn_name("Q", chef_env: "zuul", rails_env: 'production').should ==  "Q_zuul"
+    end
+
+  end
+
 
 
   describe "instances" do
@@ -47,7 +79,7 @@ describe AsyncJobQueue do
 
 
     it "should have a queue attribute" do
-      lambda { AsyncJobQueue.new.queue }.should_not raise_error
+      AsyncJobQueue.new.queue.should be_an Object
     end
 
   end
