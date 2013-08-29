@@ -65,12 +65,14 @@ class AsyncJobQueue
   # This receives a message from the AWS queue. Like its AWS::SQS counterpart, 
   # it can be called with or without a block. When called with a block, the
   # message will automatically be deleted when the block is exited normally.
+  # Always receives exactly 1 message, with receive_count.
   #
   def receive_message(opts={}, &block)
+    opts = {attributes: [:receive_count]}.merge(opts).merge(limit: 1)
     if block
-      queue.receive_message(opts, &block)
+      queue.receive_message(opts) { |msg| yield QueueMessage.new(msg) }
     else
-      queue.receive_message(opts)
+      QueueMessage.new(queue.receive_message(opts))
     end
   end
 
@@ -78,13 +80,15 @@ class AsyncJobQueue
   #
   # This polls the AWS queue. Like its AWS::SQS counterpart, it can be called
   # with or without a block. When called with a block, the message will 
-  # automatically be deleted when the block is exited normally.
+  # automatically be deleted when the block is exited normally. Always receives 
+  # exactly 1 message at a time, with receive_count.
   #
   def poll(opts={}, &block)
+    opts = {attributes: [:receive_count]}.merge(opts).merge(limit: 1)
     if block
-      queue.poll(opts, &block)
+      queue.poll(opts) { |msg| yield QueueMessage.new(msg) }
     else
-      queue.poll(opts)
+      QueueMessage.new(queue.poll(opts))
     end
   end
 

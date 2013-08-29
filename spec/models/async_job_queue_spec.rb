@@ -118,14 +118,14 @@ describe AsyncJobQueue do
 
     it "should receive a message from the AWS queue, not using a block" do
       q = AsyncJobQueue.new
-      q.receive_message(visibility_timeout: 60)
-      expect(q.queue).to have_received(:receive_message).with({visibility_timeout: 60})
+      q.receive_message(visibility_timeout: 60).should be_a QueueMessage
+      expect(q.queue).to have_received(:receive_message).with({:attributes=>[:receive_count], :visibility_timeout=>60, :limit=>1})
     end
 
     it "should receive a message from the AWS queue, using a block" do
       q = AsyncJobQueue.new
       q.receive_message(visibility_timeout: 60) { |msg| puts msg.body }
-      expect(q.queue).to have_received(:receive_message).with({visibility_timeout: 60})
+      expect(q.queue).to have_received(:receive_message).with({:attributes=>[:receive_count], :visibility_timeout=>60, :limit=>1})
     end
   end
 
@@ -135,14 +135,14 @@ describe AsyncJobQueue do
 
     it "should poll from the AWS queue, not using a block" do
       q = AsyncJobQueue.new
-      q.poll(visibility_timeout: 60)
-      expect(q.queue).to have_received(:poll).with({visibility_timeout: 60})
+      q.poll(visibility_timeout: 60).should be_a QueueMessage
+      expect(q.queue).to have_received(:poll).with({:attributes=>[:receive_count], :visibility_timeout=>60, :limit=>1})
     end
 
     it "should poll from the AWS queue, using a block" do
       q = AsyncJobQueue.new
       q.poll(visibility_timeout: 60) { |msg| puts msg.body }
-      expect(q.queue).to have_received(:poll).with({visibility_timeout: 60})
+      expect(q.queue).to have_received(:poll).with({:attributes=>[:receive_count], :visibility_timeout=>60, :limit=>1})
     end
   end
 
