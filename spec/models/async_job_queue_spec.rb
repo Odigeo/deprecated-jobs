@@ -45,11 +45,21 @@ describe AsyncJobQueue do
 
     it "should add IP and rails_env if the chef_env is 'dev' or 'ci' or if rails_env isn't 'production'" do
       local_ip = UDPSocket.open {|s| s.connect("64.233.187.99", 1); s.addr.last}.gsub('.', '-')
-      AsyncJobQueue.adorn_name("Q", chef_env: "dev",  rails_env: 'production').should ==  "Q_dev_#{local_ip}_production"
-      AsyncJobQueue.adorn_name("Q", chef_env: "ci",   rails_env: 'production').should ==  "Q_ci_#{local_ip}_production"
-      AsyncJobQueue.adorn_name("Q", chef_env: "zuul", rails_env: 'development').should == "Q_zuul_#{local_ip}_development"
-      AsyncJobQueue.adorn_name("Q", chef_env: "zuul", rails_env: 'test').should ==        "Q_zuul_#{local_ip}_test"
-      AsyncJobQueue.adorn_name("Q", chef_env: "zuul", rails_env: 'production').should ==  "Q_zuul"
+      AsyncJobQueue.adorn_name("Q", chef_env: "dev",  rails_env: 'development').should ==    "Q_dev_#{local_ip}_development"
+      AsyncJobQueue.adorn_name("Q", chef_env: "dev",  rails_env: 'test').should ==           "Q_dev_#{local_ip}_test"
+      AsyncJobQueue.adorn_name("Q", chef_env: "dev",  rails_env: 'production').should ==     "Q_dev_#{local_ip}_production"
+      AsyncJobQueue.adorn_name("Q", chef_env: "ci",   rails_env: 'development').should ==    "Q_ci_#{local_ip}_development"
+      AsyncJobQueue.adorn_name("Q", chef_env: "ci",   rails_env: 'test').should ==           "Q_ci_#{local_ip}_test"
+      AsyncJobQueue.adorn_name("Q", chef_env: "ci",   rails_env: 'production').should ==     "Q_ci_#{local_ip}_production"
+      AsyncJobQueue.adorn_name("Q", chef_env: "master", rails_env: 'development').should ==  "Q_master_#{local_ip}_development"
+      AsyncJobQueue.adorn_name("Q", chef_env: "master", rails_env: 'test').should ==         "Q_master_#{local_ip}_test"
+      AsyncJobQueue.adorn_name("Q", chef_env: "master", rails_env: 'production').should ==   "Q_master"
+      AsyncJobQueue.adorn_name("Q", chef_env: "staging", rails_env: 'development').should == "Q_staging_#{local_ip}_development"
+      AsyncJobQueue.adorn_name("Q", chef_env: "staging", rails_env: 'test').should ==        "Q_staging_#{local_ip}_test"
+      AsyncJobQueue.adorn_name("Q", chef_env: "staging", rails_env: 'production').should ==  "Q_staging"
+      AsyncJobQueue.adorn_name("Q", chef_env: "prod", rails_env: 'development').should ==    "Q_prod_#{local_ip}_development"
+      AsyncJobQueue.adorn_name("Q", chef_env: "prod", rails_env: 'test').should ==           "Q_prod_#{local_ip}_test"
+      AsyncJobQueue.adorn_name("Q", chef_env: "prod", rails_env: 'production').should ==     "Q_prod"
     end
 
   end
