@@ -45,4 +45,48 @@ class AsyncJobQueue
   end
 
 
+  #
+  # This deletes the AWs Queue permanently, including any messages it may contain.
+  #
+  def delete
+    queue.delete
+  end
+
+
+  #
+  # This enqueues a message to the AWS queue.
+  #
+  def send_message(*args)
+    queue.send_message *args 
+  end
+
+
+  #
+  # This receives a message from the AWS queue. Like its AWS::SQS counterpart, 
+  # it can be called with or without a block. When called with a block, the
+  # message will automatically be deleted when the block is exited normally.
+  #
+  def receive_message(opts={}, &block)
+    if block
+      queue.receive_message(opts, &block)
+    else
+      queue.receive_message(opts)
+    end
+  end
+
+
+  #
+  # This polls the AWS queue. Like its AWS::SQS counterpart, it can be called
+  # with or without a block. When called with a block, the message will 
+  # automatically be deleted when the block is exited normally.
+  #
+  def poll(opts={}, &block)
+    if block
+      queue.poll(opts, &block)
+    else
+      queue.poll(opts)
+    end
+  end
+
+
 end

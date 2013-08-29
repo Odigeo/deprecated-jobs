@@ -3,7 +3,13 @@ require 'spec_helper'
 describe AsyncJobQueue do
 
   before :each do
-    AsyncJobQueue.stub(:create_queue).and_return(double(AWS::SQS::Queue))
+    AsyncJobQueue.stub(:create_queue).
+      and_return(double(AWS::SQS::Queue, 
+        delete:          nil, 
+        send_message:    double(AWS::SQS::Queue::SentMessage),
+        receive_message: double(AWS::SQS::ReceivedMessage),
+        poll:            double(AWS::SQS::ReceivedMessage)
+      ))
   end
 
 
@@ -61,22 +67,13 @@ describe AsyncJobQueue do
       AsyncJobQueue.adorn_name("Q", chef_env: "prod", rails_env: 'test').should ==           "Q_prod_#{local_ip}_test"
       AsyncJobQueue.adorn_name("Q", chef_env: "prod", rails_env: 'production').should ==     "Q_prod"
     end
-
   end
 
 
 
   describe "instances" do
 
-    it "should set up an AWS::SQS object the first time" do
-      # We don't know the order of exec of specs, hence at_most(:once) 
-      AWS::SQS.should_receive(:new).at_most(:once)
-      AsyncJobQueue.new
-      AsyncJobQueue.new
-      AsyncJobQueue.new
-    end
-
-    it "should have a SQS attribute" do
+    it "should have an SQS attribute" do
       AsyncJobQueue.new.sqs.should be_an(AWS::SQS)
     end
 
@@ -91,7 +88,62 @@ describe AsyncJobQueue do
     it "should have a queue attribute" do
       AsyncJobQueue.new.queue.should be_an Object
     end
+  end
 
+
+
+  describe "#delete" do
+
+    it "should delete the AWS queue" do
+      q = AsyncJobQueue.new
+      q.delete
+      expect(q.queue).to have_received(:delete)
+    end
+  end
+
+
+
+  describe "#send_message" do
+
+    it "should post to the AWS queue" do
+      q = AsyncJobQueue.new
+      q.send_message "Dear John", delay_seconds: 10
+      expect(q.queue).to have_received(:send_message).with("Dear John", delay_seconds: 10)
+    end
+  end
+
+
+
+  describe "#receive_message" do
+
+    it "should receive a message from the AWS queue, not using a block" do
+      q = AsyncJobQueue.new
+      q.receive_message(visibility_timeout: 60)
+      expect(q.queue).to have_received(:receive_message).with({visibility_timeout: 60})
+    end
+
+    it "should receive a message from the AWS queue, using a block" do
+      q = AsyncJobQueue.new
+      q.receive_message(visibility_timeout: 60) { |msg| puts msg.body }
+      expect(q.queue).to have_received(:receive_message).with({visibility_timeout: 60})
+    end
+  end
+
+
+
+  describe "#poll" do
+
+    it "should poll from the AWS queue, not using a block" do
+      q = AsyncJobQueue.new
+      q.poll(visibility_timeout: 60)
+      expect(q.queue).to have_received(:poll).with({visibility_timeout: 60})
+    end
+
+    it "should poll from the AWS queue, using a block" do
+      q = AsyncJobQueue.new
+      q.poll(visibility_timeout: 60) { |msg| puts msg.body }
+      expect(q.queue).to have_received(:poll).with({visibility_timeout: 60})
+    end
   end
 
 end
