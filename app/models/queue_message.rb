@@ -100,7 +100,8 @@ class QueueMessage
 
 
   #
-  # Execute the current job step.
+  # Executes the current job step. If the job isn't finished after this step,
+  # a new message will be enqueued to handle the next step.
   #
   def execute_current_step
     # Prepare
@@ -125,7 +126,7 @@ class QueueMessage
     Rails.logger.info "[Job #{async_job.uuid}] has no steps." and return unless step 
 
     #
-    
+
     Rails.logger.info "[Job #{async_job.uuid}] step #{async_job.current_step_index} finished (#{async_job.steps.length} steps)."
   end
 

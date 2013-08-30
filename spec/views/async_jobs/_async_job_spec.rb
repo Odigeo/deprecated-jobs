@@ -86,4 +86,16 @@ describe "async_jobs/_async_job" do
     @u['default_step_time'].should == 30
   end
 
+  it "should have a succeeded boolean" do
+    @u['succeeded'].should == false
+  end
+
+  it "should have a failed boolean" do
+    @u['failed'].should == false
+  end
+
+  it "should have a poison boolean" do
+    @u['poison'].should == false
+  end
+
 end
