@@ -11,11 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130828135517) do
+ActiveRecord::Schema.define(version: 20130830083321) do
 
   create_table "async_jobs", force: true do |t|
     t.string   "uuid",                                 null: false
-    t.integer  "restarts",             default: 0,     null: false
     t.datetime "started_at"
     t.datetime "finished_at"
     t.text     "steps"
@@ -27,7 +26,7 @@ ActiveRecord::Schema.define(version: 20130828135517) do
     t.integer  "last_completed_step"
     t.integer  "max_seconds_in_queue", default: 86400, null: false
     t.datetime "destroy_at"
-    t.integer  "poison_limit",         default: 5,     null: false
+    t.integer  "default_poison_limit", default: 5,     null: false
     t.string   "credentials",          default: "",    null: false
     t.integer  "default_step_time",    default: 30,    null: false
   end

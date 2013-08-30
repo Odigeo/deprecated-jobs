@@ -59,7 +59,7 @@ class QueueMessage
   #
   def process
     return false if !async_job || finished? || poison?
-    execute_next_step
+    execute_current_step
     true
   end
 
@@ -72,8 +72,7 @@ class QueueMessage
   end
 
   #
-  # Returns true if the job is poison.
-  # TODO: support individual poison limits for steps
+  # Returns true if the job step is poison.
   #
   def poison?
     receive_count > async_job.poison_limit
@@ -81,10 +80,21 @@ class QueueMessage
 
 
   #
-  # Execute the next step of the job.
+  # Execute the current job step.
   #
-  def execute_next_step
+  def execute_current_step
+    async_job.started_at = Time.now.utc unless async_job.started_at
+    async_job.current_step['receive_count'] = receive_count unless async_job.done_all_steps?
+    async_job.save!
+    self.visibility_timeout = async_job.step_time
 
+    # Do the work here
+    Rails.logger.info "[ASYNC_JOB_STEP] ==========================================================================="
+    Rails.logger.info "[ASYNC_JOB_STEP] Executing the step: #{async_job.current_step.inspect}"
+    Rails.logger.info "[ASYNC_JOB_STEP] ==========================================================================="
+
+    async_job.current_step_done!
+    async_job.enqueue unless async_job.done_all_steps?
   end
 
 end

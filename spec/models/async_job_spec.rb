@@ -4,7 +4,6 @@
 #
 #  id                   :integer          not null, primary key
 #  uuid                 :string(255)      not null
-#  restarts             :integer          default(0), not null
 #  started_at           :datetime
 #  finished_at          :datetime
 #  steps                :text
@@ -16,7 +15,7 @@
 #  last_completed_step  :integer
 #  max_seconds_in_queue :integer          default(86400), not null
 #  destroy_at           :datetime
-#  poison_limit         :integer          default(5), not null
+#  default_poison_limit :integer          default(5), not null
 #  credentials          :string(255)      default(""), not null
 #  default_step_time    :integer          default(30), not null
 #
@@ -37,10 +36,6 @@ describe AsyncJob do
       lambda { create(:async_job, uuid: "blahonga") }.should raise_error
     end
 
-    it "should have a restart count" do
-      create(:async_job).restarts.should be_an Integer
-    end
-
     it "should have a start time" do
       create(:async_job, started_at: Time.now.utc).started_at.should be_a Time
     end
@@ -50,7 +45,8 @@ describe AsyncJob do
     end
 
     it "should have a steps array" do
-      create(:async_job, steps: [1,2,3]).steps.should == [1,2,3]
+     AsyncJob.any_instance.should_receive(:enqueue)
+     create(:async_job, steps: [1,2,3]).steps.should == [1,2,3]
     end
 
      it "should have a creation time" do
@@ -88,8 +84,8 @@ describe AsyncJob do
     end
 
     it "should have a default poison_limit of 5" do
-      create(:async_job).poison_limit.should == 5
-      create(:async_job, poison_limit: 10).poison_limit.should == 10
+      create(:async_job).default_poison_limit.should == 5
+      create(:async_job, default_poison_limit: 10).default_poison_limit.should == 10
     end
 
     it "should have a required credentials attribute" do
@@ -114,13 +110,8 @@ describe AsyncJob do
 
 
   describe "search" do
-    describe ".index_only" do
-      it "should return an array of permitted search query args" do
-        AsyncJob.index_only.should be_an Array
-      end
-    end
   
-    describe ".index" do
+    describe ".collection" do
     
       before :each do
         create :async_job, uuid: 'foo'
@@ -151,6 +142,82 @@ describe AsyncJob do
       end
         
     end
+  end
+
+
+  describe "step handling" do
+
+    before :each do
+      AsyncJob.any_instance.should_receive(:enqueue)
+      @j = create(:async_job, steps: [{'name' => "Step 1"}, 
+                                      {'name' => "Step 2", 'poison_limit' => 50}, 
+                                      {'name' => "Step 3", 'step_time' => 2.minutes}
+                                     ])
+    end
+
+    it "#current_step should obtain the current step" do
+      @j.current_step.should == {'name' => "Step 1"}
+      @j.last_completed_step = 0
+      @j.current_step.should == {'name' => "Step 2", 'poison_limit' => 50}
+      @j.last_completed_step = 1
+      @j.current_step.should == {'name' => "Step 3", 'step_time' => 2.minutes}
+      @j.last_completed_step = 2
+      @j.current_step.should == nil
+      @j.last_completed_step = 200000
+      @j.current_step.should == nil
+    end
+
+    it "#done_all_steps? should return true if the job has no remaining steps" do
+      create(:async_job).done_all_steps?.should == true
+    end
+
+    it "#current_step_done! should advance state to the next job step" do
+      @j.last_completed_step.should == nil
+      @j.current_step_done!
+      @j.last_completed_step.should == 0
+      @j.current_step_done!
+      @j.last_completed_step.should == 1
+      @j.current_step_done!
+      @j.last_completed_step.should == 2
+      @j.current_step_done!
+      @j.last_completed_step.should == 2
+      @j.current_step_done!
+      @j.last_completed_step.should == 2
+    end
+
+    it "#current_step_done! should finish the job if no steps remain" do
+      @j.current_step_done!
+      @j.finished_at.should == nil      
+      @j.current_step_done!
+      @j.finished_at.should == nil      
+      @j.current_step_done!
+      @j.finished_at.should_not == nil      
+    end
+
+    it "#poison_limit should return the poison limit for the current job step" do
+      @j.poison_limit.should == 5
+      @j.current_step_done!
+      @j.poison_limit.should == 50
+      @j.current_step_done!
+      @j.poison_limit.should == 5
+    end
+
+    it "#step_time should return the step time for the current job step" do
+      @j.step_time.should == @j.default_step_time
+      @j.current_step_done!
+      @j.step_time.should == @j.default_step_time
+      @j.current_step_done!
+      @j.step_time.should == 2.minutes
+    end
+  end
+
+
+  describe "queue handling" do
+
+    it "should have an enqueue method" do
+
+    end
+
   end
 
 end

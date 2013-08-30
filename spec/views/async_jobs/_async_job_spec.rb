@@ -3,6 +3,7 @@ require 'spec_helper'
 describe "async_jobs/_async_job" do
   
   before :each do                     # Must be :each (:all causes all tests to fail)
+    #AsyncJob.any_instance.should_receive(:enqueue)
     aj = create :async_job, 
            started_at: 1.hour.ago.utc,
            finished_at: 10.minutes.ago.utc,
@@ -38,10 +39,6 @@ describe "async_jobs/_async_job" do
 
   it "should have a UUID" do
     @u['uuid'].should be_a String
-  end
-
-  it "should have a restart count" do
-    @u['restarts'].should be_an Integer
   end
 
   it "should have a start time" do

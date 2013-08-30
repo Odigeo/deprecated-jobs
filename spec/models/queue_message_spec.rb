@@ -3,7 +3,11 @@ require 'spec_helper'
 describe QueueMessage do
 
   before :each do
-    @async_job = create :async_job
+    AsyncJob.any_instance.stub(:enqueue)
+    @async_job = create(:async_job, steps: [{'name' => "Step 1"}, 
+                                            {'name' => "Step 2", 'poison_limit' => 50}, 
+                                            {'name' => "Step 3", 'step_time' => 2.minutes}
+                                           ])
     @msg = double(AWS::SQS::ReceivedMessage,
              body: @async_job.uuid,
              receive_count: 2,
@@ -56,6 +60,7 @@ describe QueueMessage do
     QueueMessage.new(@msg).async_job.should == nil
   end
 
+  # No idea why this doesn't work in RSpec when it works in dev and prod
   # it "should have async_job always return the same object" do
   #   aj1 = QueueMessage.new(@msg).async_job
   #   aj2 = QueueMessage.new(@msg).async_job
@@ -66,20 +71,20 @@ describe QueueMessage do
   describe "process" do
 
     it "should execute the next step if all is in order" do
-      QueueMessage.any_instance.should_receive(:execute_next_step)
+      QueueMessage.any_instance.should_receive(:execute_current_step)
       QueueMessage.new(@msg).process.should == true
     end
 
     it "should do nothing if there's no associated AsyncJob" do
       @async_job.destroy
-      QueueMessage.any_instance.should_not_receive(:execute_next_step)
+      QueueMessage.any_instance.should_not_receive(:execute_current_step)
       QueueMessage.new(@msg).process.should == false
     end
 
     it "should do nothing if the AsyncJob already is finished" do
       @async_job.finished_at = 1.hour.ago.utc
       @async_job.save!
-      QueueMessage.any_instance.should_not_receive(:execute_next_step)
+      QueueMessage.any_instance.should_not_receive(:execute_current_step)
       QueueMessage.new(@msg).process.should == false
     end
 
@@ -90,18 +95,88 @@ describe QueueMessage do
                :visibility_timeout= => 3600,
                delete: nil
              )
-      QueueMessage.any_instance.should_not_receive(:execute_next_step)
+      QueueMessage.any_instance.should_not_receive(:execute_current_step)
       QueueMessage.new(msg).process.should == false
     end
   end
 
 
-  describe "execute_next_step" do
 
-    it "should be callable" do
-      QueueMessage.new(@msg).execute_next_step
+  describe "execute_current_step" do
+
+    describe "with remaining steps" do
+
+      before :each do
+        AsyncJob.any_instance.should_receive(:enqueue).at_least(:once)
+      end
+
+
+      it "should set the AsyncJob's started_at attribute if not already set" do
+        @async_job.started_at.should == nil
+        qm = QueueMessage.new(@msg)
+        qm.execute_current_step
+        @async_job.reload
+        start_time = @async_job.started_at
+        start_time.should_not == nil
+        # The started_at time shouldn't change again
+        qm.execute_current_step
+        @async_job.reload
+        @async_job.started_at.should == start_time
+     end
+
+      it "should set the receive count of the AsyncJob step" do
+        @async_job.current_step.should == {"name" => "Step 1"}
+        qm = QueueMessage.new(@msg)
+        qm.execute_current_step
+        @async_job.reload
+        @async_job.steps[0].should == {"name" => "Step 1", "receive_count" => 2}
+      end
+
+      it "should set the visibility timeout from the step time" do
+        qm = QueueMessage.new(@msg)
+        qm.should_receive(:visibility_timeout=).twice.with(30)
+        qm.should_receive(:visibility_timeout=).with(2.minutes)
+        qm.execute_current_step
+        qm.execute_current_step
+        qm.execute_current_step
+      end
+
+      it "should advance the job to the next step if successful" do
+        qm = QueueMessage.new(@msg)
+
+        @async_job.current_step.should == {"name"=>"Step 1"}
+        qm.execute_current_step
+        @async_job.reload
+        @async_job.steps[0].should ==     {"name"=>"Step 1", "receive_count"=>2}
+
+        @async_job.current_step.should == {"name"=>"Step 2", "poison_limit"=>50}
+        qm.execute_current_step
+        @async_job.reload
+        @async_job.steps[1].should ==     {"name"=>"Step 2", "poison_limit"=>50, "receive_count"=>2}
+
+        @async_job.current_step.should == {"name"=>"Step 3", "step_time"=>120}
+        qm.execute_current_step
+        @async_job.reload
+        @async_job.steps[2].should ==     {"name"=>"Step 3", "step_time"=>120, "receive_count"=>2}
+
+        @async_job.current_step.should == nil
+      end
+
+    end
+
+
+    describe "with no remaining steps" do
+
+      it "should not enqueue the AsyncJob again" do
+        @async_job.last_completed_step = 3
+        @async_job.save!
+        AsyncJob.any_instance.should_not_receive(:enqueue)
+        QueueMessage.new(@msg).execute_current_step
+      end
+
     end
 
   end
+
 
 end

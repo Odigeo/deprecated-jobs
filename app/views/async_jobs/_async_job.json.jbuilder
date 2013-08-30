@@ -3,9 +3,8 @@ json.async_job do |json|
 	                             creator: api_user_url(async_job.created_by || 0),
 	                             updater: api_user_url(async_job.updated_by || 0))
 	json.(async_job, :uuid, 
-	                 :restarts,
 	                 :default_step_time,
-	                 :poison_limit,
+	                 :default_poison_limit,
 	                 :max_seconds_in_queue,
 	                 :last_completed_step,
 	                 :steps,
