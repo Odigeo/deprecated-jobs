@@ -110,7 +110,11 @@ class QueueMessage
     async_job.save!
     self.visibility_timeout = async_job.step_time
     # Do the work
-    make_http_request
+    if async_job.current_step['url']
+      make_http_request 
+    else
+      Rails.logger.info async_job.log("Step has no URL. Skipped.")
+    end
     # Advance or finish
     async_job.current_step_done!
     async_job.enqueue unless job_finished?
@@ -121,13 +125,26 @@ class QueueMessage
   # Make the outgoing HTTP request.
   #
   def make_http_request
-    Rails.logger.info "[Job #{async_job.uuid}] step #{async_job.current_step_index} started (#{async_job.steps.length} steps)."
+    uuid = async_job.uuid
+    i = async_job.current_step_index
+    nsteps = async_job.steps.length
     step = async_job.current_step
-    Rails.logger.info "[Job #{async_job.uuid}] has no steps." and return unless step 
+    name = step['name']
+    url = step['url']
+    method = step['method']
+    headers = step['headers']
+    body = step['body']
 
-    #
+    Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' started."
+    begin
 
-    Rails.logger.info "[Job #{async_job.uuid}] step #{async_job.current_step_index} finished (#{async_job.steps.length} steps)."
+    rescue Exception => e
+      async_job.log e.message
+      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' crashed."
+      raise e
+    ensure
+      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' finished."
+    end
   end
 
 end

@@ -217,11 +217,11 @@ describe AsyncJob do
 
 
     it "#current_step should obtain the current step" do
-      @j.current_step.should == {'name' => "Step 1"}
+      @j.current_step['name'].should == "Step 1"
       @j.last_completed_step = 0
-      @j.current_step.should == {'name' => "Step 2", 'poison_limit' => 50}
+      @j.current_step['name'].should == "Step 2"
       @j.last_completed_step = 1
-      @j.current_step.should == {'name' => "Step 3", 'step_time' => 2.minutes}
+      @j.current_step['name'].should == "Step 3"
       @j.last_completed_step = 2
       @j.current_step.should == nil
       @j.last_completed_step = 200000
@@ -274,6 +274,16 @@ describe AsyncJob do
       @j.step_time.should == @j.default_step_time
       @j.current_step_done!
       @j.step_time.should == 2.minutes
+    end
+
+    it "#log should log to the current step" do
+      @j.log("Log data")
+      @j.log("Some more")
+      @j.current_step['log'].should == ["Log data", "Some more"]
+    end
+
+    it "#log should return its string argument" do
+      @j.log("Log data").should == "Log data"
     end
   end
 

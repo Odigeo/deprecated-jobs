@@ -138,7 +138,6 @@ class AsyncJob < ActiveRecord::Base
   def current_step_done!
     return if finished?
     self.last_completed_step = current_step_index
-    Rails.logger.info "[Job #{uuid}] step #{current_step_index} finished (#{steps.length} steps)."
     job_succeeded if done_all_steps? && !failed?
     save!
   end
@@ -167,6 +166,18 @@ class AsyncJob < ActiveRecord::Base
   def enqueue
     @@queue ||= AsyncJobQueue.new basename: ASYNCJOBQ_AWS_BASENAME
     @@queue.send_message uuid
+  end
+
+
+  #
+  # Log to the current step.
+  # 
+  def log(str)
+    cs = current_step
+    cs['log'] ||= []
+    cs['log'] << str
+    save!
+    str
   end
 
 end

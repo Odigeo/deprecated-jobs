@@ -4,7 +4,7 @@ describe QueueMessage do
 
   before :each do
     AsyncJob.any_instance.stub(:enqueue)
-    @async_job = create(:async_job, steps: [{'name' => "Step 1"}, 
+    @async_job = create(:async_job, steps: [{'name' => "Step 1", 'url' => 'http://127.0.0.1/something'}, 
                                             {'name' => "Step 2", 'poison_limit' => 50}, 
                                             {'name' => "Step 3", 'step_time' => 2.minutes}
                                            ])
@@ -85,6 +85,7 @@ describe QueueMessage do
   end
 
 
+
   describe "process" do
 
     it "should execute the next step if all is in order" do
@@ -134,12 +135,12 @@ describe QueueMessage do
   describe "execute_current_step" do
 
     before :each do
-      QueueMessage.any_instance.should_receive(:make_http_request).at_least(:once)
-      AsyncJob.any_instance.should_receive(:enqueue).at_least(:once)
+
     end
 
 
     it "should set the AsyncJob's started_at attribute if not already set" do
+      QueueMessage.any_instance.should_receive(:make_http_request)
       @async_job.started_at.should == nil
       qm = QueueMessage.new(@msg)
       qm.execute_current_step
@@ -153,14 +154,16 @@ describe QueueMessage do
    end
 
     it "should set the receive count of the AsyncJob step" do
-      @async_job.current_step.should == {"name" => "Step 1"}
+      QueueMessage.any_instance.should_receive(:make_http_request)
+      @async_job.current_step['name'].should == "Step 1"
       qm = QueueMessage.new(@msg)
       qm.execute_current_step
       @async_job.reload
-      @async_job.steps[0].should == {"name" => "Step 1", "receive_count" => 2}
+      @async_job.steps[0]['receive_count'].should == 2
     end
 
     it "should set the visibility timeout from the step time" do
+      QueueMessage.any_instance.should_receive(:make_http_request)
       qm = QueueMessage.new(@msg)
       qm.should_receive(:visibility_timeout=).twice.with(30)
       qm.should_receive(:visibility_timeout=).with(2.minutes)
@@ -170,26 +173,48 @@ describe QueueMessage do
     end
 
     it "should advance the job to the next step if successful" do
+      QueueMessage.any_instance.should_receive(:make_http_request)
       qm = QueueMessage.new(@msg)
-
-      @async_job.current_step.should == {"name"=>"Step 1"}
+      @async_job.current_step['name'].should == "Step 1"
       qm.execute_current_step
       @async_job.reload
-      @async_job.steps[0].should ==     {"name"=>"Step 1", "receive_count"=>2}
-
-      @async_job.current_step.should == {"name"=>"Step 2", "poison_limit"=>50}
+      @async_job.current_step['name'].should == "Step 2"
       qm.execute_current_step
       @async_job.reload
-      @async_job.steps[1].should ==     {"name"=>"Step 2", "poison_limit"=>50, "receive_count"=>2}
-
-      @async_job.current_step.should == {"name"=>"Step 3", "step_time"=>120}
+      @async_job.current_step['name'].should == "Step 3"
       qm.execute_current_step
       @async_job.reload
-      @async_job.steps[2].should ==     {"name"=>"Step 3", "step_time"=>120, "receive_count"=>2}
-
       @async_job.current_step.should == nil
+    end
+
+    it "should ignore the step if it lacks a URL" do
+      QueueMessage.any_instance.should_not_receive(:make_http_request)
+      @async_job.last_completed_step = 0
+      @async_job.save!
+      QueueMessage.new(@msg).execute_current_step
+    end
+
+    it "should log a missing URL to the Rails log and in the job" do
+      QueueMessage.any_instance.should_not_receive(:make_http_request)
+      @async_job.last_completed_step = 0
+      @async_job.save!
+      QueueMessage.new(@msg).execute_current_step
+      @async_job.reload
+      @async_job.steps[1]['log'].should == ["Step has no URL. Skipped."]
     end
   end
 
+
+  describe "make_http_request" do
+
+    before :each do
+
+    end
+
+
+
+
+
+  end
 
 end
