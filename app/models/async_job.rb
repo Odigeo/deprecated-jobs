@@ -65,10 +65,17 @@ class AsyncJob < ActiveRecord::Base
 
 
   #
+  # Returns the index of the current step
+  #
+  def current_step_index
+    (last_completed_step || -1) + 1
+  end
+
+  #
   # Returns the current step
   #
   def current_step
-    steps[(last_completed_step || -1) + 1]
+    steps[current_step_index]
   end
 
   #
@@ -83,7 +90,7 @@ class AsyncJob < ActiveRecord::Base
   #
   def current_step_done!
     return if done_all_steps?
-    self.last_completed_step = (last_completed_step || -1) + 1
+    self.last_completed_step = current_step_index
     self.finished_at = Time.now.utc if done_all_steps?
     save!
   end
