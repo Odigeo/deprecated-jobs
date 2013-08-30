@@ -55,27 +55,47 @@ class QueueMessage
 
 
   #
-  # Process the message. Returns false if the job was skipped, true otherwise.
+  # Returns true if the job can't be found.
   #
-  def process
-    return false if !async_job || finished? || poison?
-    execute_current_step
-    true
+  def job_missing?
+    !async_job
   end
-
 
   #
   # Returns true if the job already has finished.
   #
-  def finished?
-    !!async_job.finished_at
+  def job_started?
+    !!async_job.started_at
+  end
+
+  #
+  # Returns true if the job already has finished.
+  #
+  def job_finished?
+    async_job.finished?
   end
 
   #
   # Returns true if the job step is poison.
   #
-  def poison?
+  def job_is_poison?
     receive_count > async_job.poison_limit
+  end
+
+
+  #
+  # Process the message. Returns false if the job was skipped, true otherwise.
+  #
+  def process
+    return false if job_missing?
+    return false if job_finished?
+    async_job.job_is_poison and return false if job_is_poison?
+    if async_job.done_all_steps?
+      async_job.finished_at = Time.now.utc
+      return false
+    end
+    execute_current_step
+    true
   end
 
 
@@ -83,18 +103,30 @@ class QueueMessage
   # Execute the current job step.
   #
   def execute_current_step
-    async_job.started_at = Time.now.utc unless async_job.started_at
-    async_job.current_step['receive_count'] = receive_count unless async_job.done_all_steps?
+    # Prepare
+    async_job.started_at = Time.now.utc and Rails.logger.info "[Job #{async_job.uuid}] started (#{async_job.steps.length} steps)." unless job_started?
+    async_job.current_step['receive_count'] = receive_count
     async_job.save!
     self.visibility_timeout = async_job.step_time
-
-    # Do the work here
-    Rails.logger.info "[ASYNC_JOB_STEP] ==========================================================================="
-    Rails.logger.info "[ASYNC_JOB_STEP] Executing the step: #{async_job.current_step.inspect}"
-    Rails.logger.info "[ASYNC_JOB_STEP] ==========================================================================="
-
+    # Do the work
+    make_http_request
+    # Advance or finish
     async_job.current_step_done!
-    async_job.enqueue unless async_job.done_all_steps?
+    async_job.enqueue unless job_finished?
+  end
+
+
+  #
+  # Make the outgoing HTTP request.
+  #
+  def make_http_request
+    Rails.logger.info "[Job #{async_job.uuid}] step #{async_job.current_step_index} started (#{async_job.steps.length} steps)."
+    step = async_job.current_step
+    Rails.logger.info "[Job #{async_job.uuid}] has no steps." and return unless step 
+
+    #
+    
+    Rails.logger.info "[Job #{async_job.uuid}] step #{async_job.current_step_index} finished (#{async_job.steps.length} steps)."
   end
 
 end

@@ -18,6 +18,9 @@
 #  default_poison_limit :integer          default(5), not null
 #  credentials          :string(255)      default(""), not null
 #  default_step_time    :integer          default(30), not null
+#  succeeded            :boolean          default(FALSE), not null
+#  failed               :boolean          default(FALSE), not null
+#  poison               :boolean          default(FALSE), not null
 #
 
 require 'spec_helper'
@@ -145,6 +148,7 @@ describe AsyncJob do
   end
 
 
+
   describe "step handling" do
 
     before :each do
@@ -154,6 +158,63 @@ describe AsyncJob do
                                       {'name' => "Step 3", 'step_time' => 2.minutes}
                                      ])
     end
+
+    it "should have a finished? predicate" do
+      @j.finished?.should == false
+      @j.job_is_poison
+      @j.reload
+      @j.finished?.should == true
+    end
+
+    it "should have a success? predicate" do
+      @j.finished?.should == false
+      @j.job_succeeded
+      @j.reload
+      @j.succeeded?.should == true
+    end
+
+    it "should have a failure? predicate" do
+      @j.finished?.should == false
+      @j.job_failed
+      @j.reload
+      @j.failed?.should == true
+    end
+
+    it "should have a poison? predicate" do
+      @j.finished?.should == false
+      @j.job_is_poison
+      @j.reload
+      @j.poison?.should == true
+    end
+
+    it "should have a job_succeeded method that finishes the job" do
+      @j.job_succeeded
+      @j.reload
+      @j.finished?.should == true
+      @j.succeeded?.should == true
+      @j.failed?.should == false
+      @j.poison?.should == false
+    end
+
+    it "should have a job_failed method to finish a job" do
+      @j.job_failed
+      @j.reload
+      @j.finished?.should == true
+      @j.failed?.should == true
+      @j.succeeded?.should == false
+      @j.poison?.should == false
+    end
+
+    it "should have a job_is_poison method to finish a job" do
+      @j.job_is_poison
+      @j.reload
+      @j.finished?.should == true
+      @j.failed?.should == true
+      @j.succeeded?.should == false
+      @j.poison?.should == true
+    end
+
+
 
     it "#current_step should obtain the current step" do
       @j.current_step.should == {'name' => "Step 1"}
@@ -192,6 +253,11 @@ describe AsyncJob do
       @j.finished_at.should == nil      
       @j.current_step_done!
       @j.finished_at.should_not == nil      
+      @j.reload
+      @j.finished?.should == true
+      @j.failed?.should == false
+      @j.succeeded?.should == true
+      @j.poison?.should == false
     end
 
     it "#poison_limit should return the poison limit for the current job step" do
@@ -209,15 +275,6 @@ describe AsyncJob do
       @j.current_step_done!
       @j.step_time.should == 2.minutes
     end
-  end
-
-
-  describe "queue handling" do
-
-    it "should have an enqueue method" do
-
-    end
-
   end
 
 end
