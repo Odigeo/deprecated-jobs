@@ -19,24 +19,23 @@ describe QueueMessage do
 
   describe "authorisation" do
 
-    it "should authenticate with the Auth service if there's no token" do
+    it "should authenticate if there's no token" do
       @async_job.token = nil
       @async_job.save!
       stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
-         with(:headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json', 'X-Api-Authenticate'=>'bWFnbmV0bzp4YXZpZXI='}).
-         to_return(status: 201, body: '{"authentication": {"token": "hey-i-am-the-token"}}', headers: {'Content-Type'=>'application/json'})
+        to_return(status: 201, body: '{"authentication": {"token": "hey-i-am-the-token"}}', headers: {'Content-Type'=>'application/json'})
       stub_request(:get, "http://127.0.0.1/something")    
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload
       @async_job.token.should == "hey-i-am-the-token"
       @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
+      @async_job.failed?.should == false
     end
 
-    it "should authenticate with the Auth service if there's no token" do
+    it "should fail the job if there's no token and authentication fails" do
       @async_job.token = nil
       @async_job.save!
       stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
-        with(:headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json', 'X-Api-Authenticate'=>'bWFnbmV0bzp4YXZpZXI='}).
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload
@@ -45,6 +44,58 @@ describe QueueMessage do
       @async_job.failed?.should == true
       @async_job.finished?.should == true
     end
+
+    it "should authenticate if the main request returns 400 (unknown token)" do
+      stub_request(:get, "http://127.0.0.1/something").
+        to_return({status: 400, headers: {'Content-Type'=>'application/json'}}).then.
+        to_return({status: 200, body: '{}', headers: {'Content-Type'=>'application/json'}})
+      stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
+        to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
+      QueueMessage.new(@msg).execute_current_step
+      @async_job.reload
+      @async_job.token.should == "this-is-a-new-token"
+      @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
+      @async_job.failed?.should == false
+   end
+
+    it "should fail the job if the main request returns 400 and authentication fails" do
+      stub_request(:get, "http://127.0.0.1/something").
+        to_return({status: 400, headers: {'Content-Type'=>'application/json'}})
+      stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
+        to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
+      QueueMessage.new(@msg).execute_current_step
+      @async_job.reload
+      @async_job.token.should == "A-totally-fake-token"
+      @async_job.steps[0]['log'].should == ["Failed to authenticate"]
+      @async_job.failed?.should == true
+      @async_job.finished?.should == true
+   end
+
+    it "should authenticate if the main request returns 419 (authentication expired)" do
+      stub_request(:get, "http://127.0.0.1/something").
+        to_return({status: 419, headers: {'Content-Type'=>'application/json'}}).then. 
+        to_return({status: 200, body: '{}', headers: {'Content-Type'=>'application/json'}})
+      stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
+        to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
+      QueueMessage.new(@msg).execute_current_step
+      @async_job.reload
+      @async_job.token.should == "this-is-a-new-token"
+      @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
+      @async_job.failed?.should == false
+   end
+
+    it "should fail the job if the main request returns 419 and authentication fails" do
+      stub_request(:get, "http://127.0.0.1/something").
+        to_return({status: 419, headers: {'Content-Type'=>'application/json'}})
+      stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
+        to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
+      QueueMessage.new(@msg).execute_current_step
+      @async_job.reload
+      @async_job.token.should == "A-totally-fake-token"
+      @async_job.steps[0]['log'].should == ["Failed to authenticate"]
+      @async_job.failed?.should == true
+      @async_job.finished?.should == true
+   end
 
   end
 

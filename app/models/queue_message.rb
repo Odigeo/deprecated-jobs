@@ -169,13 +169,19 @@ class QueueMessage
             async_job.job_failed "Unsupported HTTP method '#{http_method}'"
             return
           end
-        break if !(300..399).include?(response.status)
-        if response.headers['Location'].blank?
-          async_job.job_failed "Failed: #{response.status} without Location header"
-          return
+        if [400, 419].include?(response.status)
+          return if !authenticate
+          headers[:x_api_token] = async_job.token
+        elsif !(300..399).include?(response.status)
+          break
+        else
+          if response.headers['Location'].blank?
+            async_job.job_failed "Failed: #{response.status} without Location header"
+            return
+          end
+          url = response.headers['Location']
+          async_job.log "Redirect: #{response.status} to #{url}"
         end
-        url = response.headers['Location']
-        async_job.log "Redirect: #{response.status} to #{url}"
       end
       handle_response(step, response.status, response.headers, response.body) if response
     rescue Exception => e
@@ -190,12 +196,12 @@ class QueueMessage
 
 
   def authenticate
-    token = Api.authenticate(*Api.decode_credentials(async_job.credentials))
-    if token
-      async_job.token = token
+    new_token = Api.authenticate(*Api.decode_credentials(async_job.credentials))
+    if new_token
+      async_job.token = new_token
       async_job.save!
       async_job.log "Authenticated"
-      token
+      new_token
     else
       async_job.job_failed "Failed to authenticate"
       nil
