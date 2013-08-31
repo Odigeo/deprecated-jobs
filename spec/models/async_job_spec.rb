@@ -205,6 +205,11 @@ describe AsyncJob do
       @j.poison?.should == false
     end
 
+    it "#job_failed should take an optional message to log" do
+      @j.job_failed "And this is why."
+      @j.current_step['log'].should == ["And this is why."]
+    end
+
     it "should have a job_is_poison method to finish a job" do
       @j.job_is_poison
       @j.reload

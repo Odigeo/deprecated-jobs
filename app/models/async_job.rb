@@ -81,11 +81,12 @@ class AsyncJob < ActiveRecord::Base
   #
   # Finishes the job as failed. Returns true.
   #
-  def job_failed
+  def job_failed(str=nil)
     self.finished_at = Time.now.utc
     self.failed = true
     save!
-    Rails.logger.warn "[Job #{uuid}] failed (#{steps.length} steps)."
+    log(str) if str
+    Rails.logger.warn "[Job #{uuid}] failed: '#{str}' (#{steps.length} steps)."
     true
   end
 

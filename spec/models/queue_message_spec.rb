@@ -211,8 +211,47 @@ describe QueueMessage do
 
     end
 
+    it "should default to a GET" do
+      Faraday.should_receive(:get)
+      @qm = QueueMessage.new(@msg)
+      @qm.execute_current_step
+    end
 
+    it "should do a POST if the method is 'POST'" do
+      @async_job.current_step['method'] = 'POST'
+      @async_job.current_step['body'] = 'This is the body.'
+      @async_job.save!
+      Faraday.should_receive(:post)
+      @qm = QueueMessage.new(@msg)
+      @qm.execute_current_step
+    end
 
+    it "should do a PUT if the method is 'PUT'" do
+      @async_job.current_step['method'] = 'PUT'
+      @async_job.current_step['body'] = 'This is the body.'
+      @async_job.save!
+      Faraday.should_receive(:put)
+      @qm = QueueMessage.new(@msg)
+      @qm.execute_current_step
+    end
+
+    it "should do a DELETE if the method is 'DELETE'" do
+      @async_job.current_step['method'] = 'DELETE'
+      @async_job.save!
+      Faraday.should_receive(:delete)
+      @qm = QueueMessage.new(@msg)
+      @qm.execute_current_step
+    end
+
+    it "should log an unsupported HTTP method" do
+      @async_job.current_step['method'] = 'QUUX'
+      @async_job.save!
+      Faraday.should_not_receive(:quux)
+      @qm = QueueMessage.new(@msg)
+      @qm.execute_current_step
+      @async_job.reload
+      @async_job.steps[0]['log'].should == ["Unsupported HTTP method 'QUUX'"]
+    end
 
 
   end

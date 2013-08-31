@@ -126,24 +126,35 @@ class QueueMessage
   #
   def make_http_request
     uuid = async_job.uuid
-    i = async_job.current_step_index
+    i = async_job.current_step_index + 1
     nsteps = async_job.steps.length
     step = async_job.current_step
     name = step['name']
     url = step['url']
-    method = step['method']
-    headers = step['headers']
+    http_method = (step['method'] || "GET").upcase
+    headers = step['headers'] || {}
     body = step['body']
 
-    Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' started."
+    Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] started."
     begin
-
+      response = 
+        if http_method == "GET"
+          Faraday.get url, nil, **headers
+        elsif http_method == "POST"
+          Faraday.post url, body, headers
+        elsif http_method == "PUT"
+          Faraday.put url, body, headers
+        elsif http_method == "DELETE"
+          Faraday.delete url, nil, headers
+        else
+          async_job.job_failed "Unsupported HTTP method '#{http_method}'"
+        end
     rescue Exception => e
       async_job.log e.message
-      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' crashed."
+      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] crashed: '#{e.message}'."
       raise e
     ensure
-      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' finished."
+      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] finished."
     end
   end
 
