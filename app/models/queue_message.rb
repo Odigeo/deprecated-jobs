@@ -177,6 +177,8 @@ class QueueMessage
     case status
     when 200..299
       async_job.log("Succeeded: #{status}")
+    when 400..499
+      async_job.job_failed "Failed: #{status}"
     end
   end
 

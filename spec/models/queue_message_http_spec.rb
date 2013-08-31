@@ -119,6 +119,17 @@ describe QueueMessage do
       expect { qm.handle_response(qm.async_job.current_step, 204, {}, nil) }.not_to raise_error
       @async_job.reload
       @async_job.steps[0]['log'].should == ["Succeeded: 204"]
+      @async_job.failed?.should == false
+      @async_job.finished?.should == false
+    end
+
+    it "should log a client error response (4xx) and fail the whole job" do
+      qm = QueueMessage.new(@msg)
+      expect { qm.handle_response(qm.async_job.current_step, 403, {}, nil) }.not_to raise_error
+      @async_job.reload
+      @async_job.steps[0]['log'].should == ["Failed: 403"]
+      @async_job.failed?.should == true
+      @async_job.finished?.should == true
     end
 
   end
