@@ -214,6 +214,9 @@ class QueueMessage
   end
 
 
+  #
+  # Handles the response from the HTTP request
+  #
   def handle_response(step, status, headers, body)
     case status
     when 200..299
