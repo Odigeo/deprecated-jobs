@@ -68,6 +68,9 @@ class AsyncJob < ActiveRecord::Base
     j.enqueue unless j.steps == []
   end
 
+  after_update  { |model| model.ban }
+  after_destroy { |model| model.ban }
+
 
   #
   # Finishes the job successfully. Returns true.
@@ -181,6 +184,15 @@ class AsyncJob < ActiveRecord::Base
     cs['log'] << str
     save!
     str
+  end
+
+
+  #
+  # Issue a BAN to remove the entity from Varnish
+  #
+  def ban
+    resource = self.class.name.pluralize.underscore
+    Api.ban "/#{Api.version_for(resource)}/#{resource}/#{uuid}"
   end
 
 end
