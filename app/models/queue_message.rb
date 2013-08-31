@@ -143,10 +143,16 @@ class QueueMessage
     name = step['name']
     url = step['url']
     http_method = (step['method'] || "GET").to_s.upcase
-    headers = {content_type: 'application/json', accept: 'application/json'}.merge(step['headers'] || {})
     body = step['body']
 
     Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] started."
+
+    return if !async_job.token && !authenticate
+
+    headers = {content_type: 'application/json', 
+               accept: 'application/json',
+               x_api_token: async_job.token}.merge(step['headers'] || {})
+
     begin
       response = nil
       loop do
@@ -179,6 +185,20 @@ class QueueMessage
       raise e
     ensure
       Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] finished."
+    end
+  end
+
+
+  def authenticate
+    token = Api.authenticate(*Api.decode_credentials(async_job.credentials))
+    if token
+      async_job.token = token
+      async_job.save!
+      async_job.log "Authenticated"
+      token
+    else
+      async_job.job_failed "Failed to authenticate"
+      nil
     end
   end
 

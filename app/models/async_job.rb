@@ -21,6 +21,7 @@
 #  succeeded            :boolean          default(FALSE), not null
 #  failed               :boolean          default(FALSE), not null
 #  poison               :boolean          default(FALSE), not null
+#  token                :string(255)
 #
 
 class AsyncJob < ActiveRecord::Base
@@ -37,7 +38,7 @@ class AsyncJob < ActiveRecord::Base
   # Attributes
   attr_accessible :uuid, :lock_version,
                   :steps, :max_seconds_in_queue, :default_poison_limit,
-                  :credentials, :default_step_time
+                  :credentials, :token, :default_step_time
 
   # Scopes
 

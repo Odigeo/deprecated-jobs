@@ -17,20 +17,50 @@ describe QueueMessage do
   end
 
 
+  describe "authorisation" do
+
+    it "should authenticate with the Auth service if there's no token" do
+      @async_job.token = nil
+      @async_job.save!
+      stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
+         with(:headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json', 'X-Api-Authenticate'=>'bWFnbmV0bzp4YXZpZXI='}).
+         to_return(status: 201, body: '{"authentication": {"token": "hey-i-am-the-token"}}', headers: {'Content-Type'=>'application/json'})
+      stub_request(:get, "http://127.0.0.1/something")    
+      QueueMessage.new(@msg).execute_current_step
+      @async_job.reload
+      @async_job.token.should == "hey-i-am-the-token"
+      @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
+    end
+
+    it "should authenticate with the Auth service if there's no token" do
+      @async_job.token = nil
+      @async_job.save!
+      stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
+        with(:headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json', 'X-Api-Authenticate'=>'bWFnbmV0bzp4YXZpZXI='}).
+        to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
+      QueueMessage.new(@msg).execute_current_step
+      @async_job.reload
+      @async_job.token.should == nil
+      @async_job.steps[0]['log'].should == ["Failed to authenticate"]
+      @async_job.failed?.should == true
+      @async_job.finished?.should == true
+    end
+
+  end
+
+
   describe "make_http_request" do
 
     it "should default to a GET" do
       stub_request(:get, "http://127.0.0.1/something").with(body: '')
-      @qm = QueueMessage.new(@msg)
-      @qm.execute_current_step
+      QueueMessage.new(@msg).execute_current_step
     end
 
     it "should do a GET if the method is 'GET'" do
       @async_job.current_step['method'] = 'GET'
       @async_job.save!
       stub_request(:get, "http://127.0.0.1/something").with(body: '')
-      @qm = QueueMessage.new(@msg)
-      @qm.execute_current_step
+      QueueMessage.new(@msg).execute_current_step
     end
 
     it "should do a POST if the method is 'POST'" do
@@ -38,8 +68,7 @@ describe QueueMessage do
       @async_job.current_step['body'] = 'This is the body.'
       @async_job.save!
       stub_request(:post, "http://127.0.0.1/something").with(body: "This is the body.")
-      @qm = QueueMessage.new(@msg)
-      @qm.execute_current_step
+      QueueMessage.new(@msg).execute_current_step
     end
 
     it "should do a PUT if the method is 'PUT'" do
@@ -47,42 +76,37 @@ describe QueueMessage do
       @async_job.current_step['body'] = 'This is the body.'
       @async_job.save!
       stub_request(:put, "http://127.0.0.1/something").with(body: "This is the body.")
-      @qm = QueueMessage.new(@msg)
-      @qm.execute_current_step
+      QueueMessage.new(@msg).execute_current_step
     end
 
     it "should do a DELETE if the method is 'DELETE'" do
       @async_job.current_step['method'] = 'DELETE'
       @async_job.save!
       stub_request(:delete, "http://127.0.0.1/something").with(body: '')
-      @qm = QueueMessage.new(@msg)
-      @qm.execute_current_step
+      QueueMessage.new(@msg).execute_current_step
     end
 
     it "should log an unsupported HTTP method" do
       @async_job.current_step['method'] = 'QUUX'
       @async_job.save!
       Faraday.should_not_receive(:quux)
-      @qm = QueueMessage.new(@msg)
-      @qm.execute_current_step
+      QueueMessage.new(@msg).execute_current_step
       @async_job.reload
       @async_job.steps[0]['log'].should == ["Unsupported HTTP method 'QUUX'"]
     end
 
     it "should include extra headers" do
       stub_request(:get, "http://127.0.0.1/something").with(headers: {'X-Api-Token' => 'an-api-token'})
-      @qm = QueueMessage.new(@msg)
-      @qm.execute_current_step
+      QueueMessage.new(@msg).execute_current_step
     end
 
     it "should set Content-Type and Accept headers to application/json" do
       stub_request(:get, "http://127.0.0.1/something").with(headers: {'Content-Type' => 'application/json', 
                                                                       'Accept' => 'application/json'})
-      @qm = QueueMessage.new(@msg)
-      @qm.execute_current_step
+      QueueMessage.new(@msg).execute_current_step
     end
 
-    it "should log a client error response (3xx) if no Location header, then fail the whole job" do
+    it "should log a redirect response (3xx) if no Location header, then fail the whole job" do
       stub_request(:get, "http://127.0.0.1/something").
          to_return(status: 301, body: nil, headers: {})
       QueueMessage.new(@msg).execute_current_step # (qm.async_job.current_step, 301, {}, nil)
@@ -114,24 +138,21 @@ describe QueueMessage do
 
     it "should handle timeouts and log them before re-raising the timeout exception" do
       stub_request(:get, "http://127.0.0.1/something").to_timeout
-      @qm = QueueMessage.new(@msg)
-      expect { @qm.execute_current_step }.to raise_error
+      expect { QueueMessage.new(@msg).execute_current_step }.to raise_error
       @async_job.reload
       @async_job.steps[0]['log'].should == ["Faraday::Error::TimeoutError: execution expired"]
     end
 
     it "should handle exceptions and log them before re-raising them" do
       stub_request(:get, "http://127.0.0.1/something").to_raise("some error")
-      @qm = QueueMessage.new(@msg)
-      expect { @qm.execute_current_step }.to raise_error
+      expect { QueueMessage.new(@msg).execute_current_step }.to raise_error
       @async_job.reload
       @async_job.steps[0]['log'].should == ["StandardError: some error"]
     end
 
     it "should set visibility_timeout in proportion to the number of times the message has been received" do
       stub_request(:get, "http://127.0.0.1/something").to_raise("some error")
-      @qm = QueueMessage.new(@msg)
-      expect { @qm.execute_current_step }.to raise_error
+      expect { QueueMessage.new(@msg).execute_current_step }.to raise_error
       expect(@msg).to have_received(:visibility_timeout=).with(30) # This is the initial assignment
       expect(@msg).to have_received(:visibility_timeout=).with(2)  # This is the exception assignment
     end

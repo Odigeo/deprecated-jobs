@@ -82,6 +82,10 @@ describe "async_jobs/_async_job" do
     @u['credentials'].should == nil
   end
 
+  it "should NOT expose the token" do
+    @u['token'].should == nil
+  end
+
   it "should have a default_step_time of 30 seconds" do
     @u['default_step_time'].should == 30
   end

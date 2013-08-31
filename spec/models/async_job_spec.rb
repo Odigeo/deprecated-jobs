@@ -21,6 +21,7 @@
 #  succeeded            :boolean          default(FALSE), not null
 #  failed               :boolean          default(FALSE), not null
 #  poison               :boolean          default(FALSE), not null
+#  token                :string(255)
 #
 
 require 'spec_helper'
@@ -107,6 +108,11 @@ describe AsyncJob do
       j.credentials = ""
       j.should be_valid
       j.save!
+    end
+
+    it "should have an optional token attribute" do
+      create(:async_job).token.should be_a String
+      create(:async_job, token: nil).token.should == nil
     end
 
   end
