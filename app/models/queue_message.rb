@@ -159,7 +159,9 @@ class QueueMessage
           Faraday.delete url, nil, headers
         else
           async_job.job_failed "Unsupported HTTP method '#{http_method}'"
+          return
         end
+      handle_response(step, response.status, response.headers, response.body) if response
     rescue Exception => e
       self.visibility_timeout = retry_seconds
       logmsg = async_job.log "#{e.class.name}: #{e.message}"
@@ -167,6 +169,14 @@ class QueueMessage
       raise e
     ensure
       Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] finished."
+    end
+  end
+
+
+  def handle_response(step, status, headers, body)
+    case status
+    when 200..299
+      async_job.log("Succeeded: #{status}")
     end
   end
 

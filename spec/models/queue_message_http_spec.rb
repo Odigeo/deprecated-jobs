@@ -109,8 +109,20 @@ describe QueueMessage do
       expect(@msg).to have_received(:visibility_timeout=).with(30) # This is the initial assignment
       expect(@msg).to have_received(:visibility_timeout=).with(2)  # This is the exception assignment
     end
+  end
+
+
+  describe "handle_response" do
+
+    it "should log a successful response (2xx) and return normally" do
+      qm = QueueMessage.new(@msg)
+      expect { qm.handle_response(qm.async_job.current_step, 204, {}, nil) }.not_to raise_error
+      @async_job.reload
+      @async_job.steps[0]['log'].should == ["Succeeded: 204"]
+    end
 
   end
+
 
 
 end

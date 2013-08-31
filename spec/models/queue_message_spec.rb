@@ -276,5 +276,5 @@ describe QueueMessage do
       @async_job.steps[1]['log'].should == ["Step has no URL. Skipped."]
     end
   end
-
+  
 end
