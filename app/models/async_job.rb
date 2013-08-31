@@ -191,8 +191,7 @@ class AsyncJob < ActiveRecord::Base
   # Issue a BAN to remove the entity from Varnish
   #
   def ban
-    resource = self.class.name.pluralize.underscore
-    Api.ban "/#{Api.version_for(resource)}/#{resource}/#{uuid}"
+    Api.ban "/#{Api.version_for(:async_jobs)}/async_jobs/#{uuid}"
   end
 
 end
