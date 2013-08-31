@@ -212,7 +212,15 @@ describe QueueMessage do
     end
 
     it "should default to a GET" do
-      Faraday.should_receive(:get)
+      stub_request(:get, "http://127.0.0.1/something").with(body: '')
+      @qm = QueueMessage.new(@msg)
+      @qm.execute_current_step
+    end
+
+    it "should do a GET if the method is 'GET'" do
+      @async_job.current_step['method'] = 'GET'
+      @async_job.save!
+      stub_request(:get, "http://127.0.0.1/something").with(body: '')
       @qm = QueueMessage.new(@msg)
       @qm.execute_current_step
     end
@@ -221,7 +229,7 @@ describe QueueMessage do
       @async_job.current_step['method'] = 'POST'
       @async_job.current_step['body'] = 'This is the body.'
       @async_job.save!
-      Faraday.should_receive(:post)
+      stub_request(:post, "http://127.0.0.1/something").with(body: "This is the body.")
       @qm = QueueMessage.new(@msg)
       @qm.execute_current_step
     end
@@ -230,7 +238,7 @@ describe QueueMessage do
       @async_job.current_step['method'] = 'PUT'
       @async_job.current_step['body'] = 'This is the body.'
       @async_job.save!
-      Faraday.should_receive(:put)
+      stub_request(:put, "http://127.0.0.1/something").with(body: "This is the body.")
       @qm = QueueMessage.new(@msg)
       @qm.execute_current_step
     end
@@ -238,7 +246,7 @@ describe QueueMessage do
     it "should do a DELETE if the method is 'DELETE'" do
       @async_job.current_step['method'] = 'DELETE'
       @async_job.save!
-      Faraday.should_receive(:delete)
+      stub_request(:delete, "http://127.0.0.1/something").with(body: '')
       @qm = QueueMessage.new(@msg)
       @qm.execute_current_step
     end

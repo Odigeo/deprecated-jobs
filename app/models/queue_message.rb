@@ -137,14 +137,14 @@ class QueueMessage
 
     Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] started."
     begin
-      response = 
-        if http_method == "GET"
+      response = case http_method
+        when "GET"
           Faraday.get url, nil, **headers
-        elsif http_method == "POST"
+        when "POST"
           Faraday.post url, body, headers
-        elsif http_method == "PUT"
+        when "PUT"
           Faraday.put url, body, headers
-        elsif http_method == "DELETE"
+        when "DELETE"
           Faraday.delete url, nil, headers
         else
           async_job.job_failed "Unsupported HTTP method '#{http_method}'"
