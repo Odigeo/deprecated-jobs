@@ -132,7 +132,7 @@ class QueueMessage
     name = step['name']
     url = step['url']
     http_method = (step['method'] || "GET").upcase
-    headers = step['headers'] || {}
+    headers = {content_type: 'application/json', accept: 'application/json'}.merge(step['headers'] || {})
     body = step['body']
 
     Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] started."
@@ -150,7 +150,7 @@ class QueueMessage
           async_job.job_failed "Unsupported HTTP method '#{http_method}'"
         end
     rescue Exception => e
-      async_job.log e.message
+      async_job.log "#{e.class.name}: #{e.message}"
       Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] crashed: '#{e.message}'."
       raise e
     ensure
