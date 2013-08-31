@@ -25,7 +25,9 @@
 
 class AsyncJob < ActiveRecord::Base
 
-  ocean_resource_model index: [:uuid], search: false
+  ocean_resource_model index: [:uuid], search: false,
+                       invalidate_member: [],
+                       invalidate_collection: []
 
   serialize :steps, Array
 
