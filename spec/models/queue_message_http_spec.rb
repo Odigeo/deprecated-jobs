@@ -81,6 +81,32 @@ describe QueueMessage do
       @qm = QueueMessage.new(@msg)
       @qm.execute_current_step
     end
+
+    it "should log a client error response (3xx) if no Location header, then fail the whole job" do
+      stub_request(:get, "http://127.0.0.1/something").
+         to_return(status: 301, body: nil, headers: {})
+      QueueMessage.new(@msg).execute_current_step # (qm.async_job.current_step, 301, {}, nil)
+      @async_job.reload
+      @async_job.steps[0]['log'].should == ["Failed: 301 without Location header"]
+      @async_job.failed?.should == true
+      @async_job.finished?.should == true
+    end
+
+    it "should follow and log a redirect response (3xx) with a Location header" do
+      stub_request(:get, "http://127.0.0.1/something").
+         to_return(status: 301, body: nil, headers: {location: "http://somewhere.else.com/someplace"})
+      stub_request(:get, "http://somewhere.else.com/someplace").
+         to_return(status: 301, body: nil, headers: {location: "http://final.com/the_data"})
+      stub_request(:get, "http://final.com/the_data").
+         to_return(status: 200, body: "Final payload", headers: {})
+      QueueMessage.new(@msg).execute_current_step
+      @async_job.reload
+      @async_job.steps[0]['log'].should == ["Redirect: 301 to http://somewhere.else.com/someplace", 
+                                            "Redirect: 301 to http://final.com/the_data", 
+                                            "Succeeded: 200"]
+      @async_job.failed?.should == false
+      @async_job.finished?.should == true
+    end
   end
 
 
@@ -130,6 +156,15 @@ describe QueueMessage do
       @async_job.steps[0]['log'].should == ["Failed: 403"]
       @async_job.failed?.should == true
       @async_job.finished?.should == true
+    end
+
+    it "should log a server error response (5xx), fail the step, then raise an error to trigger a later retry" do
+      qm = QueueMessage.new(@msg)
+      expect { qm.handle_response(qm.async_job.current_step, 500, {}, nil) }.to raise_error
+      @async_job.reload
+      @async_job.steps[0]['log'].should == ["Remote server error: 500. Retrying via exception."]
+      @async_job.failed?.should == false
+      @async_job.finished?.should == false
     end
 
   end

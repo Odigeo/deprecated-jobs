@@ -148,19 +148,29 @@ class QueueMessage
 
     Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] started."
     begin
-      response = case http_method
-        when "GET"
-          Faraday.get url, nil, **headers
-        when "POST"
-          Faraday.post url, body, headers
-        when "PUT"
-          Faraday.put url, body, headers
-        when "DELETE"
-          Faraday.delete url, nil, headers
-        else
-          async_job.job_failed "Unsupported HTTP method '#{http_method}'"
+      response = nil
+      loop do
+        response = case http_method
+          when "GET"
+            Faraday.get url, nil, **headers
+          when "POST"
+            Faraday.post url, body, headers
+          when "PUT"
+            Faraday.put url, body, headers
+          when "DELETE"
+            Faraday.delete url, nil, headers
+          else
+            async_job.job_failed "Unsupported HTTP method '#{http_method}'"
+            return
+          end
+        break if !(300..399).include?(response.status)
+        if response.headers['Location'].blank?
+          async_job.job_failed "Failed: #{response.status} without Location header"
           return
         end
+        url = response.headers['Location']
+        async_job.log "Redirect: #{response.status} to #{url}"
+      end
       handle_response(step, response.status, response.headers, response.body) if response
     rescue Exception => e
       self.visibility_timeout = retry_seconds
@@ -179,6 +189,9 @@ class QueueMessage
       async_job.log("Succeeded: #{status}")
     when 400..499
       async_job.job_failed "Failed: #{status}"
+    when 500..599
+      async_job.log("Remote server error: #{status}. Retrying via exception.")
+      raise "Raising exception to trigger retry"
     end
   end
 
