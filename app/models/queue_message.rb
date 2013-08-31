@@ -195,6 +195,11 @@ class QueueMessage
   end
 
 
+  #
+  # Authenticates with the Auth service. Returns the new authentication token if successful,
+  # logging the authentication in the step and setting token in the AsyncJob. If not successful,
+  # the entire job fails.
+  #
   def authenticate
     new_token = Api.authenticate(*Api.decode_credentials(async_job.credentials))
     if new_token
