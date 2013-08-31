@@ -28,9 +28,11 @@ class QueueMessage
   # seconds. After the specified number of seconds, the job will be claimed for another
   # run. Therefore, one of the first things the worker does is to set this value high
   # enough to allow normal processing to complete. See AsyncJob#default_step_time.
+  # If an exception occurs, the visibility timeout will be set again to control how
+  # long to wait before the next attempt.
   #
   def visibility_timeout=(seconds)
-    message.visibility_timeout = seconds
+    message.visibility_timeout = [seconds, 900].min
   end
 
 
@@ -80,6 +82,15 @@ class QueueMessage
   #
   def job_is_poison?
     receive_count > async_job.poison_limit
+  end
+
+
+  def retry_seconds
+    s = async_job.current_step
+    base = s['retry_base'] || 1
+    multiplier = s['retry_multiplier'] || 1
+    exponent = s['retry_exponent'] || 1
+    (base + ((receive_count - 1) * multiplier) ** exponent).ceil
   end
 
 
@@ -150,6 +161,7 @@ class QueueMessage
           async_job.job_failed "Unsupported HTTP method '#{http_method}'"
         end
     rescue Exception => e
+      self.visibility_timeout = retry_seconds
       logmsg = async_job.log "#{e.class.name}: #{e.message}"
       Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] crashed: '#{logmsg}'."
       raise e

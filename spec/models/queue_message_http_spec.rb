@@ -3,7 +3,7 @@ require 'spec_helper'
 describe QueueMessage do
 
   before :each do
-    AsyncJob.any_instance.stub(:enqueue)
+    AsyncJob.any_instance.should_receive(:enqueue).with().once
     @async_job = create(:async_job, steps: [{'name' => "Step 1", 
                                              'url' => 'http://127.0.0.1/something',
                                              'headers' => {x_api_token: 'an-api-token'}
@@ -11,17 +11,13 @@ describe QueueMessage do
     @msg = double(AWS::SQS::ReceivedMessage,
              body: @async_job.uuid,
              receive_count: 2,
-             :visibility_timeout= => 3600,
+             :visibility_timeout= => 30,
              delete: nil
            )
   end
 
 
   describe "make_http_request" do
-
-    before :each do
-
-    end
 
     it "should default to a GET" do
       stub_request(:get, "http://127.0.0.1/something").with(body: '')
@@ -85,6 +81,10 @@ describe QueueMessage do
       @qm = QueueMessage.new(@msg)
       @qm.execute_current_step
     end
+  end
+
+
+  describe "make_http_request exceptions" do
 
     it "should handle timeouts and log them before re-raising the timeout exception" do
       stub_request(:get, "http://127.0.0.1/something").to_timeout
@@ -102,7 +102,15 @@ describe QueueMessage do
       @async_job.steps[0]['log'].should == ["StandardError: some error"]
     end
 
+    it "should set visibility_timeout in proportion to the number of times the message has been received" do
+      stub_request(:get, "http://127.0.0.1/something").to_raise("some error")
+      @qm = QueueMessage.new(@msg)
+      expect { @qm.execute_current_step }.to raise_error
+      expect(@msg).to have_received(:visibility_timeout=).with(30) # This is the initial assignment
+      expect(@msg).to have_received(:visibility_timeout=).with(2)  # This is the exception assignment
+    end
 
   end
+
 
 end

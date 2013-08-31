@@ -85,6 +85,84 @@ describe QueueMessage do
   end
 
 
+  describe "retry_seconds" do
+
+    it "should calculate an integer value" do
+      QueueMessage.new(@msg).retry_seconds.should be_an Integer
+    end
+
+    it "should provide defaults to return 1, 2, 3, etc as consecutive values" do
+      qm = QueueMessage.new(@msg)
+      @msg.should_receive(:receive_count).and_return(1)
+      qm.retry_seconds.should == 1
+      @msg.should_receive(:receive_count).and_return(2)
+      qm.retry_seconds.should == 2
+      @msg.should_receive(:receive_count).and_return(3)
+      qm.retry_seconds.should == 3
+      @msg.should_receive(:receive_count).and_return(4)
+      qm.retry_seconds.should == 4
+    end
+
+    it "should be able to apply a multiplier" do
+      @async_job.steps[0]['retry_base'] = 0
+      @async_job.steps[0]['retry_multiplier'] = 3
+      @async_job.save!
+      qm = QueueMessage.new(@msg)
+      @msg.should_receive(:receive_count).and_return(1)
+      qm.retry_seconds.should == 0
+      @msg.should_receive(:receive_count).and_return(2)
+      qm.retry_seconds.should == 3
+      @msg.should_receive(:receive_count).and_return(3)
+      qm.retry_seconds.should == 6
+      @msg.should_receive(:receive_count).and_return(4)
+      qm.retry_seconds.should == 9
+      @msg.should_receive(:receive_count).and_return(5)
+      qm.retry_seconds.should == 12
+      @msg.should_receive(:receive_count).and_return(6)
+      qm.retry_seconds.should == 15
+    end
+
+    it "should be able to return exponentially increasing consecutive values" do
+      @async_job.steps[0]['retry_base'] = 0
+      @async_job.steps[0]['retry_multiplier'] = 1
+      @async_job.steps[0]['retry_exponent'] = 3.5
+      @async_job.save!
+      qm = QueueMessage.new(@msg)
+      @msg.should_receive(:receive_count).and_return(1)
+      qm.retry_seconds.should == 0
+      @msg.should_receive(:receive_count).and_return(2)
+      qm.retry_seconds.should == 1
+      @msg.should_receive(:receive_count).and_return(3)
+      qm.retry_seconds.should == 12
+      @msg.should_receive(:receive_count).and_return(4)
+      qm.retry_seconds.should == 47
+      @msg.should_receive(:receive_count).and_return(5)
+      qm.retry_seconds.should == 128
+      @msg.should_receive(:receive_count).and_return(6)
+      qm.retry_seconds.should == 280
+      @msg.should_receive(:receive_count).and_return(7)
+      qm.retry_seconds.should == 530
+      @msg.should_receive(:receive_count).and_return(8)
+      qm.retry_seconds.should == 908
+    end
+
+    it "should be able to produce a constant result" do
+      @async_job.steps[0]['retry_base'] = 2
+      @async_job.steps[0]['retry_multiplier'] = 0
+      @async_job.save!
+      qm = QueueMessage.new(@msg)
+      @msg.should_receive(:receive_count).and_return(1)
+      qm.retry_seconds.should == 2
+      @msg.should_receive(:receive_count).and_return(2)
+      qm.retry_seconds.should == 2
+      @msg.should_receive(:receive_count).and_return(3)
+      qm.retry_seconds.should == 2
+      @msg.should_receive(:receive_count).and_return(4)
+      qm.retry_seconds.should == 2
+    end
+  end
+
+
 
   describe "process" do
 
@@ -133,11 +211,6 @@ describe QueueMessage do
 
 
   describe "execute_current_step" do
-
-    before :each do
-
-    end
-
 
     it "should set the AsyncJob's started_at attribute if not already set" do
       QueueMessage.any_instance.should_receive(:make_http_request)
