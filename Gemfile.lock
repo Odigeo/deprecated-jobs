@@ -37,6 +37,7 @@ GEM
     builder (3.1.4)
     crack (0.4.1)
       safe_yaml (~> 0.9.0)
+    daemons (1.1.9)
     diff-lcs (1.2.4)
     erubis (2.7.0)
     ethon (0.6.1)
@@ -148,6 +149,7 @@ PLATFORMS
 DEPENDENCIES
   annotate (>= 2.5.0)
   aws-sdk (~> 1.0)
+  daemons
   factory_girl_rails (~> 4.0)
   jbuilder
   memory_test_fix

@@ -9,6 +9,9 @@ gem "mysql2"
 
 gem "jbuilder"
 
+gem 'daemons'
+
+
 group :test, :development do
   gem "sqlite3"
   gem "memory_test_fix"
