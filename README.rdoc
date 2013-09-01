@@ -45,6 +45,6 @@ The following will create an AsyncJob which will turn to poison after about 35 s
 Raising the +retry_exponent+ to 2.5 yields poison in about a minute; +3+ in almost 2 minutes.
 
   AsyncJob.create(
-    steps: [{'url' => 'http://127.0.0.1', 'retry_exponent' => 3}],
+    steps: [{'url' => 'http://127.0.0.1', 'retry_exponent' => 2}],
     credentials: "bWFnbmV0bzp4YXZpZXI=",
     token: "hhhhhhhhhhhhhhh")
