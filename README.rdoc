@@ -14,3 +14,37 @@ A QueueJob can also be DELETEd from the queue.
  
 Use cases: to start an update operation that might take time: book a ticket, send an email, upload and 
 thumbnail a photograph, perform a search, etc.
+
+
+== AsyncJob Workers ==
+
+To start the AsyncJob workers during development:
+
+  ruby lib/async_job_daemons.rb start
+
+To stop them:
+
+  ruby lib/async_job_daemons.rb stop
+
+To run one of them without demonising:
+
+  ruby lib/async_job_daemons.rb run
+
+To see what's in the log directory:
+
+  ls -l /var/run/async_job_workers
+
+To see what the workers are logging:
+
+  tail -f log/development.log
+
+
+== Sample AsyncJob ==
+
+The following will create an AsyncJob which will turn to poison after about 35 seconds.
+Raising the +retry_exponent+ to 2.5 yields poison in about a minute; +3+ in almost 2 minutes.
+
+  AsyncJob.create(
+    steps: [{'url' => 'http://127.0.0.1', 'retry_exponent' => 3}],
+    credentials: "bWFnbmV0bzp4YXZpZXI=",
+    token: "hhhhhhhhhhhhhhh")
