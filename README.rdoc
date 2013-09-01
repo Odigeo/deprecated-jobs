@@ -16,7 +16,9 @@ Use cases: to start an update operation that might take time: book a ticket, sen
 thumbnail a photograph, perform a search, etc.
 
 
-== AsyncJob Workers ==
+== AsyncJob Workers
+
+Make sure the <tt>/var/run/async_workers</tt> directory exists and is writable.
 
 To start the AsyncJob workers during development:
 
@@ -42,7 +44,8 @@ To see what the workers are logging:
 == Sample AsyncJob ==
 
 The following will create an AsyncJob which will turn to poison after about 35 seconds.
-Raising the +retry_exponent+ to 2.5 yields poison in about a minute; +3+ in almost 2 minutes.
+Raising the +retry_exponent+ to 2.5 yields poison in about a minute. Raising it to 3 
+extends this to almost 2 minutes.
 
   AsyncJob.create(
     steps: [{'url' => 'http://127.0.0.1', 'retry_exponent' => 2}],
