@@ -42,7 +42,7 @@ end
 Daemons.run_proc("async_job_purger", options) do
   require ENV_PATH
   while true do
-    # Do something here
-    sleep 1.hour
+    AsyncJob.where("destroy_at <= ?", Time.now.utc).find_each { |j| j.destroy }
+    sleep 15.minutes
   end
 end
