@@ -32,7 +32,7 @@ class QueueMessage
   # long to wait before the next attempt.
   #
   def visibility_timeout=(seconds)
-    message.visibility_timeout = [seconds, 900].min
+    message.visibility_timeout = [seconds, 12.hours].min
   end
 
 
