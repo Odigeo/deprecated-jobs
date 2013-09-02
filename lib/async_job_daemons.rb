@@ -31,7 +31,7 @@ options = {
 (0...N_WORKERS).each do |i| 
   Daemons.run_proc("async_job_worker_#{i}", options) do
     require ENV_PATH
-    q = AsyncJobQueue.new basename: 'AsyncJobs'
+    q = AsyncJobQueue.new basename: ASYNCJOBQ_AWS_BASENAME
     loop do
       q.poll { |qm| qm.process } rescue nil
     end
