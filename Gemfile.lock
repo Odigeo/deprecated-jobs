@@ -72,7 +72,7 @@ GEM
     mysql2 (0.3.13)
     net-purge (0.1.0)
     nokogiri (1.5.10)
-    ocean-rails (1.18.8)
+    ocean-rails (1.19.0)
       faraday
       faraday_middleware
       ffi-rzmq
@@ -154,7 +154,7 @@ DEPENDENCIES
   jbuilder
   memory_test_fix
   mysql2
-  ocean-rails (~> 1.0)
+  ocean-rails (>= 1.19.0)
   protected_attributes
   rails (= 4.0.0)
   rspec-rails (~> 2.0)
