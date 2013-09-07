@@ -44,5 +44,14 @@ RSpec.configure do |config|
   
   # Make "FactoryGirl" superfluous
   config.include FactoryGirl::Syntax::Methods
+
+  config.before(:suite) do 
+    WebMock.allow_net_connect!
+    AsyncJob.establish_db_connection
+  end
+
+  config.after(:suite) do
+    WebMock.disable_net_connect!
+  end
 end
 

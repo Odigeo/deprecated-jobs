@@ -1,43 +1,27 @@
 # == Schema Information
 #
-# Table name: async_jobs
-#
-#  id                   :integer          not null, primary key
-#  uuid                 :string(255)      not null
-#  started_at           :datetime
-#  finished_at          :datetime
-#  steps                :text
-#  lock_version         :integer          default(0), not null
-#  created_by           :integer          default(0), not null
-#  updated_by           :integer          default(0), not null
-#  created_at           :datetime
-#  updated_at           :datetime
-#  last_completed_step  :integer
-#  max_seconds_in_queue :integer          default(86400), not null
-#  destroy_at           :datetime
-#  default_poison_limit :integer          default(5), not null
-#  credentials          :string(255)      default(""), not null
-#  default_step_time    :integer          default(30), not null
-#  succeeded            :boolean          default(FALSE), not null
-#  failed               :boolean          default(FALSE), not null
-#  poison               :boolean          default(FALSE), not null
-#  token                :string(255)
-#
-
 require 'spec_helper'
 
 describe AsyncJob do
+
+  # before :all do
+  #   WebMock.allow_net_connect!
+  #   AsyncJob.establish_db_connection
+  # end
+
+  # after :all do
+  #   WebMock.disable_net_connect!
+  # end
 
 
   describe "attributes" do
     
     it "should have an UUID" do
-      create(:async_job).uuid.should be_a String
+      create(:async_job_dyn).uuid.should be_a String
     end
 
-    it "should require UUIDs to be unique" do
-      create(:async_job, uuid: "blahonga")
-      lambda { create(:async_job, uuid: "blahonga") }.should raise_error
+    it "should have a start time" do
+      create(:async_job_dyn, started_at: Time.now.utc).started_at.should be_a Time
     end
 
     it "should have a start time" do
@@ -114,45 +98,7 @@ describe AsyncJob do
       create(:async_job).token.should be_a String
       create(:async_job, token: nil).token.should == nil
     end
-
   end
-
-
-  describe "search" do
-  
-    describe ".collection" do
-    
-      before :each do
-        create :async_job, uuid: 'foo'
-        create :async_job, uuid: 'bar'
-        create :async_job, uuid: 'baz'
-      end
-      
-    
-      it "should return an array of AsyncJob instances" do
-        ix = AsyncJob.collection
-        ix.length.should == 3
-        ix[0].should be_a AsyncJob
-      end
-    
-      it "should allow matches on uuid" do
-        AsyncJob.collection(uuid: 'NOWAI').length.should == 0
-        AsyncJob.collection(uuid: 'bar').length.should == 1
-        AsyncJob.collection(uuid: 'baz').length.should == 1
-      end
-      
-      it "should not allow searches" do
-        AsyncJob.collection(search: 'b').length.should == 0
-        AsyncJob.collection(search: 'z').length.should == 0
-      end
-      
-      it "key/value pairs not in the index_only array should quietly be ignored" do
-        AsyncJob.collection(uuid: 'bar', aardvark: 12).length.should == 1
-      end
-        
-    end
-  end
-
 
 
   describe "step handling" do

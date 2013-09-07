@@ -4,6 +4,16 @@ describe AsyncJobsController do
   
   render_views
 
+  # before :all do
+  #   WebMock.allow_net_connect!
+  #   AsyncJob.establish_db_connection
+  # end
+
+  # after :all do
+  #   WebMock.disable_net_connect!
+  # end
+
+
   describe "DELETE" do
     
     before :each do

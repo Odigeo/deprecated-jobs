@@ -1,46 +1,41 @@
-# == Schema Information
-#
-# Table name: async_jobs
-#
-#  id                   :integer          not null, primary key
-#  uuid                 :string(255)      not null
-#  started_at           :datetime
-#  finished_at          :datetime
-#  steps                :text
-#  lock_version         :integer          default(0), not null
-#  created_by           :integer          default(0), not null
-#  updated_by           :integer          default(0), not null
-#  created_at           :datetime
-#  updated_at           :datetime
-#  last_completed_step  :integer
-#  max_seconds_in_queue :integer          default(86400), not null
-#  destroy_at           :datetime
-#  default_poison_limit :integer          default(5), not null
-#  credentials          :string(255)      default(""), not null
-#  default_step_time    :integer          default(30), not null
-#  succeeded            :boolean          default(FALSE), not null
-#  failed               :boolean          default(FALSE), not null
-#  poison               :boolean          default(FALSE), not null
-#  token                :string(255)
-#
-
-class AsyncJob < ActiveRecord::Base
+class AsyncJob < OceanDynamo::Base
 
   ocean_resource_model index: [:uuid], search: false,
                        invalidate_member: [],
                        invalidate_collection: []
 
-  serialize :steps, Array
 
+  set_table_name_suffix Api.basename_suffix
+
+  primary_key :uuid
+
+  # Will be defaulted to a UUID
+  field :uuid
+
+  # Input attributes
+  field :credentials
+  field :token
+  field :steps,                :serialized, default: []
+  field :max_seconds_in_queue, :integer,    default: 1.day
+  field :default_poison_limit, :integer,    default: 5
+  field :default_step_time,    :integer,    default: 30
+
+  # Output only
+  field :started_at,           :datetime
+  field :last_completed_step,  :integer
+  field :finished_at,          :datetime
+  field :destroy_at,           :datetime
+  field :created_by
+  field :updated_by
+  field :succeeded,            :boolean,    default: false
+  field :failed,               :boolean,    default: false
+  field :poison,               :boolean,    default: false
+
+  
   @@queue = nil
 
-
-  # Attributes
-  attr_accessible :uuid, :lock_version,
-                  :steps, :max_seconds_in_queue, :default_poison_limit,
-                  :credentials, :token, :default_step_time
-
-  # Scopes
+  attr_accessor :controller
+  attr_accessor :action
 
 
   # Validations
@@ -57,10 +52,6 @@ class AsyncJob < ActiveRecord::Base
 
 
   # Callbacks
-  after_initialize do |j| 
-    j.uuid ||= SecureRandom.uuid
-  end
-
   before_validation do |j| 
     j.destroy_at ||= Time.now.utc + j.max_seconds_in_queue
   end
@@ -171,8 +162,8 @@ class AsyncJob < ActiveRecord::Base
   # This method enqueues the job on AWS.
   #
   def enqueue
-    @@queue ||= AsyncJobQueue.new basename: ASYNCJOBQ_AWS_BASENAME
-    @@queue.send_message uuid
+    #@@queue ||= AsyncJobQueue.new basename: ASYNCJOBQ_AWS_BASENAME
+    #@@queue.send_message uuid
   end
 
 
@@ -194,5 +185,6 @@ class AsyncJob < ActiveRecord::Base
   def ban
     Api.ban "/#{Api.version_for(:async_jobs)}/async_jobs/#{uuid}"
   end
+
 
 end

@@ -41,7 +41,7 @@ class AsyncJobsController < ApplicationController
      
   def find_async_job
     the_id = params['uuid'] || params['id']  # 'id' when received from the Rails router, uuid othw
-    @async_job = AsyncJob.find_by_uuid the_id
+    @async_job = AsyncJob.find(the_id) rescue nil
     return true if @async_job
     render_api_error 404, "AsyncJob not found"
     false

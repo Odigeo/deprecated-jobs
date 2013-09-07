@@ -52,7 +52,7 @@ class QueueMessage
   # multiple invocations return the same object.
   #
   def async_job
-    @async_job ||= AsyncJob.where(uuid: body).first
+    @async_job ||= AsyncJob.find(body) rescue nil
   end
 
 
