@@ -1,5 +1,10 @@
 class AsyncJobDyn < OceanDynamo::Base
 
+  ocean_resource_model index: [:uuid], search: false,
+                       invalidate_member: [],
+                       invalidate_collection: []
+
+
   set_table_name_suffix Api.basename_suffix
 
   primary_key :uuid
