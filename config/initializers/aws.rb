@@ -4,5 +4,5 @@ AWS.config access_key_id:     AWS_ACCESS_KEY_ID,
            user_agent_prefix: "",
            dynamo_db:         { :api_version => '2012-08-10' }
 
-$ddb = AWS::DynamoDB.new
+#$ddb = AWS::DynamoDB.new
                                  
