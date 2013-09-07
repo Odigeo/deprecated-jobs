@@ -3,8 +3,8 @@ require "spec_helper"
 describe AsyncJobsController do
   describe "routing" do
 
-    it "routes to #index" do
-      get("/v1/async_jobs").should route_to("async_jobs#index")
+    it "doesn't route to #index" do
+      get("/v1/async_jobs").should_not be_routable
     end
 
     it "routes to #show" do

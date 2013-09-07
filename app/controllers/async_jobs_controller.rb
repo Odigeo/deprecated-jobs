@@ -7,15 +7,6 @@ class AsyncJobsController < ApplicationController
   before_action :require_conditional, only: :show
   before_action :find_async_job, :only => [:show, :destroy]
     
-  
-  # GET /async_jobs
-  def index
-    #expires_in 0, 's-maxage' => 30.minutes
-    #if stale?(collection_etag(AsyncJob))
-      api_render AsyncJob.collection(params)
-    #end
-  end
-
 
   # GET /async_jobs/1
   def show
@@ -28,7 +19,7 @@ class AsyncJobsController < ApplicationController
 
   # POST /async_jobs
   def create
-    @async_job = AsyncJob.new(filtered_params AsyncJob)
+    @async_job = AsyncJob.new(params)    # No filtering yet!
     if @async_job.steps == []
       @async_job.started_at = Time.now.utc
       @async_job.finished_at = @async_job.started_at
