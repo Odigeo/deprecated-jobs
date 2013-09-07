@@ -1,8 +1,16 @@
-AWS.config access_key_id:     AWS_ACCESS_KEY_ID, 
-           secret_access_key: AWS_SECRET_ACCESS_KEY, 
-           region:            AWS_REGION,
-           user_agent_prefix: "",
-           dynamo_db:         { :api_version => '2012-08-10' }
+f = File.join(Rails.root, "config/aws.yml")
 
-#$ddb = AWS::DynamoDB.new
-                                 
+unless File.exists?(f)
+  puts
+  puts "-----------------------------------------------------------------------"
+  puts "AWS config file missing. Please copy config/aws.yml.example"
+  puts "to config/aws.yml and tailor its contents to suit your dev setup."
+  puts
+  puts "NB: aws.yml is excluded from git version control as it will contain"
+  puts "    data private to your Ocean system."
+  puts "-----------------------------------------------------------------------"
+  puts
+  abort
+end
+
+AWS.config YAML.load(File.read(f))[Rails.env]

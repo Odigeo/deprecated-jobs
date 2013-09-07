@@ -33,5 +33,8 @@
 # Ignore the tailored config.yml file
 config/config.yml
 
+# Ignore the tailored AWS configuration file
+config/aws.yml
+
 # Ignore the Tork config dir
 /.tork
