@@ -1,27 +1,15 @@
-# == Schema Information
-#
 require 'spec_helper'
 
 describe AsyncJob do
 
-  # before :all do
-  #   WebMock.allow_net_connect!
-  #   AsyncJob.establish_db_connection
-  # end
-
-  # after :all do
-  #   WebMock.disable_net_connect!
-  # end
-
-
   describe "attributes" do
     
     it "should have an UUID" do
-      create(:async_job_dyn).uuid.should be_a String
+      create(:async_job).uuid.should be_a String
     end
 
     it "should have a start time" do
-      create(:async_job_dyn, started_at: Time.now.utc).started_at.should be_a Time
+      create(:async_job, started_at: Time.now.utc).started_at.should be_a Time
     end
 
     it "should have a start time" do
@@ -46,11 +34,11 @@ describe AsyncJob do
     end
   
    it "should have a creator" do
-      create(:async_job).created_by.should be_an Integer
+      create(:async_job).created_by.should == ""
     end
 
     it "should have an updater" do
-      create(:async_job).updated_by.should be_an Integer
+      create(:async_job).updated_by.should == ""
     end
 
     it "should have a last_completed_step attribute" do
@@ -114,34 +102,34 @@ describe AsyncJob do
     it "should have a finished? predicate" do
       @j.finished?.should == false
       @j.job_is_poison
-      @j.reload
+      @j.reload(consistent: true)
       @j.finished?.should == true
     end
 
     it "should have a success? predicate" do
       @j.finished?.should == false
       @j.job_succeeded
-      @j.reload
+      @j.reload(consistent: true)
       @j.succeeded?.should == true
     end
 
     it "should have a failure? predicate" do
       @j.finished?.should == false
       @j.job_failed
-      @j.reload
+      @j.reload(consistent: true)
       @j.failed?.should == true
     end
 
     it "should have a poison? predicate" do
       @j.finished?.should == false
       @j.job_is_poison
-      @j.reload
+      @j.reload(consistent: true)
       @j.poison?.should == true
     end
 
     it "should have a job_succeeded method that finishes the job" do
       @j.job_succeeded
-      @j.reload
+      @j.reload(consistent: true)
       @j.finished?.should == true
       @j.succeeded?.should == true
       @j.failed?.should == false
@@ -150,7 +138,7 @@ describe AsyncJob do
 
     it "should have a job_failed method to finish a job" do
       @j.job_failed
-      @j.reload
+      @j.reload(consistent: true)
       @j.finished?.should == true
       @j.failed?.should == true
       @j.succeeded?.should == false
@@ -164,7 +152,7 @@ describe AsyncJob do
 
     it "should have a job_is_poison method to finish a job" do
       @j.job_is_poison
-      @j.reload
+      @j.reload(consistent: true)
       @j.finished?.should == true
       @j.failed?.should == true
       @j.succeeded?.should == false
@@ -210,7 +198,7 @@ describe AsyncJob do
       @j.finished_at.should == nil      
       @j.current_step_done!
       @j.finished_at.should_not == nil      
-      @j.reload
+      @j.reload(consistent: true)
       @j.finished?.should == true
       @j.failed?.should == false
       @j.succeeded?.should == true

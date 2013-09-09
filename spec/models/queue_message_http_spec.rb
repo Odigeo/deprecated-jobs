@@ -2,15 +2,6 @@ require 'spec_helper'
 
 describe QueueMessage do
 
-  # before :all do
-  #   WebMock.allow_net_connect!
-  #   AsyncJob.establish_db_connection
-  # end
-
-  # after :all do
-  #   WebMock.disable_net_connect!
-  # end
-
   before :each do
     AsyncJob.any_instance.should_receive(:enqueue).with().once
     @async_job = create(:async_job, steps: [{'name' => "Step 1", 
@@ -33,9 +24,9 @@ describe QueueMessage do
       @async_job.save!
       stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
         to_return(status: 201, body: '{"authentication": {"token": "hey-i-am-the-token"}}', headers: {'Content-Type'=>'application/json'})
-      stub_request(:get, "http://127.0.0.1/something")    
+      stub_request(:get, "http://127.0.0.1/something")
       QueueMessage.new(@msg).execute_current_step
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.token.should == "hey-i-am-the-token"
       @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
       @async_job.failed?.should == false
@@ -47,7 +38,7 @@ describe QueueMessage do
       stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.token.should == nil
       @async_job.steps[0]['log'].should == ["Failed to authenticate"]
       @async_job.failed?.should == true
@@ -61,7 +52,7 @@ describe QueueMessage do
       stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
         to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.token.should == "this-is-a-new-token"
       @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
       @async_job.failed?.should == false
@@ -73,7 +64,7 @@ describe QueueMessage do
       stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.token.should == "A-totally-fake-token"
       @async_job.steps[0]['log'].should == ["Failed to authenticate"]
       @async_job.failed?.should == true
@@ -87,7 +78,7 @@ describe QueueMessage do
       stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
         to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.token.should == "this-is-a-new-token"
       @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
       @async_job.failed?.should == false
@@ -99,7 +90,7 @@ describe QueueMessage do
       stub_request(:post, "http://forbidden.odigeoservices.com/v1/authentications").
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.token.should == "A-totally-fake-token"
       @async_job.steps[0]['log'].should == ["Failed to authenticate"]
       @async_job.failed?.should == true
@@ -151,7 +142,7 @@ describe QueueMessage do
       @async_job.save!
       Faraday.should_not_receive(:quux)
       QueueMessage.new(@msg).execute_current_step
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Unsupported HTTP method 'QUUX'"]
     end
 
@@ -170,7 +161,7 @@ describe QueueMessage do
       stub_request(:get, "http://127.0.0.1/something").
          to_return(status: 301, body: nil, headers: {})
       QueueMessage.new(@msg).execute_current_step # (qm.async_job.current_step, 301, {}, nil)
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Failed: 301 without Location header"]
       @async_job.failed?.should == true
       @async_job.finished?.should == true
@@ -184,7 +175,7 @@ describe QueueMessage do
       stub_request(:get, "http://final.com/the_data").
          to_return(status: 200, body: "Final payload", headers: {})
       QueueMessage.new(@msg).execute_current_step
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Redirect: 301 to http://somewhere.else.com/someplace", 
                                             "Redirect: 301 to http://final.com/the_data", 
                                             "Succeeded: 200"]
@@ -199,14 +190,14 @@ describe QueueMessage do
     it "should handle timeouts and log them before re-raising the timeout exception" do
       stub_request(:get, "http://127.0.0.1/something").to_timeout
       expect { QueueMessage.new(@msg).execute_current_step }.to raise_error
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Faraday::Error::TimeoutError: execution expired"]
     end
 
     it "should handle exceptions and log them before re-raising them" do
       stub_request(:get, "http://127.0.0.1/something").to_raise("some error")
       expect { QueueMessage.new(@msg).execute_current_step }.to raise_error
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["StandardError: some error"]
     end
 
@@ -224,7 +215,7 @@ describe QueueMessage do
     it "should log a successful response (2xx) and return normally" do
       qm = QueueMessage.new(@msg)
       expect { qm.handle_response(qm.async_job.current_step, 204, {}, nil) }.not_to raise_error
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Succeeded: 204"]
       @async_job.failed?.should == false
       @async_job.finished?.should == false
@@ -233,7 +224,7 @@ describe QueueMessage do
     it "should log a client error response (4xx) and fail the whole job" do
       qm = QueueMessage.new(@msg)
       expect { qm.handle_response(qm.async_job.current_step, 403, {}, nil) }.not_to raise_error
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Failed: 403"]
       @async_job.failed?.should == true
       @async_job.finished?.should == true
@@ -242,7 +233,7 @@ describe QueueMessage do
     it "should log a server error response (5xx), fail the step, then raise an error to trigger a later retry" do
       qm = QueueMessage.new(@msg)
       expect { qm.handle_response(qm.async_job.current_step, 500, {}, nil) }.to raise_error
-      @async_job.reload
+      @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Remote server error: 500. Retrying via exception."]
       @async_job.failed?.should == false
       @async_job.finished?.should == false

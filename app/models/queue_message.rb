@@ -52,7 +52,7 @@ class QueueMessage
   # multiple invocations return the same object.
   #
   def async_job
-    @async_job ||= AsyncJob.find(body) rescue nil
+    @async_job ||= AsyncJob.find(body, consistent: true) rescue nil
   end
 
 
@@ -149,11 +149,12 @@ class QueueMessage
 
     return if !async_job.token && !authenticate
 
-    headers = {content_type: 'application/json', 
+    headers = {
+               content_type: 'application/json', 
                accept: 'application/json',
-               x_api_token: async_job.token}.merge(step['headers'] || {})
-
-    begin
+               x_api_token: async_job.token
+              }.merge(step['headers'] || {}).symbolize_keys
+   begin
       response = nil
       loop do
         response = case http_method

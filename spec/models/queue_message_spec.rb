@@ -2,16 +2,6 @@ require 'spec_helper'
 
 describe QueueMessage do
 
-  # before :all do
-  #   WebMock.allow_net_connect!
-  #   AsyncJob.establish_db_connection
-  # end
-
-  # after :all do
-  #   WebMock.disable_net_connect!
-  # end
-
-
   before :each do
     AsyncJob.any_instance.stub(:enqueue)
     @async_job = create(:async_job, steps: [{'name' => "Step 1", 'url' => 'http://127.0.0.1/something'}, 

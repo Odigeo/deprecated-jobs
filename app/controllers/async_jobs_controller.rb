@@ -19,7 +19,8 @@ class AsyncJobsController < ApplicationController
 
   # POST /async_jobs
   def create
-    @async_job = AsyncJob.new(params)    # No filtering yet!
+    @async_job = AsyncJob.new(params.slice(:credentials, :token, :steps, :max_seconds_in_queue,
+                                           :default_poison_limit, :default_step_time))
     if @async_job.steps == []
       @async_job.started_at = Time.now.utc
       @async_job.finished_at = @async_job.started_at
@@ -41,10 +42,15 @@ class AsyncJobsController < ApplicationController
      
   def find_async_job
     the_id = params['uuid'] || params['id']  # 'id' when received from the Rails router, uuid othw
-    @async_job = AsyncJob.find(the_id) rescue nil
+    begin 
+      @async_job = (AsyncJob.find(the_id, consistent: true))
+    rescue OceanDynamo::RecordNotFound
+      @async_job = nil
+    end
     return true if @async_job
     render_api_error 404, "AsyncJob not found"
     false
   end
     
 end
+

@@ -1,16 +1,6 @@
 require 'spec_helper'
 
 describe AsyncJobQueue do
-
-  # before :all do
-  #   WebMock.allow_net_connect!
-  #   AsyncJob.establish_db_connection
-  # end
-
-  # after :all do
-  #   WebMock.disable_net_connect!
-  # end
-
   
   before :each do
     AsyncJobQueue.stub(:create_queue).

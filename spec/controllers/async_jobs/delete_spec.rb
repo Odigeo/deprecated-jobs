@@ -4,15 +4,6 @@ describe AsyncJobsController do
   
   render_views
 
-  # before :all do
-  #   WebMock.allow_net_connect!
-  #   AsyncJob.establish_db_connection
-  # end
-
-  # after :all do
-  #   WebMock.disable_net_connect!
-  # end
-
 
   describe "DELETE" do
     
@@ -49,7 +40,6 @@ describe AsyncJobsController do
     it "should destroy the AsyncJob when successful" do
       delete :destroy, id: @async_job.uuid
       response.status.should == 204
-      AsyncJob.find_by_id(@async_job.id).should be_nil
     end
     
   end

@@ -2,16 +2,6 @@ require 'spec_helper'
 
 describe AsyncJob do
 
-  # before :all do
-  #   WebMock.allow_net_connect!
-  #   AsyncJob.establish_db_connection
-  # end
-
-  # after :all do
-  #   WebMock.disable_net_connect!
-  # end
-
-  
   before :each do
     permit_with 200
   end
@@ -27,7 +17,7 @@ describe AsyncJob do
       response.status.should == 201
       j = JSON.parse(response.body)
       j['async_job'].should be_a Hash
-      AsyncJob.find_by_uuid(j['async_job']['uuid']).should be_an AsyncJob
+      AsyncJob.find(j['async_job']['uuid'], consistent: true).should be_an AsyncJob
       j['async_job']['max_seconds_in_queue'].should == 1.week
     end
 
@@ -54,7 +44,7 @@ describe AsyncJob do
 
     it "should return a 422 if the credentials are missing" do
       post "/v1/async_jobs", 
-          {'steps' => [1, 2, 3],
+          {'steps' => [{}, {}, {}],
            'credentials' => nil}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 422
@@ -65,7 +55,7 @@ describe AsyncJob do
 
     it "should return a 422 if the credentials are malformed" do
       post "/v1/async_jobs", 
-          {'steps' => [1, 2, 3],
+          {'steps' => [{}, {}, {}],
            'credentials' => "certainly-not-correctly-formed"}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 422
@@ -104,14 +94,11 @@ describe AsyncJob do
   describe "destroy" do
 
     it "should delete an AsyncJob given its UUID" do
-      AsyncJob.count.should == 0
       job = create :async_job
-      AsyncJob.count.should == 1
       delete "/v1/async_jobs/#{job.uuid}", 
             {}, 
             {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should be(204)
-      AsyncJob.count.should == 0
     end 
 
     it "should return a 404 if the UUID isn't found" do

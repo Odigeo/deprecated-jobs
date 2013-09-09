@@ -51,7 +51,7 @@ RSpec.configure do |config|
   end
 
   config.after(:suite) do
-    WebMock.disable_net_connect!
+    #WebMock.disable_net_connect!
   end
 end
 

@@ -10,32 +10,32 @@ class AsyncJob < OceanDynamo::Base
   primary_key :uuid
 
   # Will be defaulted to a UUID
-  field :uuid
+  attribute :uuid
 
   # Input attributes
-  field :credentials
-  field :token
-  field :steps,                :serialized, default: []
-  field :max_seconds_in_queue, :integer,    default: 1.day
-  field :default_poison_limit, :integer,    default: 5
-  field :default_step_time,    :integer,    default: 30
+  attribute :credentials
+  attribute :token
+  attribute :steps,                :serialized, default: []
+  attribute :max_seconds_in_queue, :integer,    default: 1.day
+  attribute :default_poison_limit, :integer,    default: 5
+  attribute :default_step_time,    :integer,    default: 30
 
   # Output only
-  field :started_at,           :datetime
-  field :last_completed_step,  :integer
-  field :finished_at,          :datetime
-  field :destroy_at,           :datetime
-  field :created_by
-  field :updated_by
-  field :succeeded,            :boolean,    default: false
-  field :failed,               :boolean,    default: false
-  field :poison,               :boolean,    default: false
+  attribute :started_at,           :datetime
+  attribute :last_completed_step,  :integer
+  attribute :finished_at,          :datetime
+  attribute :destroy_at,           :datetime
+  attribute :created_by
+  attribute :updated_by
+  attribute :succeeded,            :boolean,    default: false
+  attribute :failed,               :boolean,    default: false
+  attribute :poison,               :boolean,    default: false
 
   
   @@queue = nil
 
-  attr_accessor :controller
-  attr_accessor :action
+  # attr_accessor :controller
+  # attr_accessor :action
 
 
   # Validations
@@ -162,8 +162,8 @@ class AsyncJob < OceanDynamo::Base
   # This method enqueues the job on AWS.
   #
   def enqueue
-    #@@queue ||= AsyncJobQueue.new basename: ASYNCJOBQ_AWS_BASENAME
-    #@@queue.send_message uuid
+    @@queue ||= AsyncJobQueue.new basename: ASYNCJOBQ_AWS_BASENAME
+    @@queue.send_message uuid
   end
 
 
