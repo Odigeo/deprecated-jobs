@@ -72,9 +72,9 @@ GEM
     mysql2 (0.3.13)
     net-purge (0.1.0)
     nokogiri (1.5.10)
-    ocean-dynamo (0.1.9)
+    ocean-dynamo (0.1.10)
       aws-sdk (~> 1.0)
-    ocean-rails (1.22.0)
+    ocean-rails (1.22.1)
       faraday
       faraday_middleware
       ffi-rzmq
