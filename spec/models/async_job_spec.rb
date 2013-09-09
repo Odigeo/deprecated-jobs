@@ -8,6 +8,12 @@ describe AsyncJob do
       create(:async_job).uuid.should be_a String
     end
 
+    it "should assign an UUID to the hash_key attribute if nil at create" do
+      i = build :async_job, uuid: nil
+      i.save.should == true
+      i.uuid.should_not be_blank
+    end
+
     it "should have a start time" do
       create(:async_job, started_at: Time.now.utc).started_at.should be_a Time
     end
@@ -22,7 +28,7 @@ describe AsyncJob do
 
     it "should have a steps array" do
      AsyncJob.any_instance.should_receive(:enqueue)
-     create(:async_job, steps: [1,2,3]).steps.should == [1,2,3]
+     create(:async_job, steps: [{}, {}, {}]).steps.should == [{}, {}, {}]
     end
 
      it "should have a creation time" do

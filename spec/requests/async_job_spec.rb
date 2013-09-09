@@ -11,25 +11,18 @@ describe AsyncJob do
 
     it "should create an AsyncJob given proper parameters" do
       post "/v1/async_jobs", 
-          {'max_seconds_in_queue' => 1.week,
+          {'max_seconds_in_queue' => 604800,
+           'default_step_time' => 100,
            'credentials' => 'bWFnbmV0bzp4YXZpZXI='}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 201
+      puts response.body
       j = JSON.parse(response.body)
       j['async_job'].should be_a Hash
       AsyncJob.find(j['async_job']['uuid'], consistent: true).should be_an AsyncJob
-      j['async_job']['max_seconds_in_queue'].should == 1.week
+      j['async_job']['default_step_time'].should == 100
+      j['async_job']['max_seconds_in_queue'].should == 604800
     end
-
-    it "should barf on a non-array steps attribute" do
-      post "/v1/async_jobs", 
-          {'steps' => {x: 1, y: 2}}, 
-          {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
-      response.status.should == 422
-      j = JSON.parse(response.body)
-      j['async_job'].should == nil
-      j['steps'].should == ["must be an Array"]
-   end
 
    it "should return a finished job immediately if no steps" do
       post "/v1/async_jobs", 
@@ -39,7 +32,18 @@ describe AsyncJob do
       response.status.should == 201
       j = JSON.parse(response.body)['async_job']
       j.should be_a Hash
-      j['finished_at'].should_not == nil
+      j['finished_at'].should be_a String
+   end
+
+    it "should barf on a non-array steps attribute" do
+      post "/v1/async_jobs", 
+          {'steps' => {x: 1, y: 2}}, 
+          {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
+      response.status.should == 422
+      j = JSON.parse(response.body)
+      j.should_not == {"_api_error"=>["Resource not unique"]}
+      j['async_job'].should == nil
+      j['steps'].should == ["must be an Array"]
    end
 
     it "should return a 422 if the credentials are missing" do
@@ -49,6 +53,7 @@ describe AsyncJob do
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 422
       j = JSON.parse(response.body)
+      j.should_not == {"_api_error"=>["Resource not unique"]}
       j['async_job'].should == nil
       j['credentials'].should == ["must be specified"]
     end
@@ -60,6 +65,7 @@ describe AsyncJob do
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 422
       j = JSON.parse(response.body)
+      j.should_not == {"_api_error"=>["Resource not unique"]}
       j['async_job'].should == nil
       j['credentials'].should == ["are malformed"]
     end

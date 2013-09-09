@@ -2,6 +2,15 @@ require 'spec_helper'
 
 describe QueueMessage do
 
+  before :all do    
+    #WebMock.allow_net_connect!
+    WebMock.disable_net_connect!(allow: ["localhost:4567"])
+  end
+  
+  after :all do    
+    WebMock.allow_net_connect!
+  end
+
   before :each do
     AsyncJob.any_instance.should_receive(:enqueue).with().once
     @async_job = create(:async_job, steps: [{'name' => "Step 1", 
@@ -39,7 +48,7 @@ describe QueueMessage do
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.token.should == nil
+      @async_job.token.should == ""
       @async_job.steps[0]['log'].should == ["Failed to authenticate"]
       @async_job.failed?.should == true
       @async_job.finished?.should == true

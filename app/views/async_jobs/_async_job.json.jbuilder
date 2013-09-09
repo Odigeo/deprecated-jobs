@@ -1,7 +1,7 @@
 json.async_job do |json|
-	json._links       hyperlinks(self:    async_job_url(async_job.uuid),
-	                             creator: api_user_url(async_job.created_by || 0),
-	                             updater: api_user_url(async_job.updated_by || 0))
+	json._links       hyperlinks(self:    async_job_url(async_job.id),
+	                             creator: api_user_url(async_job.created_by),
+	                             updater: api_user_url(async_job.updated_by))
 	json.(async_job, :uuid, 
 	                 :default_step_time,
 	                 :default_poison_limit,

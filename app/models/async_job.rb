@@ -34,9 +34,6 @@ class AsyncJob < OceanDynamo::Base
   
   @@queue = nil
 
-  # attr_accessor :controller
-  # attr_accessor :action
-
 
   # Validations
   validates_each :steps do |record, attr, value|
@@ -53,7 +50,8 @@ class AsyncJob < OceanDynamo::Base
 
   # Callbacks
   before_validation do |j| 
-    j.destroy_at ||= Time.now.utc + j.max_seconds_in_queue
+    # The to_i should NOT be required. Fix OceanDynamo.
+    j.destroy_at ||= Time.now.utc + j.max_seconds_in_queue.to_i
   end
 
   after_create do |j|

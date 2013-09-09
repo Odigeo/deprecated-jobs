@@ -26,26 +26,13 @@ describe AsyncJobsController do
       response.status.should == 400
     end
     
-    it "should return a 422 if the async_job already exists" do
-      post :create, @args
-      response.status.should == 201
-      response.content_type.should == "application/json"
-      post :create, @args
+    it "should return a 422 when there are validation errors" do
+      post :create, @args.merge('credentials' => "qz")
       response.status.should == 422
       response.content_type.should == "application/json"
-      JSON.parse(response.body).should == {"_api_error" => ["Resource not unique"]}
+      JSON.parse(response.body).should_not == {"_api_error"=>["Resource not unique"]}
+      JSON.parse(response.body).should == {"credentials"=>["are malformed"]}
     end
-
-    #
-    # Uncomment this test as soon as there is one or more DB attributes that need
-    # validating.
-    #
-    # it "should return a 422 when there are validation errors" do
-    #   post :create, @args.merge('name' => "qz")
-    #   response.status.should == 422
-    #   response.content_type.should == "application/json"
-    #   JSON.parse(response.body).should == {"name"=>["is too short (minimum is 3 characters)"]}
-    # end
                 
     it "should return a 201 when successful" do
       post :create, @args

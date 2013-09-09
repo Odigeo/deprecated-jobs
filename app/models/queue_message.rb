@@ -51,8 +51,10 @@ class QueueMessage
   # Returns the associated AsyncJob or nil if one doesn't exist. Caches the result:
   # multiple invocations return the same object.
   #
-  def async_job
-    @async_job ||= AsyncJob.find(body, consistent: true) rescue nil
+  def async_job    
+    @async_job ||= AsyncJob.find(body, consistent: true) #rescue nil
+  rescue OceanDynamo::RecordNotFound
+    nil
   end
 
 
@@ -147,7 +149,7 @@ class QueueMessage
 
     Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] started."
 
-    return if !async_job.token && !authenticate
+    return if async_job.token.blank? && !authenticate
 
     headers = {
                content_type: 'application/json', 
