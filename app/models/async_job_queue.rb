@@ -9,8 +9,8 @@ class AsyncJobQueue
   def initialize(basename: "AsyncJobQueue-" + SecureRandom::urlsafe_base64)
     @@sqs ||= AWS::SQS.new
     @basename = basename
-    @fullname = Api.adorn_basename(basename)
-    @queue = AsyncJobQueue.create_queue(self, chef_env: CHEF_ENV, rails_env: Rails.env)
+    @fullname = basename + Api.basename_suffix
+    @queue = AsyncJobQueue.create_queue(self)
   end
 
 
