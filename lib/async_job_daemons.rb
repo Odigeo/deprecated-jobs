@@ -21,7 +21,7 @@ options = {
   dir_mode:   :normal,
   dir:        RUN_TIME_DIR,
   backtrace:  true,
-  log_output: false,
+  log_output: true,
   multiple:   false,
   monitor:    true
 }
@@ -31,6 +31,7 @@ options = {
 (0...N_WORKERS).each do |i| 
   Daemons.run_proc("async_job_worker_#{i}", options) do
     require ENV_PATH
+    AsyncJob.establish_db_connection
     q = AsyncJobQueue.new basename: ASYNCJOBQ_AWS_BASENAME
     loop do
       q.poll { |qm| qm.process } rescue nil

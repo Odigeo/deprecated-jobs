@@ -5,7 +5,8 @@ class AsyncJob < OceanDynamo::Base
                        invalidate_collection: []
 
 
-  set_table_name_suffix Api.basename_suffix
+  #set_table_name_suffix Api.basename_suffix
+  self.table_name_suffix = Api.basename_suffix
 
   primary_key :uuid
 
