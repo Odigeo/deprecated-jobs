@@ -16,7 +16,6 @@ describe AsyncJob do
            'credentials' => 'bWFnbmV0bzp4YXZpZXI='}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       response.status.should == 201
-      puts response.body
       j = JSON.parse(response.body)
       j['async_job'].should be_a Hash
       AsyncJob.find(j['async_job']['uuid'], consistent: true).should be_an AsyncJob
