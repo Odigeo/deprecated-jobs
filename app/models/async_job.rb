@@ -4,11 +4,10 @@ class AsyncJob < OceanDynamo::Base
                        invalidate_member: [],
                        invalidate_collection: []
 
-
-  #set_table_name_suffix Api.basename_suffix
-  self.table_name_suffix = Api.basename_suffix
-
+  # Must be the very first declaration (inits the class)
   primary_key :uuid
+
+  set_table_name_suffix Api.basename_suffix
 
   # Will be defaulted to a UUID
   attribute :uuid
