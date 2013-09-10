@@ -4,34 +4,30 @@ class AsyncJob < OceanDynamo::Base
                        invalidate_member: [],
                        invalidate_collection: []
 
-  # Must be the very first declaration (inits the class)
-  primary_key :uuid
 
-  set_table_name_suffix Api.basename_suffix
+  dynamo_schema(table_name_suffix: Api.basename_suffix) do
 
-  # Will be defaulted to a UUID
-  attribute :uuid
+    # Input attributes
+    attribute :credentials
+    attribute :token
+    attribute :steps,                :serialized, default: []
+    attribute :max_seconds_in_queue, :integer,    default: 1.day
+    attribute :default_poison_limit, :integer,    default: 5
+    attribute :default_step_time,    :integer,    default: 30
 
-  # Input attributes
-  attribute :credentials
-  attribute :token
-  attribute :steps,                :serialized, default: []
-  attribute :max_seconds_in_queue, :integer,    default: 1.day
-  attribute :default_poison_limit, :integer,    default: 5
-  attribute :default_step_time,    :integer,    default: 30
-
-  # Output only
-  attribute :started_at,           :datetime
-  attribute :last_completed_step,  :integer
-  attribute :finished_at,          :datetime
-  attribute :destroy_at,           :datetime
-  attribute :created_by
-  attribute :updated_by
-  attribute :succeeded,            :boolean,    default: false
-  attribute :failed,               :boolean,    default: false
-  attribute :poison,               :boolean,    default: false
-
+    # Output only
+    attribute :started_at,           :datetime
+    attribute :last_completed_step,  :integer
+    attribute :finished_at,          :datetime
+    attribute :destroy_at,           :datetime
+    attribute :created_by
+    attribute :updated_by
+    attribute :succeeded,            :boolean,    default: false
+    attribute :failed,               :boolean,    default: false
+    attribute :poison,               :boolean,    default: false
+  end
   
+
   @@queue = nil
 
 

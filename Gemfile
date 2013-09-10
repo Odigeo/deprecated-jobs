@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem "rails", "4.0.0"
 gem "ocean-rails", ">= 1.19.0"
+gem "ocean-dynamo", ">= 0.2.0"
 
 gem 'aws-sdk', '~> 1.0'
 
