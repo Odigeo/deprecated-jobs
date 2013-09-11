@@ -2,15 +2,6 @@ require 'spec_helper'
 
 describe QueueMessage do
 
-  before :all do    
-    #WebMock.allow_net_connect!
-    WebMock.disable_net_connect!(allow: ["localhost:4567"])
-  end
-  
-  after :all do    
-    WebMock.allow_net_connect!
-  end
-
   before :each do
     AsyncJob.any_instance.should_receive(:enqueue).with().once
     @async_job = create(:async_job, steps: [{'name' => "Step 1", 

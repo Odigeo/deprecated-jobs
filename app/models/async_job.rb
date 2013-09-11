@@ -5,7 +5,8 @@ class AsyncJob < OceanDynamo::Base
                        invalidate_collection: []
 
 
-  dynamo_schema(table_name_suffix: Api.basename_suffix) do
+  dynamo_schema(table_name_suffix: Api.basename_suffix, 
+                create: Rails.env != "production") do
 
     # Input attributes
     attribute :credentials
@@ -46,8 +47,7 @@ class AsyncJob < OceanDynamo::Base
 
   # Callbacks
   before_validation do |j| 
-    # The to_i should NOT be required. Fix OceanDynamo.
-    j.destroy_at ||= Time.now.utc + j.max_seconds_in_queue.to_i
+    j.destroy_at ||= Time.now.utc + j.max_seconds_in_queue
   end
 
   after_create do |j|
