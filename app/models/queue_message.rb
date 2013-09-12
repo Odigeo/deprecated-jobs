@@ -52,9 +52,7 @@ class QueueMessage
   # multiple invocations return the same object.
   #
   def async_job    
-    @async_job ||= AsyncJob.find(body, consistent: true) #rescue nil
-  rescue OceanDynamo::RecordNotFound
-    nil
+    @async_job ||= AsyncJob.find_by_key(body, consistent: true)
   end
 
 

@@ -49,13 +49,8 @@ class AsyncJobsController < ApplicationController
   def find_async_job
     ActionController::Parameters.permit_all_parameters = true
     the_id = params['uuid'] || params['id']  # 'id' when received from the Rails router, uuid othw
-    # The following song and dance because we don't have AsyncJob.find_by_id()
-    begin 
-      @async_job = (AsyncJob.find(the_id, consistent: true))
-    rescue OceanDynamo::RecordNotFound
-      @async_job = nil
-    end
-    # End of song and dance
+    @async_job = AsyncJob.find_by_key(the_id, consistent: true)
+
     return true if @async_job
     render_api_error 404, "AsyncJob not found"
     false
