@@ -5,9 +5,8 @@ class AsyncJob < OceanDynamo::Base
                        invalidate_collection: []
 
 
-  dynamo_schema(table_name_suffix: Api.basename_suffix, 
-                create: Rails.env != "production") do
-
+  dynamo_schema(:uuid, table_name_suffix: Api.basename_suffix, 
+                       create: Rails.env != "production") do
     # Input attributes
     attribute :credentials
     attribute :token

@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem "rails", "4.0.0"
 gem "ocean-rails", ">= 1.22.5"
-gem "ocean-dynamo", ">= 0.3.1"
+gem "ocean-dynamo", ">= 0.3.3"
 
 gem "jbuilder"
 
@@ -19,5 +19,3 @@ group :test do
   gem "factory_girl_rails", "~> 4.0"
   gem "webmock"
 end
-
-gem "protected_attributes"
