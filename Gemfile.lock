@@ -70,7 +70,7 @@ GEM
     multipart-post (1.2.0)
     net-purge (0.1.0)
     nokogiri (1.5.10)
-    ocean-dynamo (0.3.3)
+    ocean-dynamo (0.3.4)
       activemodel (~> 4.0)
       activesupport (~> 4.0)
       aws-sdk (~> 1.0)
