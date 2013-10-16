@@ -11,7 +11,6 @@ class AliveController < ApplicationController
 
 
   def index
-    AsyncJob.count
     render :text => "ALIVE", :status => 200
   end
   
