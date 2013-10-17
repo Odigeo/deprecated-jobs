@@ -41,7 +41,7 @@ To see what the workers are logging:
   tail -f log/development.log
 
 
-== Sample AsyncJob ==
+== Sample AsyncJob
 
 The following will create an AsyncJob which will turn to poison after about 35 seconds.
 Raising the +retry_exponent+ to 2.5 yields poison in about a minute. Raising it to 3 
