@@ -17,6 +17,7 @@ amazon: &amazon
 # It is safe to set any of the following three environments to
 # *amazon, as table names will be suffixed according to the
 # environment (CHEF_ENV and Rails.env). See Api.basename_suffix.
+# You can use *amazon instead of *local if you wish.
 #
 
 development:
@@ -26,4 +27,4 @@ test:
   <<: *local
 
 production:
-  <<: *amazon
+  <<: *local
