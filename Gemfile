@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem "rails", "4.0.0"
+gem 'rails', '~> 4.0'
 gem "ocean-rails", ">= 1.22.6"
 gem "ocean-dynamo", ">= 0.4.0"
 
