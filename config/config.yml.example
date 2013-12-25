@@ -2,7 +2,16 @@
 # In order for the application to work, a file named config/config.yml must exist.
 # You can use this file as a template: simply copy it, rename it and tailor its
 # contents. All data in this file will be used to define constants in your application
-# namespace. NB: the Chef recipes used to deploy this to the production environment will
+# namespace. Please note that both config.yml and config.yml.example must exist - don't
+# delete this example file, as its values will be used by TeamCity for tests.
+# 
+# Any constants declared here can be overridden by corresponding environment variables
+# starting with OVERRIDE_. Thus, BASE_DOMAIN can be overridden by the environment
+# variable OVERRIDE_BASE_DOMAIN, and so forth. The API_PASSWORD receives special
+# treatment: you can pass both the master and the staging password separated by a comma,
+# and Ocean will choose the appropriate one to use depending on the Chef environment.
+#
+# NB: the Chef recipes used to deploy this to the production environment will
 # replace the contents of config/config.yml with an auto-generated file.
 ##########################################################################################
 
