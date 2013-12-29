@@ -1,15 +1,14 @@
 ##########################################################################################
 # In order for the application to work, a file named config/aws.yml must exist.
 # You can use this file as a template: simply copy it, rename it and tailor its
-# contents. All data in this file will be used to define constants in your application
-# namespace. Please note that both aws.yml and aws.yml.example must exist - don't
+# contents. Please note that both aws.yml and aws.yml.example must exist - don't
 # delete this example file, as its values will be used by TeamCity for tests.
 #
 # If your application doesn't use any AWS functionality, you should delete both
 # aws.yml.example and aws.yml. In that case, none of them may exist in your application.
 #
-# NB: the Chef recipes used to deploy this to the production environment will
-# replace the contents of config/aws.yml with an auto-generated file.
+# NB: the Chef recipes used to deploy the application to its Chef environment (master,
+# staging, prod) will replace the contents of config/aws.yml with an auto-generated file.
 ##########################################################################################
 
 
