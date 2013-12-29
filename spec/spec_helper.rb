@@ -1,6 +1,7 @@
 require 'simplecov'
 SimpleCov.start do
   add_filter "/vendor/"
+  add_filter "/spec/support/hyperlinks.rb"
 end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
