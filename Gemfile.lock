@@ -55,10 +55,8 @@ GEM
     faraday_middleware (0.9.0)
       faraday (>= 0.7.4, < 0.9)
     ffi (1.9.0)
-    ffi-rzmq (2.0.0)
-      ffi-rzmq-core (>= 1.0.1)
-    ffi-rzmq-core (1.0.1)
-      ffi (~> 1.9)
+    ffi-rzmq (1.0.3)
+      ffi
     hike (1.2.3)
     i18n (0.6.9)
     jbuilder (2.0.2)
@@ -80,14 +78,14 @@ GEM
       activemodel (~> 4.0)
       activesupport (~> 4.0)
       aws-sdk (~> 1.0)
-    ocean-rails (1.28.4)
+    ocean-rails (1.28.5)
       faraday
       faraday_middleware
       ffi (= 1.9.0)
-      ffi-rzmq
+      ffi-rzmq (~> 1.0)
       jbuilder
       net-purge
-      ocean-dynamo (>= 0.5.6)
+      ocean-dynamo (>= 0.5.7)
       rack-attack
       typhoeus
     polyglot (0.3.3)
@@ -148,7 +146,7 @@ GEM
       ethon (~> 0.6.2)
     tzinfo (0.3.38)
     uuidtools (2.1.4)
-    webmock (1.16.1)
+    webmock (1.17.1)
       addressable (>= 2.2.7)
       crack (>= 0.3.2)
 
