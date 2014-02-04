@@ -15,6 +15,11 @@ require "sprockets/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env)
 
+# If we're running in production, assign the first ZMQ logger here
+# (another one is assigned by the ocean-rails gem in an initializer).
+# Why this has to be done in two distinct places is an irritating mystery.
+Rails.logger = ZeromqLogger.new if Rails.env == "production"
+
 module Jobs
   class Application < Rails::Application
     # Defaults for generators
