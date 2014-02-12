@@ -75,6 +75,8 @@ To run the specs, you must first install a gem called +fake_dynamo+, which runs 
 in-memory functional clone of Amazon DynamoDB. We use +fake_dynamo+ during development 
 and testing.
 
+ gem install fake_dynamo --version 0.1.3
+
 First of all, copy the AWS configuration file from the template:
 
  cp config/aws.yml.example config/aws.yml
