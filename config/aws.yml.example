@@ -38,7 +38,7 @@ development:
   <<: *local
 
 test:
-  <<: *local
+  <<: *amazon
 
 production:
-  <<: *local
+  <<: *amazon
