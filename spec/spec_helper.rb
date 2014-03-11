@@ -56,15 +56,15 @@ RSpec.configure do |config|
   end
 end
 
-aws_access_key_id = ENV['AWS_ACCESS_KEY_ID'] || ""
+aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
 master, staging = aws_access_key_id.split(',')
 aws_access_key_id = (ENV['GIT_BRANCH'] == 'staging' ? staging : master) if staging.present?
 ENV['AWS_ACCESS_KEY_ID'] = aws_access_key_id
 
-aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY'] || ""
+aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
 master, staging = aws_secret_access_key.split(',')
 aws_secret_access_key = (ENV['GIT_BRANCH'] == 'staging' ? staging : master) if staging.present?
 ENV['AWS_SECRET_ACCESS_KEY'] = aws_secret_access_key
 
-aws_region = ENV['AWS_REGION'] || ""
+aws_region = ENV['AWS_REGION']
 
