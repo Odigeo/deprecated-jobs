@@ -31,7 +31,7 @@ GEM
       rake (>= 0.8.7)
     arel (4.0.2)
     atomic (1.1.15)
-    aws-sdk (1.36.0)
+    aws-sdk (1.36.1)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
@@ -88,6 +88,7 @@ GEM
       ocean-dynamo (>= 0.5.7)
       rack-attack
       typhoeus
+    oj (2.6.0)
     polyglot (0.3.4)
     rack (1.5.2)
     rack-attack (2.3.0)
@@ -102,6 +103,8 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.0.3)
       sprockets-rails (~> 2.0.0)
+    rails-patch-json-encode (0.0.1)
+      multi_json
     railties (4.0.3)
       actionpack (= 4.0.3)
       activesupport (= 4.0.3)
@@ -159,7 +162,9 @@ DEPENDENCIES
   factory_girl_rails (~> 4.0)
   jbuilder
   ocean-rails (>= 2.0.8)
+  oj
   rails (~> 4.0)
+  rails-patch-json-encode
   rspec-rails (~> 2.0)
   simplecov
   webmock
