@@ -140,7 +140,6 @@ describe QueueMessage do
     it "should log an unsupported HTTP method" do
       @async_job.current_step['method'] = 'QUUX'
       @async_job.save!
-      Faraday.should_not_receive(:quux)
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Unsupported HTTP method 'QUUX'"]
@@ -173,7 +172,7 @@ describe QueueMessage do
       stub_request(:get, "http://somewhere.else.com/someplace").
          to_return(status: 301, body: nil, headers: {location: "http://final.com/the_data"})
       stub_request(:get, "http://final.com/the_data").
-         to_return(status: 200, body: "Final payload", headers: {})
+         to_return(status: 200, body: nil, headers: {})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Redirect: 301 to http://somewhere.else.com/someplace", 
@@ -191,7 +190,7 @@ describe QueueMessage do
       stub_request(:get, "http://127.0.0.1/something").to_timeout
       expect { QueueMessage.new(@msg).execute_current_step }.to raise_error
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Faraday::Error::TimeoutError: execution expired"]
+      @async_job.steps[0]['log'].should == ["Exception: Ocean API request timed out"]
     end
 
     it "should handle exceptions and log them before re-raising them" do

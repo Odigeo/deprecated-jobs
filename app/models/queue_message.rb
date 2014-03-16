@@ -150,29 +150,34 @@ class QueueMessage
     return if async_job.token.blank? && !authenticate
 
     headers = {
-               content_type: 'application/json', 
-               accept: 'application/json',
-               x_api_token: async_job.token
-              }.merge(step['headers'] || {}).symbolize_keys
-   begin
+               #content_type: 'application/json', 
+               #accept: 'application/json',
+               "X-API-Token" => async_job.token
+              }.merge(step['headers'] || {}) #.symbolize_keys
+    begin
       response = nil
       loop do
         response = case http_method
           when "GET"
-            Faraday.get url, nil, **headers
+            #Faraday.get url, nil, **headers
+            Api.request url, :get, headers: headers
           when "POST"
-            Faraday.post url, body, headers
+            #Faraday.post url, body, headers
+            Api.request url, :post, headers: headers, body: body
           when "PUT"
-            Faraday.put url, body, headers
+            #Faraday.put url, body, headers
+            Api.request url, :put, headers: headers, body: body
           when "DELETE"
-            Faraday.delete url, nil, headers
+            #Faraday.delete url, nil, headers
+            Api.request url, :delete, headers: headers
           else
             async_job.job_failed "Unsupported HTTP method '#{http_method}'"
             return
           end
+        raise Exception, "Ocean API request timed out" if response.timed_out?
         if [400, 419].include?(response.status)
           return if !authenticate
-          headers[:x_api_token] = async_job.token
+          headers["X-API-Token"] = async_job.token
         elsif !(300..399).include?(response.status)
           break
         else
