@@ -9,6 +9,7 @@ RUN_TIME_DIR = "/var/run/async_job_workers"
 #
 N_WORKERS = 5
 
+ENV['RAILS_ENV'] = 'production'
 
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
 require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
