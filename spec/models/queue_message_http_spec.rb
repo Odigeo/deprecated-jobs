@@ -187,7 +187,7 @@ describe QueueMessage do
   describe "make_http_request exceptions" do
 
     it "should handle timeouts and log them before re-raising the timeout exception" do
-      stub_request(:get, "http://127.0.0.1/something").to_timeout
+      Api.should_receive(:request).and_return(double(timed_out?: true))
       expect { QueueMessage.new(@msg).execute_current_step }.to raise_error
       @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Exception: Ocean API request timed out"]
