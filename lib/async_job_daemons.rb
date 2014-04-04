@@ -22,7 +22,7 @@ options = {
   dir_mode:   :normal,
   dir:        RUN_TIME_DIR,
   backtrace:  true,
-  log_output: true,
+  log_output: false,
   multiple:   false,
   monitor:    true
 }
