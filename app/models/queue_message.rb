@@ -149,27 +149,19 @@ class QueueMessage
 
     return if async_job.token.blank? && !authenticate
 
-    headers = {
-               #content_type: 'application/json', 
-               #accept: 'application/json',
-               "X-API-Token" => async_job.token
-              }.merge(step['headers'] || {}) #.symbolize_keys
+    headers = (step['headers'] || {})
     begin
       response = nil
       loop do
         response = case http_method
           when "GET"
-            #Faraday.get url, nil, **headers
-            Api.request url, :get, headers: headers
+            Api.request url, :get, headers: headers, x_api_token: async_job.token
           when "POST"
-            #Faraday.post url, body, headers
-            Api.request url, :post, headers: headers, body: body
+            Api.request url, :post, headers: headers, body: body, x_api_token: async_job.token
           when "PUT"
-            #Faraday.put url, body, headers
-            Api.request url, :put, headers: headers, body: body
+            Api.request url, :put, headers: headers, body: body, x_api_token: async_job.token
           when "DELETE"
-            #Faraday.delete url, nil, headers
-            Api.request url, :delete, headers: headers
+            Api.request url, :delete, headers: headers, x_api_token: async_job.token
           else
             async_job.job_failed "Unsupported HTTP method '#{http_method}'"
             return
