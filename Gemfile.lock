@@ -156,7 +156,7 @@ DEPENDENCIES
   daemons
   factory_girl_rails (~> 4.0)
   jbuilder
-  ocean-rails
+  ocean-rails (>= 2.11.2)
   oj
   rails (~> 4.1.0)
   rails-patch-json-encode
