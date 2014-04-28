@@ -143,7 +143,7 @@ class QueueMessage
     name = step['name']
     url = step['url']
     http_method = (step['method'] || "GET").to_s.upcase
-    body = step['body']
+    body = step['body'] && step['body'].to_json
 
     Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] started."
 
