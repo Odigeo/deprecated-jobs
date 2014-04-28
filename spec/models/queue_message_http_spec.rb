@@ -14,6 +14,8 @@ describe QueueMessage do
              :visibility_timeout= => 30,
              delete: nil
            )
+
+    @auth_url = INTERNAL_OCEAN_API_URL + "/v1/authentications"
   end
 
 
@@ -22,7 +24,7 @@ describe QueueMessage do
     it "should authenticate if there's no token" do
       @async_job.token = nil
       @async_job.save!
-      stub_request(:post, /.*forbidden.*/). #"http://forbidden.odigeoservices.com/v1/authentications").
+      stub_request(:post, @auth_url).
         to_return(status: 201, body: '{"authentication": {"token": "hey-i-am-the-token"}}', headers: {'Content-Type'=>'application/json'})
       stub_request(:get, "http://127.0.0.1/something")
       QueueMessage.new(@msg).execute_current_step
@@ -35,7 +37,7 @@ describe QueueMessage do
     it "should fail the job if there's no token and authentication fails" do
       @async_job.token = nil
       @async_job.save!
-      stub_request(:post, /.*forbidden.*/). #"http://forbidden.odigeoservices.com/v1/authentications").
+      stub_request(:post, @auth_url).
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
@@ -49,7 +51,7 @@ describe QueueMessage do
       stub_request(:get, "http://127.0.0.1/something").
         to_return({status: 400, headers: {'Content-Type'=>'application/json'}}).then.
         to_return({status: 200, body: '{}', headers: {'Content-Type'=>'application/json'}})
-      stub_request(:post, /.*forbidden.*/). #"http://forbidden.odigeoservices.com/v1/authentications").
+      stub_request(:post,@auth_url).
         to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
@@ -61,7 +63,7 @@ describe QueueMessage do
     it "should fail the job if the main request returns 400 and authentication fails" do
       stub_request(:get, "http://127.0.0.1/something").
         to_return({status: 400, headers: {'Content-Type'=>'application/json'}})
-      stub_request(:post, /.*forbidden.*/). #"http://forbidden.odigeoservices.com/v1/authentications").
+      stub_request(:post, @auth_url).
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
@@ -75,7 +77,7 @@ describe QueueMessage do
       stub_request(:get, "http://127.0.0.1/something").
         to_return({status: 419, headers: {'Content-Type'=>'application/json'}}).then. 
         to_return({status: 200, body: '{}', headers: {'Content-Type'=>'application/json'}})
-      stub_request(:post, /.*forbidden.*/). #"http://forbidden.odigeoservices.com/v1/authentications").
+      stub_request(:post, @auth_url).
         to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
@@ -87,7 +89,7 @@ describe QueueMessage do
     it "should fail the job if the main request returns 419 and authentication fails" do
       stub_request(:get, "http://127.0.0.1/something").
         to_return({status: 419, headers: {'Content-Type'=>'application/json'}})
-      stub_request(:post, /.*forbidden.*/). #"http://forbidden.odigeoservices.com/v1/authentications").
+      stub_request(:post, @auth_url).
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
@@ -116,17 +118,17 @@ describe QueueMessage do
 
     it "should do a POST if the method is 'POST'" do
       @async_job.current_step['method'] = 'POST'
-      @async_job.current_step['body'] = 'This is the body.'
+      @async_job.current_step['body'] = {"a"=>1, "b"=>"foo"}
       @async_job.save!
-      stub_request(:post, "http://127.0.0.1/something").with(body: "This is the body.")
+      stub_request(:post, "http://127.0.0.1/something").with(body: '{"a":1,"b":"foo"}')
       QueueMessage.new(@msg).execute_current_step
     end
 
     it "should do a PUT if the method is 'PUT'" do
       @async_job.current_step['method'] = 'PUT'
-      @async_job.current_step['body'] = 'This is the body.'
+      @async_job.current_step['body'] = {}
       @async_job.save!
-      stub_request(:put, "http://127.0.0.1/something").with(body: "This is the body.")
+      stub_request(:put, "http://127.0.0.1/something").with(body: "{}")
       QueueMessage.new(@msg).execute_current_step
     end
 
