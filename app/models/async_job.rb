@@ -25,6 +25,9 @@ class AsyncJob < OceanDynamo::Table
     attribute :succeeded,            :boolean,    default: false
     attribute :failed,               :boolean,    default: false
     attribute :poison,               :boolean,    default: false
+    attribute :last_status,          :integer
+    attribute :last_headers,         :serialized
+    attribute :last_body,            :serialized
   end
   
 

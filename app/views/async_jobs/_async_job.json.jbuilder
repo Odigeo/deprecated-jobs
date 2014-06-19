@@ -11,6 +11,9 @@ json.async_job do |json|
 	                 :succeeded,
 	                 :failed,
 	                 :poison,
+	                 :last_status,
+	                 :last_headers,
+	                 :last_body,
 	                 :lock_version) 
 	json.created_at           async_job.created_at.utc.iso8601
 	json.updated_at           async_job.updated_at.utc.iso8601

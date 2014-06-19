@@ -92,6 +92,18 @@ describe AsyncJob do
       create(:async_job).token.should be_a String
       create(:async_job, token: nil).token.should == nil
     end
+
+    it "should have a last_status attribute" do
+      create(:async_job).should respond_to :last_status
+    end
+    
+    it "should have a last_headers attribute" do
+      create(:async_job).should respond_to :last_headers
+    end
+    
+    it "should have a last_body attribute" do
+      create(:async_job).should respond_to :last_body
+    end
   end
 
 
