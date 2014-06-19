@@ -155,13 +155,13 @@ class QueueMessage
       loop do
         response = case http_method
           when "GET"
-            Api.request url, :get, headers: headers
+            Api.request url, :get, headers: headers, reauthentication: false
           when "POST"
-            Api.request url, :post, headers: headers, body: body
+            Api.request url, :post, headers: headers, body: body, reauthentication: false
           when "PUT"
-            Api.request url, :put, headers: headers, body: body
+            Api.request url, :put, headers: headers, body: body, reauthentication: false
           when "DELETE"
-            Api.request url, :delete, headers: headers
+            Api.request url, :delete, headers: headers, reauthentication: false
           else
             async_job.job_failed "Unsupported HTTP method '#{http_method}'"
             return
