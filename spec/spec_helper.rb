@@ -54,6 +54,8 @@ RSpec.configure do |config|
   config.after(:suite) do
     #WebMock.disable_net_connect!
   end
+
+  config.infer_spec_type_from_file_location!
 end
 
 aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']

@@ -51,12 +51,12 @@ describe QueueMessage do
       stub_request(:get, "http://127.0.0.1/something").
         to_return({status: 400, headers: {'Content-Type'=>'application/json'}}).then.
         to_return({status: 200, body: '{}', headers: {'Content-Type'=>'application/json'}})
-      stub_request(:post,@auth_url).
+      stub_request(:post, @auth_url).
         to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.token.should == "this-is-a-new-token"
       @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
+      @async_job.token.should == "this-is-a-new-token"
       @async_job.failed?.should == false
    end
 
@@ -81,8 +81,8 @@ describe QueueMessage do
         to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.token.should == "this-is-a-new-token"
       @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
+      @async_job.token.should == "this-is-a-new-token"
       @async_job.failed?.should == false
    end
 
