@@ -215,29 +215,38 @@ describe QueueMessage do
 
     it "should log a successful response (2xx) and return normally" do
       qm = QueueMessage.new(@msg)
-      expect { qm.handle_response(qm.async_job.current_step, 204, {}, nil) }.not_to raise_error
+      expect { qm.handle_response(qm.async_job.current_step, 204, {'foo' => 'bar'}, [1, 2]) }.not_to raise_error
       @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Succeeded: 204"]
       @async_job.failed?.should == false
       @async_job.finished?.should == false
+      @async_job.last_status.should == 204
+      @async_job.last_headers.should == {'foo' => 'bar'}
+      @async_job.last_body.should == [1, 2]
     end
 
     it "should log a client error response (4xx) and fail the whole job" do
       qm = QueueMessage.new(@msg)
-      expect { qm.handle_response(qm.async_job.current_step, 403, {}, nil) }.not_to raise_error
+      expect { qm.handle_response(qm.async_job.current_step, 403, {'foo' => 'bar'}, [1, 2]) }.not_to raise_error
       @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Failed: 403"]
       @async_job.failed?.should == true
       @async_job.finished?.should == true
+      @async_job.last_status.should == 403
+      @async_job.last_headers.should == {'foo' => 'bar'}
+      @async_job.last_body.should == [1, 2]
     end
 
     it "should log a server error response (5xx), fail the step, then raise an error to trigger a later retry" do
       qm = QueueMessage.new(@msg)
-      expect { qm.handle_response(qm.async_job.current_step, 500, {}, nil) }.to raise_error
+      expect { qm.handle_response(qm.async_job.current_step, 500, {'foo' => 'bar'}, [1, 2]) }.to raise_error
       @async_job.reload(consistent: true)
       @async_job.steps[0]['log'].should == ["Remote server error: 500. Retrying via exception."]
       @async_job.failed?.should == false
       @async_job.finished?.should == false
+      @async_job.last_status.should == 500
+      @async_job.last_headers.should == {'foo' => 'bar'}
+      @async_job.last_body.should == [1, 2]
     end
 
   end

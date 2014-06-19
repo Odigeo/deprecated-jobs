@@ -216,6 +216,10 @@ class QueueMessage
   # Handles the response from the HTTP request
   #
   def handle_response(step, status, headers, body)
+    async_job.last_status = status
+    async_job.last_headers = headers
+    async_job.last_body = body
+    async_job.save!
     case status
     when 200..299
       async_job.log("Succeeded: #{status}")

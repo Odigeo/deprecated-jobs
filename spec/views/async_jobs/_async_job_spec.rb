@@ -7,7 +7,10 @@ describe "async_jobs/_async_job" do
     aj = create :async_job, 
            started_at: 1.hour.ago.utc,
            finished_at: 10.minutes.ago.utc,
-           last_completed_step: 2
+           last_completed_step: 2,
+           last_status: 200,
+           last_headers: {},
+           last_body: ["foo"]
     render partial: "async_jobs/async_job", locals: {async_job: aj}
     @json = JSON.parse(rendered)
     @u = @json['async_job']
@@ -100,6 +103,18 @@ describe "async_jobs/_async_job" do
 
   it "should have a poison boolean" do
     @u['poison'].should == false
+  end
+
+  it "should have a last_status" do
+    @u['last_status'].should == 200
+  end
+
+  it "should have a last_headers" do
+    @u['last_headers'].should be_a Hash
+  end
+
+  it "should have a last_body" do
+    @u['last_body'].should == ["foo"]
   end
 
 end
