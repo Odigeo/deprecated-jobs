@@ -153,6 +153,7 @@ class QueueMessage
     begin
       response = nil
       loop do
+        async_job.reload
         response = case http_method
           when "GET"
             Api.request url, :get, headers: headers, reauthentication: false
