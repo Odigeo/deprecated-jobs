@@ -167,6 +167,7 @@ class AsyncJob < OceanDynamo::Table
   # Log to the current step.
   # 
   def log(str)
+    reload
     cs = current_step
     cs['log'] ||= []
     cs['log'] << str

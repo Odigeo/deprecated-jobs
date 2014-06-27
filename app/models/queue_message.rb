@@ -202,6 +202,7 @@ class QueueMessage
   def authenticate
     new_token = Api.authenticate(*Api.decode_credentials(async_job.credentials))
     if new_token
+      async_job.reload
       async_job.token = new_token
       async_job.save!
       async_job.log "Authenticated"
@@ -217,6 +218,7 @@ class QueueMessage
   # Handles the response from the HTTP request
   #
   def handle_response(step, status, headers, body)
+    async_job.reload
     async_job.last_status = status
     async_job.last_headers = headers
     async_job.last_body = body
