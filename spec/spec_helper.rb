@@ -55,6 +55,7 @@ RSpec.configure do |config|
     #WebMock.disable_net_connect!
   end
 
+  # RSpec 3 compatibility
   config.infer_spec_type_from_file_location!
 end
 
