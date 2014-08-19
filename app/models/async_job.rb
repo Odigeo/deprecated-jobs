@@ -180,7 +180,7 @@ class AsyncJob < OceanDynamo::Table
   # Issue a BAN to remove the entity from Varnish
   #
   def ban
-    Api.ban "/#{Api.version_for(:async_jobs)}/async_jobs/#{uuid}"
+    Api.ban "/v[0-9]+/async_jobs/#{uuid}($|/|\\?)"
   end
 
 
