@@ -10,7 +10,6 @@ class AsyncJobsController < ApplicationController
 
   respond_to :json
   
-  before_action :require_conditional, only: :show
   before_action :find_async_job, :only => [:show, :destroy]
     
 

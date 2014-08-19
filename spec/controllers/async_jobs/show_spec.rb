@@ -34,12 +34,12 @@ describe AsyncJobsController do
       response.content_type.should == "application/json"
     end
     
-    it "should return a 428 if the request has no If-None-Match or If-Modified-Since HTTP header" do
-      request.headers['If-None-Match'] = nil
-      get :show, id: @async_job.uuid
-      response.status.should == 428
-      response.content_type.should == "application/json"
-    end
+    # it "should return a 428 if the request has no If-None-Match or If-Modified-Since HTTP header" do
+    #   request.headers['If-None-Match'] = nil
+    #   get :show, id: @async_job.uuid
+    #   response.status.should == 428
+    #   response.content_type.should == "application/json"
+    # end
 
     it "should return a 200 when successful" do
       get :show, id: @async_job.uuid
