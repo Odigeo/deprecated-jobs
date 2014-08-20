@@ -16,7 +16,8 @@ class AsyncJobsController < ApplicationController
   # GET /async_jobs/1
   def show
     expires_in 0, 's-maxage' => 30.minutes
-    if stale?(@async_job)
+    if stale?(etag: @async_job.lock_version,          # NB: DynamoDB tables dont have cache_key - FIX!
+              last_modified: @async_job.updated_at)
       api_render @async_job
     end
   end

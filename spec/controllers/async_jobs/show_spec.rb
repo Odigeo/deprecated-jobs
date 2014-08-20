@@ -40,6 +40,18 @@ describe AsyncJobsController do
       response.should render_template(partial: "_async_job", count: 1)
     end
 
+    it "should return a different ETag when updated" do
+      get :show, id: @async_job.uuid
+      response.status.should == 200
+      etag = response.headers['ETag']
+      bod = response.body
+      @async_job.job_succeeded
+      get :show, id: @async_job.uuid
+      response.status.should == 200
+      response.body.should_not == bod
+      response.headers['ETag'].should_not == etag
+    end
+
 
   end
   
