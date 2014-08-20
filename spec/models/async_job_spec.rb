@@ -250,4 +250,21 @@ describe AsyncJob do
     end
   end
 
+
+  describe "BAN handling" do
+
+    it "should ban after a save" do
+      j = create :async_job
+      Api.should_receive(:ban).with("/v[0-9]+/async_jobs/#{j.uuid}($|/|\\?)")
+      j.save!
+    end
+
+    it "should ban after a destroy" do
+      j = create :async_job
+      Api.should_receive(:ban).with("/v[0-9]+/async_jobs/#{j.uuid}($|/|\\?)")
+      j.destroy
+    end
+
+  end
+
 end
