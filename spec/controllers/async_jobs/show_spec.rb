@@ -45,7 +45,7 @@ describe AsyncJobsController do
       response.status.should == 200
       etag = response.headers['ETag']
       bod = response.body
-      @async_job.job_succeeded
+      @async_job.save!
       get :show, id: @async_job.uuid
       response.status.should == 200
       response.body.should_not == bod
