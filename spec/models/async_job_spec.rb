@@ -31,7 +31,7 @@ describe AsyncJob do
      create(:async_job, steps: [{}, {}, {}]).steps.should == [{}, {}, {}]
     end
 
-     it "should have a creation time" do
+    it "should have a creation time" do
       create(:async_job).created_at.should be_a Time
     end
 
@@ -39,7 +39,7 @@ describe AsyncJob do
       create(:async_job).updated_at.should be_a Time
     end
   
-   it "should have a creator" do
+    it "should have a creator" do
       create(:async_job).created_by.should == ""
     end
 
