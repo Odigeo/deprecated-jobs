@@ -266,4 +266,51 @@ describe CronJob do
     cj.errors.messages.should == {:cron=>["hours list '10,20,30,40' contains out of range element(s)"]}
   end
 
+
+  describe "aliases" do
+
+    it "should translate @hourly to 0 * * * *" do
+      cj = create :cron_job, cron: "@hourly"
+      cj.cron.should == "@hourly"
+      cj.cron_structure.should == [{:exactly=>0}, {:range=>[0, 23]}, {:range=>[1, 31]}, 
+                                   {:range=>[1, 12]}, {:range=>[0, 6]}]
+    end
+
+    it "should translate @daily to 0 0 * * *" do
+      cj = create :cron_job, cron: "@daily"
+      cj.cron.should == "@daily"
+      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:range=>[1, 31]}, 
+                                   {:range=>[1, 12]}, {:range=>[0, 6]}]
+    end
+
+    it "should translate @weekly to 0 0 * * 0" do
+      cj = create :cron_job, cron: "@weekly"
+      cj.cron.should == "@weekly"
+      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:range=>[1, 31]}, 
+                                   {:range=>[1, 12]}, {:exactly=>0}]
+    end
+
+    it "should translate @monthly to 0 0 1 * *" do
+      cj = create :cron_job, cron: "@monthly"
+      cj.cron.should == "@monthly"
+      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:exactly=>1}, 
+                                   {:range=>[1, 12]}, {:range=>[0, 6]}]
+    end
+
+    it "should translate @yearly to 0 0 1 1 *" do
+      cj = create :cron_job, cron: "@yearly"
+      cj.cron.should == "@yearly"
+      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:exactly=>1}, 
+                                   {:exactly=>1}, {:range=>[0, 6]}]
+    end
+
+    it "should translate @annually to 0 0 1 1 *" do
+      cj = create :cron_job, cron: "@annually"
+      cj.cron.should == "@annually"
+      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:exactly=>1}, 
+                                   {:exactly=>1}, {:range=>[0, 6]}]
+    end
+
+  end
+
 end

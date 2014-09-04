@@ -16,7 +16,7 @@ class CronJob < OceanDynamo::Table
     # Output only
     attribute :created_by
     attribute :updated_by
-    attribute :cron_structure,       :serialized, default: [nil, nil, nil, nil, nil, nil]
+    attribute :cron_structure,       :serialized, default: [nil, nil, nil, nil, nil]
   end
 
 
@@ -38,22 +38,35 @@ class CronJob < OceanDynamo::Table
     job.errors.add(attr, "are malformed") if username.blank? || password.blank?
   end
 
-  validates_each :steps do |record, attr, value|
-    record.errors.add(attr, 'must be an Array') unless value.is_a?(Array)
+  validates_each :steps do |job, attr, value|
+    job.errors.add(attr, 'must be an Array') unless value.is_a?(Array)
   end 
 
-  validates_each :cron do |record, attr, value|
+  validates_each :cron do |job, attr, value|
     if !value.is_a?(String)
-      record.errors.add(attr, 'must be a string')
-    elsif value.split(' ').length != 5
-      record.errors.add(attr, 'must have five components (m h dm m dw)')
+      job.errors.add(attr, 'must be a string')
     else
-      record.cron.split(' ').each_with_index do |component, i|
-        record.cron_structure[i] = record.parse(component, CRON_DATA[i])
-        # Validate the CRON field here
-        record.validate_cron_field record, record.cron_structure[i], component, CRON_DATA[i]
+      value = job.resolve_aliases(value)
+      if value.split(' ').length != 5
+        job.errors.add(attr, 'must have five components (m h dm m dw)')
+      else
+        value.split(' ').each_with_index do |component, i|
+          job.cron_structure[i] = job.parse(component, CRON_DATA[i])
+          job.validate_cron_field job, job.cron_structure[i], component, CRON_DATA[i]
+        end
       end
     end
+  end
+
+
+  def resolve_aliases (str)
+    return "0 * * * *" if str == "@hourly"
+    return "0 0 * * *" if str == "@daily"
+    return "0 0 * * 0" if str == "@weekly"
+    return "0 0 1 * *" if str == "@monthly"
+    return "0 0 1 1 *" if str == "@yearly"
+    return "0 0 1 1 *" if str == "@annually"
+    str
   end
 
 
