@@ -16,14 +16,23 @@ class CronJob < OceanDynamo::Table
     # Output only
     attribute :created_by
     attribute :updated_by
-    # attribute :seconds,              :serialized, default: nil
-    # attribute :minutes,              :serialized, default: nil
-    # attribute :hours,                :serialized, default: nil
-    # attribute :day_of_month,         :serialized, default: nil
-    # attribute :month,                :serialized, default: nil
-    # attribute :day_of_week,          :serialized, default: nil
     attribute :cron_structure,       :serialized, default: [nil, nil, nil, nil, nil, nil]
   end
+
+  CRON_DATA = [
+    {name: "seconds",       range: [0, 59]
+    },
+    {name: "minutes",       range: [0, 59]
+    },
+    {name: "hours",         range: [0, 23]
+    },
+    {name: "day_of_month",  range: [1, 31]
+    },
+    {name: "month",         range: [1, 12], list: %w(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC) 
+    },
+    {name: "day_of_week",   range: [0, 6], list: %w(SUN MON TUE WED THU FRI SAT)
+    }
+  ]
   
 
   # Validations
@@ -50,11 +59,26 @@ class CronJob < OceanDynamo::Table
 
   # Callbacks
   before_save do |cj|
-    self.cron_structure = cron.split(' ')
-    # cron_structure.each_with_index do |component, i|
-    #   self.cron_structure
-    # end
+    cron.split(' ').each_with_index do |component, i|
+      self.cron_structure[i] = parse(component, CRON_DATA[i])
+    end
   end
+
+
+  def parse (str, data)
+    if str == '*'
+      { range: data[:range] }
+    elsif m = str.match("^[0-9]+$")
+      { exactly: m[0].to_i }
+    elsif m = str.match("^([0-9]+)-([0-9]+)$")
+      { range: [m[1].to_i, m[2].to_i] }
+    elsif m = str.match("^([0-9]+)-([0-9]+)/([0-9]+)$")
+      { range: [m[1].to_i, m[2].to_i], interval: m[3].to_i }
+    end
+  end
+
+
+
 
   def seconds
     cron_structure[0]
