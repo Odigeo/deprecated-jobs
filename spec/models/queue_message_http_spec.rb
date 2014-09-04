@@ -3,7 +3,7 @@ require 'spec_helper'
 describe QueueMessage do
 
   before :each do
-    AsyncJob.any_instance.should_receive(:enqueue).with().once
+    AsyncJob.any_instance.should_receive(:enqueue).once
     @async_job = create(:async_job, steps: [{'name' => "Step 1", 
                                              'url' => 'http://127.0.0.1/something',
                                              'headers' => {x_api_token: 'an-api-token'}
