@@ -19,6 +19,7 @@ class CronJob < OceanDynamo::Table
     attribute :cron_structure,       :serialized, default: [nil, nil, nil, nil, nil, nil]
   end
 
+
   CRON_DATA = [
     {name: "seconds",       range: [0, 59]
     },
@@ -28,9 +29,9 @@ class CronJob < OceanDynamo::Table
     },
     {name: "day_of_month",  range: [1, 31]
     },
-    {name: "month",         range: [1, 12], list: %w(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC) 
+    {name: "month",         range: [1, 12], list: %w(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC), list_base: 1 
     },
-    {name: "day_of_week",   range: [0, 6], list: %w(SUN MON TUE WED THU FRI SAT)
+    {name: "day_of_week",   range: [0, 6], list: %w(SUN MON TUE WED THU FRI SAT), list_base: 0
     }
   ]
   
@@ -66,9 +67,14 @@ class CronJob < OceanDynamo::Table
 
 
   def parse (str, data)
-    if str == '*'
-      { range: data[:range] }
-    elsif m = str.match("^[0-9]+$")
+    if data[:list]
+      lb = data[:list_base]
+      data[:list].each_with_index do |x, i|
+        str = str.gsub x, (lb + i).to_s
+      end
+    end
+    str = str.gsub '*', "#{data[:range][0]}-#{data[:range][1]}"
+    if m = str.match("^[0-9]+$")
       { exactly: m[0].to_i }
     elsif m = str.match("^([0-9]+)-([0-9]+)$")
       { range: [m[1].to_i, m[2].to_i] }
@@ -76,10 +82,10 @@ class CronJob < OceanDynamo::Table
       { range: [m[1].to_i, m[2].to_i], interval: m[3].to_i }
     elsif str =~ /^([0-9]+,)+[0-9]+$/
       { member: str.split(',').map(&:to_i) }
+    else
+      { unrecognized: str }
     end
   end
-
-
 
 
   def seconds
