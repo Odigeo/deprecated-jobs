@@ -71,6 +71,9 @@ class CronJob < OceanDynamo::Table
     if cs[:range] && cs[:range][1] > max
       cj.errors.add(:cron, "#{name} range value '#{component}' ends out of range")
     end
+    if cs[:range] && cs[:range][0] > cs[:range][1]
+      cj.errors.add(:cron, "#{name} range value '#{component}' ends before it starts")
+    end
     if cs[:member] && cs[:member].any? { |v| v < min || v > max }
       cj.errors.add(:cron, "#{name} list '#{component}' contains out of range element(s)")
     end

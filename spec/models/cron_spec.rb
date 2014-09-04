@@ -287,6 +287,12 @@ describe CronJob do
     cj.errors.messages.should == {:cron=>["day_of_month range value '10-40/2' ends out of range"]}
   end
 
+  it "should not parse ranges where the end is less than the start" do
+    cj = build(:cron_job, cron: "* * 12-1 * * *")
+    cj.should_not be_valid
+    cj.errors.messages.should == {:cron=>["hours range value '12-1' ends before it starts"]}
+  end
+
   it "should not parse lists with elements containing out of range values" do
     cj = build(:cron_job, cron: "* * 10,20,30,40 * * *")
     cj.should_not be_valid
