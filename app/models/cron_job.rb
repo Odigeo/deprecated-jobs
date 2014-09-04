@@ -21,18 +21,12 @@ class CronJob < OceanDynamo::Table
 
 
   CRON_DATA = [
-    {name: "seconds",       range: [0, 59]
-    },
-    {name: "minutes",       range: [0, 59]
-    },
-    {name: "hours",         range: [0, 23]
-    },
-    {name: "day_of_month",  range: [1, 31]
-    },
-    {name: "month",         range: [1, 12], list: %w(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC), list_base: 1 
-    },
-    {name: "day_of_week",   range: [0, 6], list: %w(SUN MON TUE WED THU FRI SAT), list_base: 0
-    }
+    {name: "seconds",      range: [0, 59]},
+    {name: "minutes",      range: [0, 59]},
+    {name: "hours",        range: [0, 23]},
+    {name: "day_of_month", range: [1, 31]},
+    {name: "month",        range: [1, 12], list: %w(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC), list_base: 1},
+    {name: "day_of_week",  range: [0, 6], list: %w(SUN MON TUE WED THU FRI SAT), list_base: 0}
   ]
   
 
@@ -52,16 +46,33 @@ class CronJob < OceanDynamo::Table
   validates_each :cron do |record, attr, value|
     if !value.is_a?(String)
       record.errors.add(attr, 'must be a string')
+    elsif value.split(' ').length != 6
+      record.errors.add(attr, 'must have six components')
     else
-      record.errors.add(attr, 'must have six components') if value.split(' ').length != 6
+      record.cron.split(' ').each_with_index do |component, i|
+        record.cron_structure[i] = record.parse(component, CRON_DATA[i])
+        # Validate the CRON field here
+        record.validate_cron_field record, record.cron_structure[i], component, CRON_DATA[i]
+      end
     end
   end
 
 
-  # Callbacks
-  before_save do |cj|
-    cron.split(' ').each_with_index do |component, i|
-      self.cron_structure[i] = parse(component, CRON_DATA[i])
+  def validate_cron_field (cj, cs, component, cron_data)
+    name = cron_data[:name]
+    min, max = cron_data[:range]
+    cj.errors.add(:cron, "#{name} value '#{component}' is unrecognized") and return if cs[:unrecognized]
+    if cs[:exactly] && (cs[:exactly] < min || cs[:exactly] > max)
+      cj.errors.add(:cron, "#{name} value '#{component}' is out of range")
+    end
+    if cs[:range] && cs[:range][0] < min
+      cj.errors.add(:cron, "#{name} range value '#{component}' starts out of range")
+    end
+    if cs[:range] && cs[:range][1] > max
+      cj.errors.add(:cron, "#{name} range value '#{component}' ends out of range")
+    end
+    if cs[:member] && cs[:member].any? { |v| v < min || v > max }
+      cj.errors.add(:cron, "#{name} list '#{component}' contains out of range element(s)")
     end
   end
 

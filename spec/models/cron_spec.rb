@@ -242,32 +242,55 @@ describe CronJob do
   end
 
 
-  it "should replace JAN, FEB, MAR, etc in months" do
+  it "should parse JAN, FEB, MAR, etc in months" do
   	create(:cron_job, cron: "* * * * NOV,DEC *").month[:member].should == [11, 12]
-  	create(:cron_job, cron: "* * * * FEB *").month[:exactly].should == 2
+  	create(:cron_job, cron: "* * * * JAN *").month[:exactly].should == 1
   	create(:cron_job, cron: "* * * * FEB-DEC/2 *").month[:range].should == [2, 12]
   	create(:cron_job, cron: "* * * * FEB-DEC/2 *").month[:interval].should == 2
   end
 
-  it "should not replace JAN, FEB, MAR, etc in day_of_month" do
-  	create(:cron_job, cron: "* * * NOV,DEC * *").day_of_month[:unrecognized].should == "NOV,DEC"
-  	create(:cron_job, cron: "* * * FEB * *").day_of_month[:unrecognized].should == "FEB"
-  	create(:cron_job, cron: "* * * FEB-DEC/2 * *").day_of_month[:unrecognized].should == "FEB-DEC/2"
-  end
-
-
-  it "should replace MON, TUE, WED, etc in day_of_week" do
+  it "should parse MON, TUE, WED, etc in day_of_week" do
   	create(:cron_job, cron: "* * * * * TUE,FRI").day_of_week[:member].should == [2, 5]
   	create(:cron_job, cron: "* * * * * SUN").day_of_week[:exactly].should == 0
   	create(:cron_job, cron: "* * * * * MON-FRI/2").day_of_week[:range].should == [1, 5]
   	create(:cron_job, cron: "* * * * * SUN-FRI/2").day_of_week[:interval].should == 2
   end
 
-  it "should not replace MON, TUE, WED, etc in month" do
-  	create(:cron_job, cron: "* * * * TUE,FRI *").month[:unrecognized].should == "TUE,FRI"
-  	create(:cron_job, cron: "* * * * SUN *").month[:unrecognized].should == "SUN"
-  	create(:cron_job, cron: "* * * * MON-FRI/2 *").month[:unrecognized].should == "MON-FRI/2"
+  it "should not parse month names except in months" do
+    cj = build(:cron_job, cron: "MAY * * * * *")
+    cj.should_not be_valid
+    cj.errors.messages.should == {:cron=>["seconds value 'MAY' is unrecognized"]}
   end
 
+  it "should not parse weekday names except in day_of_week" do
+    cj = build(:cron_job, cron: "* * * WED * *")
+    cj.should_not be_valid
+    cj.errors.messages.should == {:cron=>["day_of_month value 'WED' is unrecognized"]}
+  end
+
+  it "should not parse single out of range values" do
+    cj = build(:cron_job, cron: "* * * * * 100")
+    cj.should_not be_valid
+    cj.errors.messages.should == {:cron=>["day_of_week value '100' is out of range"]}
+  end
+
+  it "should not parse ranges containing out of range values" do
+    cj = build(:cron_job, cron: "* * * * 0-100 *")
+    cj.should_not be_valid
+    cj.errors.messages.should == {:cron=>["month range value '0-100' starts out of range", 
+                                          "month range value '0-100' ends out of range"]}
+  end
+
+  it "should not parse ranges with intervals containing out of range values" do
+    cj = build(:cron_job, cron: "* * * 10-40/2 * *")
+    cj.should_not be_valid
+    cj.errors.messages.should == {:cron=>["day_of_month range value '10-40/2' ends out of range"]}
+  end
+
+  it "should not parse lists with elements containing out of range values" do
+    cj = build(:cron_job, cron: "* * 10,20,30,40 * * *")
+    cj.should_not be_valid
+    cj.errors.messages.should == {:cron=>["hours list '10,20,30,40' contains out of range element(s)"]}
+  end
 
 end
