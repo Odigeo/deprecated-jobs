@@ -21,7 +21,6 @@ class CronJob < OceanDynamo::Table
 
 
   CRON_DATA = [
-    {name: "seconds",      range: [0, 59]},
     {name: "minutes",      range: [0, 59]},
     {name: "hours",        range: [0, 23]},
     {name: "day_of_month", range: [1, 31]},
@@ -46,8 +45,8 @@ class CronJob < OceanDynamo::Table
   validates_each :cron do |record, attr, value|
     if !value.is_a?(String)
       record.errors.add(attr, 'must be a string')
-    elsif value.split(' ').length != 6
-      record.errors.add(attr, 'must have six components')
+    elsif value.split(' ').length != 5
+      record.errors.add(attr, 'must have five components (m h dm m dw)')
     else
       record.cron.split(' ').each_with_index do |component, i|
         record.cron_structure[i] = record.parse(component, CRON_DATA[i])
@@ -102,28 +101,24 @@ class CronJob < OceanDynamo::Table
   end
 
 
-  def seconds
+  def minutes
     cron_structure[0]
   end
   
-  def minutes
+  def hours
     cron_structure[1]
   end
   
-  def hours
+  def day_of_month
     cron_structure[2]
   end
   
-  def day_of_month
+  def month
     cron_structure[3]
   end
   
-  def month
-    cron_structure[4]
-  end
-  
   def day_of_week
-    cron_structure[5]
+    cron_structure[4]
   end
   
 

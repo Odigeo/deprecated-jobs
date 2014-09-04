@@ -65,10 +65,6 @@ describe CronJob do
       build(:cron_job, cron: nil).should_not be_valid
     end
 
-    it "should have a seconds attribute" do
-      build(:cron_job).should respond_to(:seconds)
-    end
-
     it "should have a minutes attribute" do
       build(:cron_job).should respond_to(:minutes)
     end
