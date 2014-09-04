@@ -15,7 +15,6 @@ require 'webmock/rspec'
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
 RSpec.configure do |config|
-
   # ## Mock Framework
   #
   # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
@@ -48,7 +47,6 @@ RSpec.configure do |config|
 
   config.before(:suite) do 
     WebMock.allow_net_connect!
-    AsyncJob.establish_db_connection
   end
 
   config.after(:suite) do
