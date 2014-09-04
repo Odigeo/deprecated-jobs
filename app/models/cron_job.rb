@@ -16,12 +16,13 @@ class CronJob < OceanDynamo::Table
     # Output only
     attribute :created_by
     attribute :updated_by
-    attribute :seconds,              :serialized, default: nil
-    attribute :minutes,              :serialized, default: nil
-    attribute :hours,                :serialized, default: nil
-    attribute :day_of_month,         :serialized, default: nil
-    attribute :month,                :serialized, default: nil
-    attribute :day_of_week,          :serialized, default: nil
+    # attribute :seconds,              :serialized, default: nil
+    # attribute :minutes,              :serialized, default: nil
+    # attribute :hours,                :serialized, default: nil
+    # attribute :day_of_month,         :serialized, default: nil
+    # attribute :month,                :serialized, default: nil
+    # attribute :day_of_week,          :serialized, default: nil
+    attribute :cron_structure,       :serialized, default: [nil, nil, nil, nil, nil, nil]
   end
   
 
@@ -49,13 +50,35 @@ class CronJob < OceanDynamo::Table
 
   # Callbacks
   before_save do |cj|
-    c = cron.split(' ')
-    self.seconds = c[0] 
-    self.minutes = c[1] 
-    self.hours = c[2] 
-    self.day_of_month = c[3] 
-    self.month = c[4] 
-    self.day_of_week = c[5]
+    self.cron_structure = cron.split(' ')
+    # cron_structure.each_with_index do |component, i|
+    #   self.cron_structure
+    # end
   end
+
+  def seconds
+    cron_structure[0]
+  end
+  
+  def minutes
+    cron_structure[1]
+  end
+  
+  def hours
+    cron_structure[2]
+  end
+  
+  def day_of_month
+    cron_structure[3]
+  end
+  
+  def month
+    cron_structure[4]
+  end
+  
+  def day_of_week
+    cron_structure[5]
+  end
+  
 
 end

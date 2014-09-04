@@ -13,6 +13,11 @@ describe CronJob do
       build(:cron_job, cron: {}).should_not be_valid
     end
 
+    it "should not share substructure between instances" do
+      build(:cron_job).cron_structure.should == build(:cron_job).cron_structure
+      build(:cron_job).cron_structure.should_not be_equal build(:cron_job).cron_structure
+    end
+
     it "should populate the seconds attribute when saved" do
       build(:cron_job).seconds.should == nil
       create(:cron_job).seconds.should_not == nil
