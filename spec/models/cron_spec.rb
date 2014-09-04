@@ -56,23 +56,23 @@ describe CronJob do
   	  create(:cron_job, cron: "0 1 2 3 4 5").seconds[:exactly].should == 0
   	end
 
-  	it "of 1-10 for for minutes should == [1, 10]" do
+  	it "of 1-10 for minutes should == [1, 10]" do
   	  create(:cron_job, cron: "0 1 2 3 4 5").minutes[:exactly].should == 1
   	end
 
-  	it "of 1-10 for for hours should == [1, 10]" do
+  	it "of 1-10 for hours should == [1, 10]" do
   	  create(:cron_job, cron: "0 1 2 3 4 5").hours[:exactly].should == 2
   	end
 
-  	it "of 1-10 for for day_of_month should == [1, 10]" do
+  	it "of 1-10 for day_of_month should == [1, 10]" do
   	  create(:cron_job, cron: "0 1 2 3 4 5").day_of_month[:exactly].should == 3
   	end
 
-  	it "of 1-10 for for month should == [1, 10]" do
+  	it "of 1-10 for month should == [1, 10]" do
   	  create(:cron_job, cron: "0 1 2 3 4 5").month[:exactly].should == 4
   	end
 
-  	it "of 1-4 for for day_of_week should == [1, 4]" do
+  	it "of 1-4 for day_of_week should == [1, 4]" do
   	  create(:cron_job, cron: "0 1 2 3 4 5").day_of_week[:exactly].should == 5
   	end
   end
@@ -112,23 +112,23 @@ describe CronJob do
   	  create(:cron_job, cron: "1-10 * * * * *").seconds[:range].should == [1, 10]
   	end
 
-  	it "of 1-10 for for minutes should == [1, 10]" do
+  	it "of 1-10 for minutes should == [1, 10]" do
   	  create(:cron_job, cron: "* 1-10 * * * *").minutes[:range].should == [1, 10]
   	end
 
-  	it "of 1-10 for for hours should == [1, 10]" do
+  	it "of 1-10 for hours should == [1, 10]" do
   	  create(:cron_job, cron: "* * 1-10 * * *").hours[:range].should == [1, 10]
   	end
 
-  	it "of 1-10 for for day_of_month should == [1, 10]" do
+  	it "of 1-10 for day_of_month should == [1, 10]" do
   	  create(:cron_job, cron: "* * * 1-10 * *").day_of_month[:range].should == [1, 10]
   	end
 
-  	it "of 1-10 for for month should == [1, 10]" do
+  	it "of 1-10 for month should == [1, 10]" do
   	  create(:cron_job, cron: "* * * * 1-10 *").month[:range].should == [1, 10]
   	end
 
-  	it "of 1-4 for for day_of_week should == [1, 4]" do
+  	it "of 1-4 for day_of_week should == [1, 4]" do
   	  create(:cron_job, cron: "* * * * * 1-4").day_of_week[:range].should == [1, 4]
   	end
   end
@@ -148,28 +148,56 @@ describe CronJob do
   	  cj.minutes[:interval].should == 15
   	end
 
-  	it "of 3-23/2 for for hours should have a range of [3, 23] and an interval of 2" do
+  	it "of 3-23/2 for hours should have a range of [3, 23] and an interval of 2" do
   	  cj = create(:cron_job, cron: "* * 3-23/2 * * *")
   	  cj.hours[:range].should == [3, 23]
   	  cj.hours[:interval].should == 2
   	end
 
-  	it "of 3-31/3 for for day_of_month should have a range of [3, 23] and an interval of 2" do
+  	it "of 3-31/3 for day_of_month should have a range of [3, 23] and an interval of 2" do
   	  cj = create(:cron_job, cron: "* * * 3-31/3 * *")
   	  cj.day_of_month[:range].should == [3, 31]
   	  cj.day_of_month[:interval].should == 3
   	end
 
-  	it "of 2-12/3 for for month should have a range of [2, 12] and an interval of 3" do
+  	it "of 2-12/3 for month should have a range of [2, 12] and an interval of 3" do
   	  cj = create(:cron_job, cron: "* * * * 2-12/3 *")
   	  cj.month[:range].should == [2, 12]
   	  cj.month[:interval].should == 3
   	end
 
-  	it "of 1-6/2 for for day_of_week should have a range of [1, 6] and an interval of 2" do
+  	it "of 1-6/2 for day_of_week should have a range of [1, 6] and an interval of 2" do
   	  cj = create(:cron_job, cron: "* * * * * 1-6/2")
   	  cj.day_of_week[:range].should == [1, 6]
   	  cj.day_of_week[:interval].should == 2
+  	end
+  end
+
+
+  describe "lists of 1,4,6" do
+
+  	it "for seconds should == [1, 4, 6]" do
+  	  create(:cron_job, cron: "1,4,6 * * * * *").seconds[:member].should == [1, 4, 6]
+  	end
+
+  	it "for minutes should == [1, 4, 6]" do
+  	  create(:cron_job, cron: "* 1,4,6 * * * *").minutes[:member].should == [1, 4, 6]
+  	end
+
+  	it "for hours should == [1, 4, 6]" do
+  	  create(:cron_job, cron: "* * 1,4,6 * * *").hours[:member].should == [1, 4, 6]
+  	end
+
+  	it "for day_of_month should == [1, 4, 6]" do
+  	  create(:cron_job, cron: "* * * 1,4,6 * *").day_of_month[:member].should == [1, 4, 6]
+  	end
+
+  	it "of 1-10 for for month should == [1, 4, 6]" do
+  	  create(:cron_job, cron: "* * * * 1,4,6 *").month[:member].should == [1, 4, 6]
+  	end
+
+  	it "of 1-4 for for day_of_week should == [1, 4, 6]" do
+  	  create(:cron_job, cron: "* * * * * 1,4,6").day_of_week[:member].should == [1, 4, 6]
   	end
   end
 

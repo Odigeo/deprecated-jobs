@@ -74,6 +74,8 @@ class CronJob < OceanDynamo::Table
       { range: [m[1].to_i, m[2].to_i] }
     elsif m = str.match("^([0-9]+)-([0-9]+)/([0-9]+)$")
       { range: [m[1].to_i, m[2].to_i], interval: m[3].to_i }
+    elsif str =~ /^([0-9]+,)+[0-9]+$/
+      { member: str.split(',').map(&:to_i) }
     end
   end
 
