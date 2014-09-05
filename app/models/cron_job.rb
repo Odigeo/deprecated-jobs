@@ -1,8 +1,6 @@
 class CronJob < OceanDynamo::Table
 
-  ocean_resource_model index: [:id], search: false,
-                       invalidate_member: [],
-                       invalidate_collection: []
+  ocean_resource_model index: [:id], search: false
 
 
   dynamo_schema(:id, table_name_suffix: Api.basename_suffix, 
