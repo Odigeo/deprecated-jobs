@@ -24,7 +24,7 @@ describe CronJobsController, :type => :routing do
     end
 
     it "routes to #execute" do
-      expect(put("/v1/cron_jobs/execute")).to route_to("cron_jobs#execute")
+      expect(put("/execute_cron_jobs")).to route_to("cron_jobs#execute")
     end
 
   end

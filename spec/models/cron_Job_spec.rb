@@ -171,14 +171,52 @@ describe CronJob, :type => :model do
 
     it "should handle lists" do
       cj = create :cron_job, cron: "* * * * *"
-      expect(cj.match_component({member: [0, 5, 59]}, 0)).to eq true
-      expect(cj.match_component({member: [0, 5, 59]}, 5)).to eq true
-      expect(cj.match_component({member: [0, 5, 59]}, 59)).to eq true
-      expect(cj.match_component({member: [0, 5, 59]}, 4)).to eq false
-      expect(cj.match_component({member: [0, 5, 59]}, -5)).to eq false
-      expect(cj.match_component({member: [0, 5, 59]}, 500)).to eq false
+      expect(cj.match_component({member: [0, 95, 59]}, 0)).to eq true
+      expect(cj.match_component({member: [0, 95, 59]}, 95)).to eq true
+      expect(cj.match_component({member: [0, 95, 59]}, 59)).to eq true
+      expect(cj.match_component({member: [0, 95, 59]}, 4)).to eq false
+      expect(cj.match_component({member: [0, 95, 59]}, -5)).to eq false
+      expect(cj.match_component({member: [0, 95, 59]}, 500)).to eq false
     end
+  end
+
+
+  it "process_queue should be a class method" do
+    expect(CronJob).to respond_to :process_queue
+  end
+
+  it "process_queue should call process_queue_entry on each job" do
+    CronJob.delete_all
+    create :cron_job
+    expect(CronJob.count).to be 1
+    expect_any_instance_of(CronJob).to receive(:process_job)
+    CronJob.process_queue
+    CronJob.delete_all
+  end
+
+  it "process_job should do nothing unless the time is due" do
+    CronJob.delete_all
+    job = create :cron_job
+    expect(CronJob.count).to be 1
+    expect(job).to receive(:due?).and_return(false)
+    expect(job).to_not receive(:post_async_job)
+    job.process_job
+    CronJob.delete_all
+  end
+
+  it "process_job should call post_async_job if the time is due" do
+    CronJob.delete_all
+    job = create :cron_job
+    expect(CronJob.count).to be 1
+    expect(job).to receive(:due?).and_return(true)
+    expect(job).to receive(:post_async_job)
+    job.process_job
+    CronJob.delete_all
+  end
+
+  describe "post_async_job" do
+    
+    
 
   end
-  
 end
