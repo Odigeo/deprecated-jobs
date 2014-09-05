@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe AsyncJobQueue do
+describe AsyncJobQueue, :type => :model do
   
   before :each do
-    AsyncJobQueue.stub(:create_queue).
+    allow(AsyncJobQueue).to receive(:create_queue).
       and_return(double(AWS::SQS::Queue, 
         delete:          nil, 
         send_message:    double(AWS::SQS::Queue::SentMessage),
@@ -16,20 +16,20 @@ describe AsyncJobQueue do
   describe "creation" do 
 
     it "should work" do
-      AsyncJobQueue.new.should be_an AsyncJobQueue
+      expect(AsyncJobQueue.new).to be_an AsyncJobQueue
     end
 
     it "should allow a queue basename to be specified" do
-      AsyncJobQueue.new(basename: "ZalagadoolaQueue").basename.should == "ZalagadoolaQueue"
+      expect(AsyncJobQueue.new(basename: "ZalagadoolaQueue").basename).to eq "ZalagadoolaQueue"
     end
 
     it "should have a random, unique basename if not explicitly specified" do
-      AsyncJobQueue.new.basename.should be_a String
-      AsyncJobQueue.new.basename.should_not == AsyncJobQueue.new.basename
+      expect(AsyncJobQueue.new.basename).to be_a String
+      expect(AsyncJobQueue.new.basename).not_to eq AsyncJobQueue.new.basename
     end
 
     it "should have a fullname" do
-      AsyncJobQueue.new.fullname.should be_a String
+      expect(AsyncJobQueue.new.fullname).to be_a String
     end
   end
 
@@ -38,19 +38,19 @@ describe AsyncJobQueue do
   describe "instances" do
 
     it "should have an SQS attribute" do
-      AsyncJobQueue.new.sqs.should be_an(AWS::SQS)
+      expect(AsyncJobQueue.new.sqs).to be_an(AWS::SQS)
     end
 
     it "should all use the same AWS::SQS instance" do
       the_sqs = AsyncJobQueue.new.sqs
-      AsyncJobQueue.new.sqs.should == the_sqs
-      AsyncJobQueue.new.sqs.should == the_sqs
-      AsyncJobQueue.new.sqs.should == the_sqs
+      expect(AsyncJobQueue.new.sqs).to eq the_sqs
+      expect(AsyncJobQueue.new.sqs).to eq the_sqs
+      expect(AsyncJobQueue.new.sqs).to eq the_sqs
     end
 
 
     it "should have a queue attribute" do
-      AsyncJobQueue.new.queue.should be_an Object
+      expect(AsyncJobQueue.new.queue).to be_an Object
     end
   end
 
@@ -82,7 +82,7 @@ describe AsyncJobQueue do
 
     it "should receive a message from the AWS queue, not using a block" do
       q = AsyncJobQueue.new
-      q.receive_message(visibility_timeout: 60).should be_a QueueMessage
+      expect(q.receive_message(visibility_timeout: 60)).to be_a QueueMessage
       expect(q.queue).to have_received(:receive_message).with({:attributes=>[:receive_count], :visibility_timeout=>60, :limit=>1})
     end
 
@@ -99,7 +99,7 @@ describe AsyncJobQueue do
 
     it "should poll from the AWS queue, not using a block" do
       q = AsyncJobQueue.new
-      q.poll(visibility_timeout: 60).should be_a QueueMessage
+      expect(q.poll(visibility_timeout: 60)).to be_a QueueMessage
       expect(q.queue).to have_received(:poll).with({:attributes=>[:receive_count], :visibility_timeout=>60, :limit=>1})
     end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AsyncJobsController do
+describe AsyncJobsController, :type => :controller do
   
   render_views
   
@@ -17,37 +17,37 @@ describe AsyncJobsController do
     
     it "should return JSON" do
       post :create, @args
-      response.content_type.should == "application/json"
+      expect(response.content_type).to eq "application/json"
     end
     
     it "should return a 400 if the X-API-Token header is missing" do
       request.headers['X-API-Token'] = nil
       post :create, @args
-      response.status.should == 400
+      expect(response.status).to eq 400
     end
     
     it "should return a 422 when there are validation errors" do
       post :create, @args.merge('credentials' => "qz")
-      response.status.should == 422
-      response.content_type.should == "application/json"
-      JSON.parse(response.body).should_not == {"_api_error"=>["Resource not unique"]}
-      JSON.parse(response.body).should == {"credentials"=>["are malformed"]}
+      expect(response.status).to eq 422
+      expect(response.content_type).to eq "application/json"
+      expect(JSON.parse(response.body)).not_to eq({"_api_error"=>["Resource not unique"]})
+      expect(JSON.parse(response.body)).to eq({"credentials"=>["are malformed"]})
     end
                 
     it "should return a 201 when successful" do
       post :create, @args
-      response.should render_template(partial: "_async_job", count: 1)
-      response.status.should == 201
+      expect(response).to render_template(partial: "_async_job", count: 1)
+      expect(response.status).to eq 201
     end
 
     it "should contain a Location header when successful" do
       post :create, @args
-      response.headers['Location'].should be_a String
+      expect(response.headers['Location']).to be_a String
     end
 
     it "should return the new resource in the body when successful" do
       post :create, @args
-      response.body.should be_a String
+      expect(response.body).to be_a String
     end
     
   end

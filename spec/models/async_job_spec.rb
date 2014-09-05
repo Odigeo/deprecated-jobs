@@ -1,108 +1,108 @@
 require 'spec_helper'
 
-describe AsyncJob do
+describe AsyncJob, :type => :model do
 
   describe "attributes" do
     
     it "should have an UUID" do
-      create(:async_job).uuid.should be_a String
+      expect(create(:async_job).uuid).to be_a String
     end
 
     it "should assign an UUID to the hash_key attribute if nil at create" do
       i = build :async_job, uuid: nil
-      i.save.should == true
-      i.uuid.should_not be_blank
+      expect(i.save).to eq true
+      expect(i.uuid).not_to be_blank
     end
 
     it "should have a start time" do
-      create(:async_job, started_at: Time.now.utc).started_at.should be_a Time
+      expect(create(:async_job, started_at: Time.now.utc).started_at).to be_a Time
     end
 
     it "should have a start time" do
-      create(:async_job, started_at: Time.now.utc).started_at.should be_a Time
+      expect(create(:async_job, started_at: Time.now.utc).started_at).to be_a Time
     end
 
     it "should have a finish time" do
-      create(:async_job, finished_at: nil).finished_at.should == nil
+      expect(create(:async_job, finished_at: nil).finished_at).to eq nil
     end
 
     it "should have a steps array" do
-     AsyncJob.any_instance.should_receive(:enqueue)
-     create(:async_job, steps: [{}, {}, {}]).steps.should == [{}, {}, {}]
+     expect_any_instance_of(AsyncJob).to receive(:enqueue)
+     expect(create(:async_job, steps: [{}, {}, {}]).steps).to eq [{}, {}, {}]
     end
 
     it "should have a creation time" do
-      create(:async_job).created_at.should be_a Time
+      expect(create(:async_job).created_at).to be_a Time
     end
 
     it "should have an update time" do
-      create(:async_job).updated_at.should be_a Time
+      expect(create(:async_job).updated_at).to be_a Time
     end
   
     it "should have a creator" do
-      create(:async_job).created_by.should == ""
+      expect(create(:async_job).created_by).to eq ""
     end
 
     it "should have an updater" do
-      create(:async_job).updated_by.should == ""
+      expect(create(:async_job).updated_by).to eq ""
     end
 
     it "should have a last_completed_step attribute" do
-      create(:async_job).last_completed_step.should == nil
-      create(:async_job, last_completed_step: 2).last_completed_step.should == 2
+      expect(create(:async_job).last_completed_step).to eq nil
+      expect(create(:async_job, last_completed_step: 2).last_completed_step).to eq 2
     end
 
     it "should have a max_seconds_in_queue of 1 day" do
-      create(:async_job).max_seconds_in_queue.should == 1.day
+      expect(create(:async_job).max_seconds_in_queue).to eq 1.day
     end
 
     it "should have a destroy_at time" do
-      create(:async_job).destroy_at.should be_a Time
+      expect(create(:async_job).destroy_at).to be_a Time
     end
 
     it "should set a destroy_at time automatically from the max_seconds_in_queue value" do
       j = create :async_job
-      j.destroy_at.to_i.should be_within(1).of((j.created_at + j.max_seconds_in_queue).to_i)
+      expect(j.destroy_at.to_i).to be_within(1).of((j.created_at + j.max_seconds_in_queue).to_i)
     end
 
     it "should have a default poison_limit of 5" do
-      create(:async_job).default_poison_limit.should == 5
-      create(:async_job, default_poison_limit: 10).default_poison_limit.should == 10
+      expect(create(:async_job).default_poison_limit).to eq 5
+      expect(create(:async_job, default_poison_limit: 10).default_poison_limit).to eq 10
     end
 
     it "should have a required credentials attribute" do
-      create(:async_job).credentials.should be_a String
-      build(:async_job, credentials: nil).should_not be_valid
+      expect(create(:async_job).credentials).to be_a String
+      expect(build(:async_job, credentials: nil)).not_to be_valid
     end
 
     it "should require the credentials to be unscramblable (is that a word?)" do
-      build(:async_job, credentials: 'bWFnbmV0bzp4YXZpZXI=').should be_valid
-      build(:async_job, credentials: 'blahonga').should_not be_valid
+      expect(build(:async_job, credentials: 'bWFnbmV0bzp4YXZpZXI=')).to be_valid
+      expect(build(:async_job, credentials: 'blahonga')).not_to be_valid
     end
 
     it "should only require the credentials at creation time" do
       j = create :async_job, credentials: 'bWFnbmV0bzp4YXZpZXI='
-      j.should be_valid
+      expect(j).to be_valid
       j.credentials = ""
-      j.should be_valid
+      expect(j).to be_valid
       j.save!
     end
 
     it "should have an optional token attribute" do
-      create(:async_job).token.should be_a String
-      create(:async_job, token: nil).token.should == nil
+      expect(create(:async_job).token).to be_a String
+      expect(create(:async_job, token: nil).token).to eq nil
     end
 
     it "should have a last_status attribute" do
-      create(:async_job).should respond_to :last_status
+      expect(create(:async_job)).to respond_to :last_status
     end
     
     it "should have a last_headers attribute" do
-      create(:async_job).should respond_to :last_headers
+      expect(create(:async_job)).to respond_to :last_headers
     end
     
     it "should have a last_body attribute" do
-      create(:async_job).should respond_to :last_body
+      expect(create(:async_job)).to respond_to :last_body
     end
   end
 
@@ -110,7 +110,7 @@ describe AsyncJob do
   describe "step handling" do
 
     before :each do
-      AsyncJob.any_instance.should_receive(:enqueue)
+      expect_any_instance_of(AsyncJob).to receive(:enqueue)
       @j = create(:async_job, steps: [{'name' => "Step 1"}, 
                                       {'name' => "Step 2", 'poison_limit' => 50}, 
                                       {'name' => "Step 3", 'step_time' => 2.minutes}
@@ -118,135 +118,135 @@ describe AsyncJob do
     end
 
     it "should have a finished? predicate" do
-      @j.finished?.should == false
+      expect(@j.finished?).to eq false
       @j.job_is_poison
       @j.reload(consistent: true)
-      @j.finished?.should == true
+      expect(@j.finished?).to eq true
     end
 
     it "should have a success? predicate" do
-      @j.finished?.should == false
+      expect(@j.finished?).to eq false
       @j.job_succeeded
       @j.reload(consistent: true)
-      @j.succeeded?.should == true
+      expect(@j.succeeded?).to eq true
     end
 
     it "should have a failure? predicate" do
-      @j.finished?.should == false
+      expect(@j.finished?).to eq false
       @j.job_failed
       @j.reload(consistent: true)
-      @j.failed?.should == true
+      expect(@j.failed?).to eq true
     end
 
     it "should have a poison? predicate" do
-      @j.finished?.should == false
+      expect(@j.finished?).to eq false
       @j.job_is_poison
       @j.reload(consistent: true)
-      @j.poison?.should == true
+      expect(@j.poison?).to eq true
     end
 
     it "should have a job_succeeded method that finishes the job" do
       @j.job_succeeded
       @j.reload(consistent: true)
-      @j.finished?.should == true
-      @j.succeeded?.should == true
-      @j.failed?.should == false
-      @j.poison?.should == false
+      expect(@j.finished?).to eq true
+      expect(@j.succeeded?).to eq true
+      expect(@j.failed?).to eq false
+      expect(@j.poison?).to eq false
     end
 
     it "should have a job_failed method to finish a job" do
       @j.job_failed
       @j.reload(consistent: true)
-      @j.finished?.should == true
-      @j.failed?.should == true
-      @j.succeeded?.should == false
-      @j.poison?.should == false
+      expect(@j.finished?).to eq true
+      expect(@j.failed?).to eq true
+      expect(@j.succeeded?).to eq false
+      expect(@j.poison?).to eq false
     end
 
     it "#job_failed should take an optional message to log" do
       @j.job_failed "And this is why."
-      @j.current_step['log'].should == ["And this is why."]
+      expect(@j.current_step['log']).to eq ["And this is why."]
     end
 
     it "should have a job_is_poison method to finish a job" do
       @j.job_is_poison
       @j.reload(consistent: true)
-      @j.finished?.should == true
-      @j.failed?.should == true
-      @j.succeeded?.should == false
-      @j.poison?.should == true
+      expect(@j.finished?).to eq true
+      expect(@j.failed?).to eq true
+      expect(@j.succeeded?).to eq false
+      expect(@j.poison?).to eq true
     end
 
 
 
     it "#current_step should obtain the current step" do
-      @j.current_step['name'].should == "Step 1"
+      expect(@j.current_step['name']).to eq "Step 1"
       @j.last_completed_step = 0
-      @j.current_step['name'].should == "Step 2"
+      expect(@j.current_step['name']).to eq "Step 2"
       @j.last_completed_step = 1
-      @j.current_step['name'].should == "Step 3"
+      expect(@j.current_step['name']).to eq "Step 3"
       @j.last_completed_step = 2
-      @j.current_step.should == nil
+      expect(@j.current_step).to eq nil
       @j.last_completed_step = 200000
-      @j.current_step.should == nil
+      expect(@j.current_step).to eq nil
     end
 
     it "#done_all_steps? should return true if the job has no remaining steps" do
-      create(:async_job).done_all_steps?.should == true
+      expect(create(:async_job).done_all_steps?).to eq true
     end
 
     it "#current_step_done! should advance state to the next job step" do
-      @j.last_completed_step.should == nil
+      expect(@j.last_completed_step).to eq nil
       @j.current_step_done!
-      @j.last_completed_step.should == 0
+      expect(@j.last_completed_step).to eq 0
       @j.current_step_done!
-      @j.last_completed_step.should == 1
+      expect(@j.last_completed_step).to eq 1
       @j.current_step_done!
-      @j.last_completed_step.should == 2
+      expect(@j.last_completed_step).to eq 2
       @j.current_step_done!
-      @j.last_completed_step.should == 2
+      expect(@j.last_completed_step).to eq 2
       @j.current_step_done!
-      @j.last_completed_step.should == 2
+      expect(@j.last_completed_step).to eq 2
     end
 
     it "#current_step_done! should finish the job if no steps remain" do
       @j.current_step_done!
-      @j.finished_at.should == nil      
+      expect(@j.finished_at).to eq nil      
       @j.current_step_done!
-      @j.finished_at.should == nil      
+      expect(@j.finished_at).to eq nil      
       @j.current_step_done!
-      @j.finished_at.should_not == nil      
+      expect(@j.finished_at).not_to eq nil      
       @j.reload(consistent: true)
-      @j.finished?.should == true
-      @j.failed?.should == false
-      @j.succeeded?.should == true
-      @j.poison?.should == false
+      expect(@j.finished?).to eq true
+      expect(@j.failed?).to eq false
+      expect(@j.succeeded?).to eq true
+      expect(@j.poison?).to eq false
     end
 
     it "#poison_limit should return the poison limit for the current job step" do
-      @j.poison_limit.should == 5
+      expect(@j.poison_limit).to eq 5
       @j.current_step_done!
-      @j.poison_limit.should == 50
+      expect(@j.poison_limit).to eq 50
       @j.current_step_done!
-      @j.poison_limit.should == 5
+      expect(@j.poison_limit).to eq 5
     end
 
     it "#step_time should return the step time for the current job step" do
-      @j.step_time.should == @j.default_step_time
+      expect(@j.step_time).to eq @j.default_step_time
       @j.current_step_done!
-      @j.step_time.should == @j.default_step_time
+      expect(@j.step_time).to eq @j.default_step_time
       @j.current_step_done!
-      @j.step_time.should == 2.minutes
+      expect(@j.step_time).to eq 2.minutes
     end
 
     it "#log should log to the current step" do
       @j.log("Log data")
       @j.log("Some more")
-      @j.current_step['log'].should == ["Log data", "Some more"]
+      expect(@j.current_step['log']).to eq ["Log data", "Some more"]
     end
 
     it "#log should return its string argument" do
-      @j.log("Log data").should == "Log data"
+      expect(@j.log("Log data")).to eq "Log data"
     end
   end
 
@@ -255,13 +255,13 @@ describe AsyncJob do
 
     it "should ban after a save" do
       j = create :async_job
-      Api.should_receive(:ban).with("/v[0-9]+/async_jobs/#{j.uuid}($|/|\\?)")
+      expect(Api).to receive(:ban).with("/v[0-9]+/async_jobs/#{j.uuid}($|/|\\?)")
       j.save!
     end
 
     it "should ban after a destroy" do
       j = create :async_job
-      Api.should_receive(:ban).with("/v[0-9]+/async_jobs/#{j.uuid}($|/|\\?)")
+      expect(Api).to receive(:ban).with("/v[0-9]+/async_jobs/#{j.uuid}($|/|\\?)")
       j.destroy
     end
 

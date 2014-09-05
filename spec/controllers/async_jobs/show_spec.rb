@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AsyncJobsController do
+describe AsyncJobsController, :type => :controller do
   
   render_views
 
@@ -18,38 +18,38 @@ describe AsyncJobsController do
     
     it "should return JSON" do
       get :show, id: @async_job.uuid
-      response.content_type.should == "application/json"
+      expect(response.content_type).to eq "application/json"
     end
     
     it "should return a 400 if the X-API-Token header is missing" do
       request.headers['X-API-Token'] = nil
       get :show, id: @async_job.uuid
-      response.status.should == 400
-      response.content_type.should == "application/json"
+      expect(response.status).to eq 400
+      expect(response.content_type).to eq "application/json"
     end
     
     it "should return a 404 when the user can't be found" do
       get :show, id: -1
-      response.status.should == 404
-      response.content_type.should == "application/json"
+      expect(response.status).to eq 404
+      expect(response.content_type).to eq "application/json"
     end
     
     it "should return a 200 when successful" do
       get :show, id: @async_job.uuid
-      response.status.should == 200
-      response.should render_template(partial: "_async_job", count: 1)
+      expect(response.status).to eq 200
+      expect(response).to render_template(partial: "_async_job", count: 1)
     end
 
     it "should return a different ETag when updated" do
       get :show, id: @async_job.uuid
-      response.status.should == 200
+      expect(response.status).to eq 200
       etag = response.headers['ETag']
       bod = response.body
       @async_job.save!
       get :show, id: @async_job.uuid
-      response.status.should == 200
-      response.body.should_not == bod
-      response.headers['ETag'].should_not == etag
+      expect(response.status).to eq 200
+      expect(response.body).not_to eq bod
+      expect(response.headers['ETag']).not_to eq etag
     end
 
 
