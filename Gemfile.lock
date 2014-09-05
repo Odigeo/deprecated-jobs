@@ -81,7 +81,7 @@ GEM
       activesupport (~> 4.1.0)
       aws-sdk (~> 1.0)
       aws-sdk-core
-    ocean-rails (2.16.3)
+    ocean-rails (3.0.1)
       ffi
       ffi-rzmq (~> 1.0)
       jbuilder
@@ -165,7 +165,7 @@ DEPENDENCIES
   daemons
   factory_girl_rails (~> 4.0)
   jbuilder
-  ocean-rails (~> 2.0)
+  ocean-rails
   oj
   rails (~> 4.0)
   rspec-rails

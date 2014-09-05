@@ -152,9 +152,8 @@ describe QueueMessage, :type => :model do
       QueueMessage.new(@msg).execute_current_step
     end
 
-    it "should set Content-Type and Accept headers to application/json" do
-      stub_request(:get, "http://127.0.0.1/something").with(headers: {'Content-Type' => 'application/json', 
-                                                                      'Accept' => 'application/json'})
+    it "should set only the Accept header to application/json for a GET" do
+      stub_request(:get, "http://127.0.0.1/something").with(headers: {'Accept' => 'application/json'})
       QueueMessage.new(@msg).execute_current_step
     end
 
