@@ -90,8 +90,83 @@ describe CronJob, :type => :model do
       expect(build(:cron_job)).to respond_to(:lock_version)
     end
 
+
+    it "should have a cron_structure attribute" do
+      expect(build(:cron_job)).to respond_to(:cron_structure)
+    end
   end
 
-  
+
+  describe "due?" do
+
+    it "should exist as a predicate" do
+      expect(build :cron_job).to respond_to :due?
+    end
+
+    it "should take a Time as its argument" do
+      expect(create(:cron_job, cron: "* * * * *").due?(Time.now)).to be true
+    end
+
+    it "should call match_component once for each component" do
+      cj = create :cron_job, cron: "* * * * *"
+      expect(cj).to receive(:match_component).exactly(5).times.and_return(true)
+      expect(cj.due?(Time.now.utc)).to eq true
+    end
+
+    it "should return true if all invocations of match_component return true" do
+      cj = create :cron_job, cron: "* * * * *"
+      expect(cj).to receive(:match_component).exactly(4).times.
+        and_return(true, true, true, false)
+      expect(cj.due?(Time.now.utc)).to eq false
+    end
+  end
+
+
+  describe "match_component" do
+
+    it "should return true when given true and anything" do
+      cj = create :cron_job, cron: "* * * * *"
+      expect(cj.match_component(true, "BOOGALOO")).to eq true
+    end
+
+    it "should handle exact matches" do
+      cj = create :cron_job, cron: "* * * * *"
+      expect(cj.match_component({exactly: 5}, 5)).to eq true
+      expect(cj.match_component({exactly: 5}, -5)).to eq false
+    end
+
+    it "should handle ranges" do
+      cj = create :cron_job, cron: "* * * * *"
+      expect(cj.match_component({range: [0, 59]}, 0)).to eq true
+      expect(cj.match_component({range: [0, 59]}, 5)).to eq true
+      expect(cj.match_component({range: [0, 59]}, 59)).to eq true
+      expect(cj.match_component({range: [0, 59]}, -5)).to eq false
+      expect(cj.match_component({range: [0, 59]}, 500)).to eq false
+    end
+
+    it "should handle ranges with intervals" do
+      cj = create :cron_job, cron: "* * * * *"
+      expect(cj.match_component({range: [1, 59], interval: 3}, 0)).to eq false
+      expect(cj.match_component({range: [1, 59], interval: 3}, 1)).to eq true
+      expect(cj.match_component({range: [1, 59], interval: 3}, 2)).to eq false
+      expect(cj.match_component({range: [1, 59], interval: 3}, 3)).to eq false
+      expect(cj.match_component({range: [1, 59], interval: 3}, 4)).to eq true
+      expect(cj.match_component({range: [1, 59], interval: 3}, 5)).to eq false
+      expect(cj.match_component({range: [1, 59], interval: 3}, 6)).to eq false
+      expect(cj.match_component({range: [1, 59], interval: 3}, 7)).to eq true
+      expect(cj.match_component({range: [1, 59], interval: 3}, 8)).to eq false
+    end
+
+    it "should handle lists" do
+      cj = create :cron_job, cron: "* * * * *"
+      expect(cj.match_component({member: [0, 5, 59]}, 0)).to eq true
+      expect(cj.match_component({member: [0, 5, 59]}, 5)).to eq true
+      expect(cj.match_component({member: [0, 5, 59]}, 59)).to eq true
+      expect(cj.match_component({member: [0, 5, 59]}, 4)).to eq false
+      expect(cj.match_component({member: [0, 5, 59]}, -5)).to eq false
+      expect(cj.match_component({member: [0, 5, 59]}, 500)).to eq false
+    end
+
+  end
   
 end

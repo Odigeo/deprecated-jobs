@@ -116,6 +116,29 @@ class CronJob < OceanDynamo::Table
   end
 
 
+  def due?(t = Time.now.utc)
+    t = [t.min, t.hour, t.day, t.month, t.wday]
+    cron_structure.each_with_index do |component, i|
+      return false if !match_component(component, t[i])
+    end
+    true
+  end
+
+
+  def match_component(c, v)
+    return true if c == true
+    return true if c[:exactly] && v == c[:exactly]
+    if c[:interval]
+      return true if v >= c[:range][0] && v <= c[:range][1] &&
+                     ((v - c[:range][0]) % c[:interval]) == 0
+    else
+      return true if c[:range] && v >= c[:range][0] && v <= c[:range][1]
+    end
+    return true if c[:member] && c[:member].include?(v)
+    false
+  end
+
+
   def minutes
     cron_structure[0]
   end
