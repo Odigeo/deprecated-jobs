@@ -1,6 +1,7 @@
 class CronJobsController < ApplicationController
 
-  ocean_resource_controller required_attributes: [:lock_version]  # PUT isn't used: no required args
+  ocean_resource_controller required_attributes: [:lock_version, :steps, :cron],
+                            extra_actions: { 'execute' => ['execute', "PUT"]}
 
   # The following params are required:
   #   :credentials
@@ -35,6 +36,11 @@ class CronJobsController < ApplicationController
 
   # DELETE /cron_jobs/1
   def destroy
+  end
+
+
+  # PUT /cron_jobs/execute
+  def execute
   end
   
   

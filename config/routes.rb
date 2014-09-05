@@ -7,7 +7,11 @@ Jobs::Application.routes.draw do
                            constraints: {id: /.+/}
 
     resources :cron_jobs, only: [:index, :create, :show, :update, :destroy], 
-                           constraints: {id: /.+/}
+                           constraints: {id: /.+/} do
+      collection do
+      	put 'execute'
+      end
+    end
   end
 
 end

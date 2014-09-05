@@ -23,5 +23,9 @@ describe CronJobsController, :type => :routing do
       expect(delete("/v1/cron_jobs/1")).to route_to("cron_jobs#destroy", :id => "1")
     end
 
+    it "routes to #execute" do
+      expect(put("/v1/cron_jobs/execute")).to route_to("cron_jobs#execute")
+    end
+
   end
 end
