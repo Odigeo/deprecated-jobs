@@ -119,6 +119,18 @@ describe CronJob, :type => :model do
         and_return(true, true, true, false)
       expect(cj.due?(Time.now.utc)).to eq false
     end
+
+    it "should match anything to * * * * *" do
+      cj = create :cron_job, cron: "* * * * *"
+      expect(cj).to receive(:time_vector).and_return [0, 0, 1, 0, 0]
+      expect(cj.due?(false)).to eq true
+    end
+
+    it "should match * 0-12 1-16/4 JUN,JUL,AUG,SEP MON-FRI with proper data" do
+      cj = create :cron_job, cron: "* 0-12 1-16/4 JUN,JUL,AUG,SEP MON-FRI"
+      expect(cj).to receive(:time_vector).and_return [57, 11, 9, 7, 2]
+      expect(cj.due?(false)).to eq true
+    end
   end
 
 

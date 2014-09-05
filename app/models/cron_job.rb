@@ -116,8 +116,13 @@ class CronJob < OceanDynamo::Table
   end
 
 
+  def time_vector(t)
+    [t.min, t.hour, t.day, t.month, t.wday]
+  end
+
+
   def due?(t = Time.now.utc)
-    t = [t.min, t.hour, t.day, t.month, t.wday]
+    t = time_vector(t)
     cron_structure.each_with_index do |component, i|
       return false if !match_component(component, t[i])
     end
