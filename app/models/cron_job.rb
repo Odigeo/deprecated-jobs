@@ -133,11 +133,10 @@ class CronJob < OceanDynamo::Table
   def match_component(c, v)
     return true if c == true
     return true if c[:exactly] && v == c[:exactly]
-    if c[:interval]
-      return true if v >= c[:range][0] && v <= c[:range][1] &&
-                     ((v - c[:range][0]) % c[:interval]) == 0
-    else
-      return true if c[:range] && v >= c[:range][0] && v <= c[:range][1]
+    if c[:range]
+      return false if c[:range] && v < c[:range][0] || v > c[:range][1]
+      return true unless c[:interval]
+      return true if ((v - c[:range][0]) % c[:interval]) == 0
     end
     return true if c[:member] && c[:member].include?(v)
     false
