@@ -162,4 +162,16 @@ class CronJob < OceanDynamo::Table
   end
   
 
+  def self.process_queue
+    all.each(&:process_job)
+  end
+
+  def process_job
+    post_async_job if due?
+  end
+
+  def post_async_job
+
+  end
+
 end

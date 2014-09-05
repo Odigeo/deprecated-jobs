@@ -10,6 +10,10 @@ class CronJobsController < ApplicationController
 
 
   respond_to :json
+
+  skip_before_filter :require_x_api_token, only: :execute
+  skip_before_filter :authorize_action, only: :execute
+
   
   before_action :find_cron_job, :only => [:show, :update, :destroy]
     
@@ -39,8 +43,10 @@ class CronJobsController < ApplicationController
   end
 
 
-  # PUT /cron_jobs/execute
+  # PUT /execute_cron_jobs
   def execute
+    CronJob.process_queue
+    render_head_204
   end
   
   

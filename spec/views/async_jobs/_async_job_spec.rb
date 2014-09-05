@@ -3,7 +3,6 @@ require 'spec_helper'
 describe "async_jobs/_async_job", :type => :view do
 
   before :each do                     # Must be :each (:all causes all tests to fail)
-    #AsyncJob.any_instance.should_receive(:enqueue)
     aj = create :async_job, 
            started_at: 1.hour.ago.utc,
            finished_at: 10.minutes.ago.utc,
