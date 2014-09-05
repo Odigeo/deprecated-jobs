@@ -46,10 +46,12 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
 
   config.before(:suite) do 
+    `curl -s -X DELETE http://localhost:4567`
     WebMock.allow_net_connect!
   end
 
   config.after(:suite) do
+    `curl -s -X DELETE http://localhost:4567`
     #WebMock.disable_net_connect!
   end
 end
