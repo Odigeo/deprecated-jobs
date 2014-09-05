@@ -71,24 +71,24 @@ describe CronJob do
 
   describe "range decomposition of *" do
 
-  	it "for minutes should == [0, 59]" do
-  	  create(:cron_job).minutes[:range].should == [0, 59]
+  	it "for minutes should == true" do
+  	  create(:cron_job).minutes.should == true
   	end
 
-  	it "for hours should == [0, 59]" do
-  	  create(:cron_job).hours[:range].should == [0, 23]
+  	it "for hours should == true" do
+  	  create(:cron_job).hours.should == true
   	end
 
-  	it "for day_of_month should == [1, 31]" do
-  	  create(:cron_job).day_of_month[:range].should == [1, 31]
+  	it "for day_of_month should == true" do
+  	  create(:cron_job).day_of_month.should == true
   	end
 
-  	it "for month should == [1, 12]" do
-  	  create(:cron_job).month[:range].should == [1, 12]
+  	it "for month should == true" do
+  	  create(:cron_job).month.should == true
   	end
 
-  	it "for day_of_week should == [0, 6]" do
-  	  create(:cron_job).day_of_week[:range].should == [0, 6]
+  	it "for day_of_week should == true" do
+  	  create(:cron_job).day_of_week.should == true
   	end
   end
 
@@ -272,43 +272,39 @@ describe CronJob do
     it "should translate @hourly to 0 * * * *" do
       cj = create :cron_job, cron: "@hourly"
       cj.cron.should == "@hourly"
-      cj.cron_structure.should == [{:exactly=>0}, {:range=>[0, 23]}, {:range=>[1, 31]}, 
-                                   {:range=>[1, 12]}, {:range=>[0, 6]}]
+      cj.cron_structure.should == [{:exactly=>0}, true, true, true, true]
     end
 
     it "should translate @daily to 0 0 * * *" do
       cj = create :cron_job, cron: "@daily"
       cj.cron.should == "@daily"
-      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:range=>[1, 31]}, 
-                                   {:range=>[1, 12]}, {:range=>[0, 6]}]
+      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, true, true, true]
     end
 
     it "should translate @weekly to 0 0 * * 0" do
       cj = create :cron_job, cron: "@weekly"
       cj.cron.should == "@weekly"
-      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:range=>[1, 31]}, 
-                                   {:range=>[1, 12]}, {:exactly=>0}]
+      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, true, true, {:exactly=>0}]
     end
 
     it "should translate @monthly to 0 0 1 * *" do
       cj = create :cron_job, cron: "@monthly"
       cj.cron.should == "@monthly"
-      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:exactly=>1}, 
-                                   {:range=>[1, 12]}, {:range=>[0, 6]}]
+      cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:exactly=>1}, true, true]
     end
 
     it "should translate @yearly to 0 0 1 1 *" do
       cj = create :cron_job, cron: "@yearly"
       cj.cron.should == "@yearly"
       cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:exactly=>1}, 
-                                   {:exactly=>1}, {:range=>[0, 6]}]
+                                   {:exactly=>1}, true]
     end
 
     it "should translate @annually to 0 0 1 1 *" do
       cj = create :cron_job, cron: "@annually"
       cj.cron.should == "@annually"
       cj.cron_structure.should == [{:exactly=>0}, {:exactly=>0}, {:exactly=>1}, 
-                                   {:exactly=>1}, {:range=>[0, 6]}]
+                                   {:exactly=>1}, true]
     end
 
   end

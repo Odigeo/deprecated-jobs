@@ -71,6 +71,7 @@ class CronJob < OceanDynamo::Table
 
 
   def validate_cron_field (cj, cs, component, cron_data)
+    return if cs == true
     name = cron_data[:name]
     min, max = cron_data[:range]
     cj.errors.add(:cron, "#{name} value '#{component}' is unrecognized") and return if cs[:unrecognized]
@@ -93,6 +94,7 @@ class CronJob < OceanDynamo::Table
 
 
   def parse (str, data)
+    return true if str == '*'
     if data[:list]
       lb = data[:list_base]
       data[:list].each_with_index do |x, i|
