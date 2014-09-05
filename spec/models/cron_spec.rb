@@ -297,14 +297,14 @@ describe CronJob, :type => :model do
       cj = create :cron_job, cron: "@yearly"
       expect(cj.cron).to eq "@yearly"
       expect(cj.cron_structure).to eq [{:exactly=>0}, {:exactly=>0}, {:exactly=>1}, 
-                                   {:exactly=>1}, true]
+                                       {:exactly=>1}, true]
     end
 
     it "should translate @annually to 0 0 1 1 *" do
       cj = create :cron_job, cron: "@annually"
       expect(cj.cron).to eq "@annually"
       expect(cj.cron_structure).to eq [{:exactly=>0}, {:exactly=>0}, {:exactly=>1}, 
-                                   {:exactly=>1}, true]
+                                       {:exactly=>1}, true]
     end
 
   end
