@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe QueueMessage do
+describe QueueMessage, :type => :model do
 
   before :each do
-    AsyncJob.any_instance.stub(:enqueue)
+    allow_any_instance_of(AsyncJob).to receive(:enqueue)
     @async_job = create(:async_job, steps: [{'name' => "Step 1", 'url' => 'http://127.0.0.1/something'}, 
                                             {'name' => "Step 2", 'poison_limit' => 50}, 
                                             {'name' => "Step 3", 'step_time' => 2.minutes}
@@ -18,28 +18,28 @@ describe QueueMessage do
 
 
   it "should require a message when instantiated" do
-    QueueMessage.new(@msg).should be_a QueueMessage
+    expect(QueueMessage.new(@msg)).to be_a QueueMessage
     expect { QueueMessage.new() }.to raise_error
   end
 
 
   it "should have a message reader" do
-    QueueMessage.new(@msg).message.should == @msg
+    expect(QueueMessage.new(@msg).message).to eq @msg
   end
 
   it "should have a body reader" do
-    QueueMessage.new(@msg).body.should == @async_job.uuid
+    expect(QueueMessage.new(@msg).body).to eq @async_job.uuid
     expect(@msg).to have_received(:body)
   end
 
   it "should have a receive count reader" do
-    QueueMessage.new(@msg).receive_count.should == 2
+    expect(QueueMessage.new(@msg).receive_count).to eq 2
     expect(@msg).to have_received(:receive_count)
   end
 
 
   it "should have a visibility_timeout setter" do
-    (QueueMessage.new(@msg).visibility_timeout = 1.hour).should == 3600
+    expect(QueueMessage.new(@msg).visibility_timeout = 1.hour).to eq 3600
     expect(@msg).to have_received(:visibility_timeout=)
   end
 
@@ -52,12 +52,12 @@ describe QueueMessage do
 
 
   it "should have an async_job" do
-    QueueMessage.new(@msg).async_job.should be_an AsyncJob
+    expect(QueueMessage.new(@msg).async_job).to be_an AsyncJob
   end
 
   it "should handle a missing async_job by returning nil" do
     @async_job.destroy
-    QueueMessage.new(@msg).async_job.should == nil
+    expect(QueueMessage.new(@msg).async_job).to eq nil
   end
 
   # # No idea why this doesn't work in RSpec when it works in dev and prod
@@ -69,38 +69,38 @@ describe QueueMessage do
 
 
   it "should have a job_missing? predicate" do
-    QueueMessage.new(@msg).job_missing?.should == false
+    expect(QueueMessage.new(@msg).job_missing?).to eq false
   end
 
   it "should have a job_started? predicate" do
-    QueueMessage.new(@msg).job_started?.should == false
+    expect(QueueMessage.new(@msg).job_started?).to eq false
   end
 
   it "should have a job_finished? predicate" do
-    QueueMessage.new(@msg).job_finished?.should == false
+    expect(QueueMessage.new(@msg).job_finished?).to eq false
   end
 
   it "should have a job_is_poison? predicate" do
-    QueueMessage.new(@msg).job_is_poison?.should == false
+    expect(QueueMessage.new(@msg).job_is_poison?).to eq false
   end
 
 
   describe "retry_seconds" do
 
     it "should calculate an integer value" do
-      QueueMessage.new(@msg).retry_seconds.should be_an Integer
+      expect(QueueMessage.new(@msg).retry_seconds).to be_an Integer
     end
 
     it "should provide defaults to return 1, 2, 3, etc as consecutive values" do
       qm = QueueMessage.new(@msg)
-      @msg.should_receive(:receive_count).and_return(1)
-      qm.retry_seconds.should == 1
-      @msg.should_receive(:receive_count).and_return(2)
-      qm.retry_seconds.should == 2
-      @msg.should_receive(:receive_count).and_return(3)
-      qm.retry_seconds.should == 3
-      @msg.should_receive(:receive_count).and_return(4)
-      qm.retry_seconds.should == 4
+      expect(@msg).to receive(:receive_count).and_return(1)
+      expect(qm.retry_seconds).to eq 1
+      expect(@msg).to receive(:receive_count).and_return(2)
+      expect(qm.retry_seconds).to eq 2
+      expect(@msg).to receive(:receive_count).and_return(3)
+      expect(qm.retry_seconds).to eq 3
+      expect(@msg).to receive(:receive_count).and_return(4)
+      expect(qm.retry_seconds).to eq 4
     end
 
     it "should be able to apply a multiplier" do
@@ -108,18 +108,18 @@ describe QueueMessage do
       @async_job.steps[0]['retry_multiplier'] = 3
       @async_job.save!
       qm = QueueMessage.new(@msg)
-      @msg.should_receive(:receive_count).and_return(1)
-      qm.retry_seconds.should == 0
-      @msg.should_receive(:receive_count).and_return(2)
-      qm.retry_seconds.should == 3
-      @msg.should_receive(:receive_count).and_return(3)
-      qm.retry_seconds.should == 6
-      @msg.should_receive(:receive_count).and_return(4)
-      qm.retry_seconds.should == 9
-      @msg.should_receive(:receive_count).and_return(5)
-      qm.retry_seconds.should == 12
-      @msg.should_receive(:receive_count).and_return(6)
-      qm.retry_seconds.should == 15
+      expect(@msg).to receive(:receive_count).and_return(1)
+      expect(qm.retry_seconds).to eq 0
+      expect(@msg).to receive(:receive_count).and_return(2)
+      expect(qm.retry_seconds).to eq 3
+      expect(@msg).to receive(:receive_count).and_return(3)
+      expect(qm.retry_seconds).to eq 6
+      expect(@msg).to receive(:receive_count).and_return(4)
+      expect(qm.retry_seconds).to eq 9
+      expect(@msg).to receive(:receive_count).and_return(5)
+      expect(qm.retry_seconds).to eq 12
+      expect(@msg).to receive(:receive_count).and_return(6)
+      expect(qm.retry_seconds).to eq 15
     end
 
     it "should be able to return exponentially increasing consecutive values" do
@@ -128,22 +128,22 @@ describe QueueMessage do
       @async_job.steps[0]['retry_exponent'] = 3.5
       @async_job.save!
       qm = QueueMessage.new(@msg)
-      @msg.should_receive(:receive_count).and_return(1)
-      qm.retry_seconds.should == 0
-      @msg.should_receive(:receive_count).and_return(2)
-      qm.retry_seconds.should == 1
-      @msg.should_receive(:receive_count).and_return(3)
-      qm.retry_seconds.should == 12
-      @msg.should_receive(:receive_count).and_return(4)
-      qm.retry_seconds.should == 47
-      @msg.should_receive(:receive_count).and_return(5)
-      qm.retry_seconds.should == 128
-      @msg.should_receive(:receive_count).and_return(6)
-      qm.retry_seconds.should == 280
-      @msg.should_receive(:receive_count).and_return(7)
-      qm.retry_seconds.should == 530
-      @msg.should_receive(:receive_count).and_return(8)
-      qm.retry_seconds.should == 908
+      expect(@msg).to receive(:receive_count).and_return(1)
+      expect(qm.retry_seconds).to eq 0
+      expect(@msg).to receive(:receive_count).and_return(2)
+      expect(qm.retry_seconds).to eq 1
+      expect(@msg).to receive(:receive_count).and_return(3)
+      expect(qm.retry_seconds).to eq 12
+      expect(@msg).to receive(:receive_count).and_return(4)
+      expect(qm.retry_seconds).to eq 47
+      expect(@msg).to receive(:receive_count).and_return(5)
+      expect(qm.retry_seconds).to eq 128
+      expect(@msg).to receive(:receive_count).and_return(6)
+      expect(qm.retry_seconds).to eq 280
+      expect(@msg).to receive(:receive_count).and_return(7)
+      expect(qm.retry_seconds).to eq 530
+      expect(@msg).to receive(:receive_count).and_return(8)
+      expect(qm.retry_seconds).to eq 908
     end
 
     it "should be able to produce a constant result" do
@@ -151,14 +151,14 @@ describe QueueMessage do
       @async_job.steps[0]['retry_multiplier'] = 0
       @async_job.save!
       qm = QueueMessage.new(@msg)
-      @msg.should_receive(:receive_count).and_return(1)
-      qm.retry_seconds.should == 2
-      @msg.should_receive(:receive_count).and_return(2)
-      qm.retry_seconds.should == 2
-      @msg.should_receive(:receive_count).and_return(3)
-      qm.retry_seconds.should == 2
-      @msg.should_receive(:receive_count).and_return(4)
-      qm.retry_seconds.should == 2
+      expect(@msg).to receive(:receive_count).and_return(1)
+      expect(qm.retry_seconds).to eq 2
+      expect(@msg).to receive(:receive_count).and_return(2)
+      expect(qm.retry_seconds).to eq 2
+      expect(@msg).to receive(:receive_count).and_return(3)
+      expect(qm.retry_seconds).to eq 2
+      expect(@msg).to receive(:receive_count).and_return(4)
+      expect(qm.retry_seconds).to eq 2
     end
   end
 
@@ -167,21 +167,21 @@ describe QueueMessage do
   describe "process" do
 
     it "should execute the next step if all is in order" do
-      QueueMessage.any_instance.should_receive(:execute_current_step)
-      QueueMessage.new(@msg).process.should == true
+      expect_any_instance_of(QueueMessage).to receive(:execute_current_step)
+      expect(QueueMessage.new(@msg).process).to eq true
     end
 
     it "should do nothing if there's no associated AsyncJob" do
       @async_job.destroy
-      QueueMessage.any_instance.should_not_receive(:execute_current_step)
-      QueueMessage.new(@msg).process.should == false
+      expect_any_instance_of(QueueMessage).not_to receive(:execute_current_step)
+      expect(QueueMessage.new(@msg).process).to eq false
     end
 
     it "should do nothing if the AsyncJob already is finished" do
       @async_job.finished_at = 1.hour.ago.utc
       @async_job.save!
-      QueueMessage.any_instance.should_not_receive(:execute_current_step)
-      QueueMessage.new(@msg).process.should == false
+      expect_any_instance_of(QueueMessage).not_to receive(:execute_current_step)
+      expect(QueueMessage.new(@msg).process).to eq false
     end
 
     it "should handle poison messages" do
@@ -191,19 +191,19 @@ describe QueueMessage do
                :visibility_timeout= => 3600,
                delete: nil
              )
-      QueueMessage.any_instance.should_not_receive(:execute_current_step)
+      expect_any_instance_of(QueueMessage).not_to receive(:execute_current_step)
       qm = QueueMessage.new(msg)
-      qm.process.should == false
-      qm.async_job.finished?.should == true
-      qm.async_job.succeeded?.should == false
-      qm.async_job.failed?.should == true
-      qm.async_job.poison?.should == true
+      expect(qm.process).to eq false
+      expect(qm.async_job.finished?).to eq true
+      expect(qm.async_job.succeeded?).to eq false
+      expect(qm.async_job.failed?).to eq true
+      expect(qm.async_job.poison?).to eq true
     end
 
     it "should handle empty or out of sync steps" do
         @async_job.last_completed_step = 3
         @async_job.save!
-        AsyncJob.any_instance.should_not_receive(:execute_current_step)
+        expect_any_instance_of(AsyncJob).not_to receive(:execute_current_step)
         QueueMessage.new(@msg).process
     end
   end
@@ -213,67 +213,67 @@ describe QueueMessage do
   describe "execute_current_step" do
 
     it "should set the AsyncJob's started_at attribute if not already set" do
-      QueueMessage.any_instance.should_receive(:make_http_request)
-      @async_job.started_at.should == nil
+      expect_any_instance_of(QueueMessage).to receive(:make_http_request)
+      expect(@async_job.started_at).to eq nil
       qm = QueueMessage.new(@msg)
       qm.execute_current_step
       @async_job.reload
       start_time = @async_job.started_at
-      start_time.should_not == nil
+      expect(start_time).not_to eq nil
       # The started_at time shouldn't change again
       qm.execute_current_step
       @async_job.reload
-      @async_job.started_at.should == start_time
+      expect(@async_job.started_at).to eq start_time
    end
 
     it "should set the receive count of the AsyncJob step" do
-      QueueMessage.any_instance.should_receive(:make_http_request)
-      @async_job.current_step['name'].should == "Step 1"
+      expect_any_instance_of(QueueMessage).to receive(:make_http_request)
+      expect(@async_job.current_step['name']).to eq "Step 1"
       qm = QueueMessage.new(@msg)
       qm.execute_current_step
       @async_job.reload
-      @async_job.steps[0]['receive_count'].should == 2
+      expect(@async_job.steps[0]['receive_count']).to eq 2
     end
 
     it "should set the visibility timeout from the step time" do
-      QueueMessage.any_instance.should_receive(:make_http_request)
+      expect_any_instance_of(QueueMessage).to receive(:make_http_request)
       qm = QueueMessage.new(@msg)
-      qm.should_receive(:visibility_timeout=).twice.with(30)
-      qm.should_receive(:visibility_timeout=).with(2.minutes)
+      expect(qm).to receive(:visibility_timeout=).twice.with(30)
+      expect(qm).to receive(:visibility_timeout=).with(2.minutes)
       qm.execute_current_step
       qm.execute_current_step
       qm.execute_current_step
     end
 
     it "should advance the job to the next step if successful" do
-      QueueMessage.any_instance.should_receive(:make_http_request)
+      expect_any_instance_of(QueueMessage).to receive(:make_http_request)
       qm = QueueMessage.new(@msg)
-      @async_job.current_step['name'].should == "Step 1"
+      expect(@async_job.current_step['name']).to eq "Step 1"
       qm.execute_current_step
       @async_job.reload
-      @async_job.current_step['name'].should == "Step 2"
+      expect(@async_job.current_step['name']).to eq "Step 2"
       qm.execute_current_step
       @async_job.reload
-      @async_job.current_step['name'].should == "Step 3"
+      expect(@async_job.current_step['name']).to eq "Step 3"
       qm.execute_current_step
       @async_job.reload
-      @async_job.current_step.should == nil
+      expect(@async_job.current_step).to eq nil
     end
 
     it "should ignore the step if it lacks a URL" do
-      QueueMessage.any_instance.should_not_receive(:make_http_request)
+      expect_any_instance_of(QueueMessage).not_to receive(:make_http_request)
       @async_job.last_completed_step = 0
       @async_job.save!
       QueueMessage.new(@msg).execute_current_step
     end
 
     it "should log a missing URL to the Rails log and in the job" do
-      QueueMessage.any_instance.should_not_receive(:make_http_request)
+      expect_any_instance_of(QueueMessage).not_to receive(:make_http_request)
       @async_job.last_completed_step = 0
       @async_job.save!
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload
-      @async_job.steps[1]['log'].should == ["Step has no URL. Skipped."]
+      expect(@async_job.steps[1]['log']).to eq ["Step has no URL. Skipped."]
     end
   end
     

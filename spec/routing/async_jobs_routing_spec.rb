@@ -1,26 +1,26 @@
 require "spec_helper"
 
-describe AsyncJobsController do
+describe AsyncJobsController, :type => :routing do
   describe "routing" do
 
     it "doesn't route to #index" do
-      get("/v1/async_jobs").should_not be_routable
+      expect(get("/v1/async_jobs")).not_to be_routable
     end
 
     it "routes to #show" do
-      get("/v1/async_jobs/1").should route_to("async_jobs#show", :id => "1")
+      expect(get("/v1/async_jobs/1")).to route_to("async_jobs#show", :id => "1")
     end
 
     it "routes to #create" do
-      post("/v1/async_jobs").should route_to("async_jobs#create")
+      expect(post("/v1/async_jobs")).to route_to("async_jobs#create")
     end
 
     it "routes to #update" do
-      put("/v1/async_jobs/1").should_not be_routable
+      expect(put("/v1/async_jobs/1")).not_to be_routable
     end
 
     it "routes to #destroy" do
-      delete("/v1/async_jobs/1").should route_to("async_jobs#destroy", :id => "1")
+      expect(delete("/v1/async_jobs/1")).to route_to("async_jobs#destroy", :id => "1")
     end
 
   end

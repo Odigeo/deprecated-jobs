@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe QueueMessage do
+describe QueueMessage, :type => :model do
 
   before :each do
-    AsyncJob.any_instance.should_receive(:enqueue).once
+    expect_any_instance_of(AsyncJob).to receive(:enqueue).once
     @async_job = create(:async_job, steps: [{'name' => "Step 1", 
                                              'url' => 'http://127.0.0.1/something',
                                              'headers' => {x_api_token: 'an-api-token'}
@@ -29,9 +29,9 @@ describe QueueMessage do
       stub_request(:get, "http://127.0.0.1/something")
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.token.should == "hey-i-am-the-token"
-      @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
-      @async_job.failed?.should == false
+      expect(@async_job.token).to eq "hey-i-am-the-token"
+      expect(@async_job.steps[0]['log']).to eq ["Authenticated", "Succeeded: 200"]
+      expect(@async_job.failed?).to eq false
     end
 
     it "should fail the job if there's no token and authentication fails" do
@@ -41,10 +41,10 @@ describe QueueMessage do
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.token.should == ""
-      @async_job.steps[0]['log'].should == ["Failed to authenticate"]
-      @async_job.failed?.should == true
-      @async_job.finished?.should == true
+      expect(@async_job.token).to eq ""
+      expect(@async_job.steps[0]['log']).to eq ["Failed to authenticate"]
+      expect(@async_job.failed?).to eq true
+      expect(@async_job.finished?).to eq true
     end
 
     it "should authenticate if the main request returns 400 (unknown token)" do
@@ -55,9 +55,9 @@ describe QueueMessage do
         to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
-      @async_job.token.should == "this-is-a-new-token"
-      @async_job.failed?.should == false
+      expect(@async_job.steps[0]['log']).to eq ["Authenticated", "Succeeded: 200"]
+      expect(@async_job.token).to eq "this-is-a-new-token"
+      expect(@async_job.failed?).to eq false
    end
 
     it "should fail the job if the main request returns 400 and authentication fails" do
@@ -67,10 +67,10 @@ describe QueueMessage do
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.token.should == "A-totally-fake-token"
-      @async_job.steps[0]['log'].should == ["Failed to authenticate"]
-      @async_job.failed?.should == true
-      @async_job.finished?.should == true
+      expect(@async_job.token).to eq "A-totally-fake-token"
+      expect(@async_job.steps[0]['log']).to eq ["Failed to authenticate"]
+      expect(@async_job.failed?).to eq true
+      expect(@async_job.finished?).to eq true
    end
 
     it "should authenticate if the main request returns 419 (authentication expired)" do
@@ -81,9 +81,9 @@ describe QueueMessage do
         to_return(status: 201, body: '{"authentication": {"token": "this-is-a-new-token"}}', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Authenticated", "Succeeded: 200"]
-      @async_job.token.should == "this-is-a-new-token"
-      @async_job.failed?.should == false
+      expect(@async_job.steps[0]['log']).to eq ["Authenticated", "Succeeded: 200"]
+      expect(@async_job.token).to eq "this-is-a-new-token"
+      expect(@async_job.failed?).to eq false
    end
 
     it "should fail the job if the main request returns 419 and authentication fails" do
@@ -93,10 +93,10 @@ describe QueueMessage do
         to_return(status: 403, body: '', headers: {'Content-Type'=>'application/json'})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.token.should == "A-totally-fake-token"
-      @async_job.steps[0]['log'].should == ["Failed to authenticate"]
-      @async_job.failed?.should == true
-      @async_job.finished?.should == true
+      expect(@async_job.token).to eq "A-totally-fake-token"
+      expect(@async_job.steps[0]['log']).to eq ["Failed to authenticate"]
+      expect(@async_job.failed?).to eq true
+      expect(@async_job.finished?).to eq true
    end
 
   end
@@ -144,7 +144,7 @@ describe QueueMessage do
       @async_job.save!
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Unsupported HTTP method 'QUUX'"]
+      expect(@async_job.steps[0]['log']).to eq ["Unsupported HTTP method 'QUUX'"]
     end
 
     it "should include extra headers" do
@@ -163,9 +163,9 @@ describe QueueMessage do
          to_return(status: 301, body: nil, headers: {})
       QueueMessage.new(@msg).execute_current_step # (qm.async_job.current_step, 301, {}, nil)
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Failed: 301 without Location header"]
-      @async_job.failed?.should == true
-      @async_job.finished?.should == true
+      expect(@async_job.steps[0]['log']).to eq ["Failed: 301 without Location header"]
+      expect(@async_job.failed?).to eq true
+      expect(@async_job.finished?).to eq true
     end
 
     it "should follow and log a redirect response (3xx) with a Location header" do
@@ -177,11 +177,11 @@ describe QueueMessage do
          to_return(status: 200, body: nil, headers: {})
       QueueMessage.new(@msg).execute_current_step
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Redirect: 301 to http://somewhere.else.com/someplace", 
+      expect(@async_job.steps[0]['log']).to eq ["Redirect: 301 to http://somewhere.else.com/someplace", 
                                             "Redirect: 301 to http://final.com/the_data", 
                                             "Succeeded: 200"]
-      @async_job.failed?.should == false
-      @async_job.finished?.should == true
+      expect(@async_job.failed?).to eq false
+      expect(@async_job.finished?).to eq true
     end
   end
 
@@ -189,17 +189,17 @@ describe QueueMessage do
   describe "make_http_request exceptions" do
 
     it "should handle timeouts and log them before re-raising the timeout exception" do
-      Api.should_receive(:request).and_return(double(timed_out?: true))
+      expect(Api).to receive(:request).and_return(double(timed_out?: true))
       expect { QueueMessage.new(@msg).execute_current_step }.to raise_error
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Exception: Ocean API request timed out"]
+      expect(@async_job.steps[0]['log']).to eq ["Exception: Ocean API request timed out"]
     end
 
     it "should handle exceptions and log them before re-raising them" do
       stub_request(:get, "http://127.0.0.1/something").to_raise("some error")
       expect { QueueMessage.new(@msg).execute_current_step }.to raise_error
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["StandardError: some error"]
+      expect(@async_job.steps[0]['log']).to eq ["StandardError: some error"]
     end
 
     it "should set visibility_timeout in proportion to the number of times the message has been received" do
@@ -217,36 +217,36 @@ describe QueueMessage do
       qm = QueueMessage.new(@msg)
       expect { qm.handle_response(qm.async_job.current_step, 204, {'foo' => 'bar'}, [1, 2]) }.not_to raise_error
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Succeeded: 204"]
-      @async_job.failed?.should == false
-      @async_job.finished?.should == false
-      @async_job.last_status.should == 204
-      @async_job.last_headers.should == {'foo' => 'bar'}
-      @async_job.last_body.should == [1, 2]
+      expect(@async_job.steps[0]['log']).to eq ["Succeeded: 204"]
+      expect(@async_job.failed?).to eq false
+      expect(@async_job.finished?).to eq false
+      expect(@async_job.last_status).to eq 204
+      expect(@async_job.last_headers).to eq({'foo' => 'bar'})
+      expect(@async_job.last_body).to eq [1, 2]
     end
 
     it "should log a client error response (4xx) and fail the whole job" do
       qm = QueueMessage.new(@msg)
       expect { qm.handle_response(qm.async_job.current_step, 403, {'foo' => 'bar'}, [1, 2]) }.not_to raise_error
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Failed: 403"]
-      @async_job.failed?.should == true
-      @async_job.finished?.should == true
-      @async_job.last_status.should == 403
-      @async_job.last_headers.should == {'foo' => 'bar'}
-      @async_job.last_body.should == [1, 2]
+      expect(@async_job.steps[0]['log']).to eq ["Failed: 403"]
+      expect(@async_job.failed?).to eq true
+      expect(@async_job.finished?).to eq true
+      expect(@async_job.last_status).to eq 403
+      expect(@async_job.last_headers).to eq({'foo' => 'bar'})
+      expect(@async_job.last_body).to eq [1, 2]
     end
 
     it "should log a server error response (5xx), fail the step, then raise an error to trigger a later retry" do
       qm = QueueMessage.new(@msg)
       expect { qm.handle_response(qm.async_job.current_step, 500, {'foo' => 'bar'}, [1, 2]) }.to raise_error
       @async_job.reload(consistent: true)
-      @async_job.steps[0]['log'].should == ["Remote server error: 500. Retrying via exception."]
-      @async_job.failed?.should == false
-      @async_job.finished?.should == false
-      @async_job.last_status.should == 500
-      @async_job.last_headers.should == {'foo' => 'bar'}
-      @async_job.last_body.should == [1, 2]
+      expect(@async_job.steps[0]['log']).to eq ["Remote server error: 500. Retrying via exception."]
+      expect(@async_job.failed?).to eq false
+      expect(@async_job.finished?).to eq false
+      expect(@async_job.last_status).to eq 500
+      expect(@async_job.last_headers).to eq({'foo' => 'bar'})
+      expect(@async_job.last_body).to eq [1, 2]
     end
 
   end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AsyncJob do
+describe AsyncJob, :type => :request do
 
   before :each do
     permit_with 200
@@ -15,12 +15,12 @@ describe AsyncJob do
            'default_step_time' => 100,
            'credentials' => 'bWFnbmV0bzp4YXZpZXI='}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
-      response.status.should == 201
+      expect(response.status).to eq 201
       j = JSON.parse(response.body)
-      j['async_job'].should be_a Hash
-      AsyncJob.find(j['async_job']['uuid'], consistent: true).should be_an AsyncJob
-      j['async_job']['default_step_time'].should == 100
-      j['async_job']['max_seconds_in_queue'].should == 604800
+      expect(j['async_job']).to be_a Hash
+      expect(AsyncJob.find(j['async_job']['uuid'], consistent: true)).to be_an AsyncJob
+      expect(j['async_job']['default_step_time']).to eq 100
+      expect(j['async_job']['max_seconds_in_queue']).to eq 604800
     end
 
    it "should return a finished job immediately if no steps" do
@@ -28,21 +28,21 @@ describe AsyncJob do
           {'steps' => [],
            'credentials' => 'bWFnbmV0bzp4YXZpZXI='}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
-      response.status.should == 201
+      expect(response.status).to eq 201
       j = JSON.parse(response.body)['async_job']
-      j.should be_a Hash
-      j['finished_at'].should be_a String
+      expect(j).to be_a Hash
+      expect(j['finished_at']).to be_a String
    end
 
     it "should barf on a non-array steps attribute" do
       post "/v1/async_jobs", 
           {'steps' => {x: 1, y: 2}}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
-      response.status.should == 422
+      expect(response.status).to eq 422
       j = JSON.parse(response.body)
-      j.should_not == {"_api_error"=>["Resource not unique"]}
-      j['async_job'].should == nil
-      j['steps'].should == ["must be an Array"]
+      expect(j).not_to eq({"_api_error"=>["Resource not unique"]})
+      expect(j['async_job']).to eq nil
+      expect(j['steps']).to eq ["must be an Array"]
    end
 
     it "should return a 422 if the credentials are missing" do
@@ -50,11 +50,11 @@ describe AsyncJob do
           {'steps' => [{}, {}, {}],
            'credentials' => nil}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
-      response.status.should == 422
+      expect(response.status).to eq 422
       j = JSON.parse(response.body)
-      j.should_not == {"_api_error"=>["Resource not unique"]}
-      j['async_job'].should == nil
-      j['credentials'].should == ["must be specified"]
+      expect(j).not_to eq({"_api_error"=>["Resource not unique"]})
+      expect(j['async_job']).to eq nil
+      expect(j['credentials']).to eq ["must be specified"]
     end
 
     it "should return a 422 if the credentials are malformed" do
@@ -62,11 +62,11 @@ describe AsyncJob do
           {'steps' => [{}, {}, {}],
            'credentials' => "certainly-not-correctly-formed"}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
-      response.status.should == 422
+      expect(response.status).to eq 422
       j = JSON.parse(response.body)
-      j.should_not == {"_api_error"=>["Resource not unique"]}
-      j['async_job'].should == nil
-      j['credentials'].should == ["are malformed"]
+      expect(j).not_to eq({"_api_error"=>["Resource not unique"]})
+      expect(j['async_job']).to eq nil
+      expect(j['credentials']).to eq ["are malformed"]
     end
   end
   
@@ -78,20 +78,20 @@ describe AsyncJob do
       get "/v1/async_jobs/#{job.uuid}", {}, {'HTTP_ACCEPT' => "application/json",
                                              'X-API-TOKEN' => "incredibly-fake",
                                              'If-None-Match' => 'e65ae6734803fa'}
-      response.status.should be(200)
+      expect(response.status).to be(200)
       j = JSON.parse(response.body)
-      j['async_job'].should be_a Hash
-      j['async_job']['uuid'].should == job.uuid
+      expect(j['async_job']).to be_a Hash
+      expect(j['async_job']['uuid']).to eq job.uuid
     end
 
     it "should return a 404 if the UUID isn't found" do
       get "/v1/async_jobs/totallynonexistent", {}, {'HTTP_ACCEPT' => "application/json",
                                                     'X-API-TOKEN' => "incredibly-fake",
                                                     'If-None-Match' => 'e65ae6734803fa'}
-      response.status.should be(404)
+      expect(response.status).to be(404)
       j = JSON.parse(response.body)
-      j['async_job'].should == nil
-      j['_api_error'].should == ["AsyncJob not found"]
+      expect(j['async_job']).to eq nil
+      expect(j['_api_error']).to eq ["AsyncJob not found"]
     end
   end
 
@@ -103,16 +103,16 @@ describe AsyncJob do
       delete "/v1/async_jobs/#{job.uuid}", 
             {}, 
             {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
-      response.status.should be(204)
+      expect(response.status).to be(204)
     end 
 
     it "should return a 404 if the UUID isn't found" do
       delete "/v1/async_jobs/totallynonexistent", {}, 
              {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
-      response.status.should be(404)
+      expect(response.status).to be(404)
       j = JSON.parse(response.body)
-      j['async_job'].should == nil
-      j['_api_error'].should == ["AsyncJob not found"]
+      expect(j['async_job']).to eq nil
+      expect(j['_api_error']).to eq ["AsyncJob not found"]
     end
   end
 
