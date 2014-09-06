@@ -13,7 +13,7 @@ group :test, :development do
   gem "simplecov", require: false
   gem "annotate", ">=2.5.0"
   gem "rspec-rails"
-  gem "rspec-legacy_formatters"
+  #gem "rspec-legacy_formatters"
   gem "factory_girl_rails", "~> 4.0"
 end
 
