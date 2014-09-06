@@ -188,7 +188,7 @@ describe CronJob, :type => :model do
   it "process_queue should call process_queue_entry on each job" do
     CronJob.delete_all
     create :cron_job
-    expect(CronJob.count).to be 1
+    expect(CronJob.count).to eq 1
     expect_any_instance_of(CronJob).to receive(:process_job)
     CronJob.process_queue
     CronJob.delete_all
@@ -197,7 +197,7 @@ describe CronJob, :type => :model do
   it "process_job should do nothing unless the time is due" do
     CronJob.delete_all
     job = create :cron_job
-    expect(CronJob.count).to be 1
+    expect(CronJob.count).to eq 1
     expect(job).to receive(:due?).and_return(false)
     expect(job).to_not receive(:post_async_job)
     job.process_job
@@ -207,7 +207,7 @@ describe CronJob, :type => :model do
   it "process_job should call post_async_job if the time is due" do
     CronJob.delete_all
     job = create :cron_job
-    expect(CronJob.count).to be 1
+    expect(CronJob.count).to eq 1
     expect(job).to receive(:due?).and_return(true)
     expect(job).to receive(:post_async_job)
     job.process_job
