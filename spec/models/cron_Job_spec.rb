@@ -2,6 +2,15 @@ require 'spec_helper'
 
 describe CronJob, :type => :model do
 
+  before :each do
+    CronJob.delete_all
+  end
+
+  after :each do
+    CronJob.delete_all
+  end
+
+
   describe "attributes" do
     
     it "should have a UUID" do
@@ -94,6 +103,19 @@ describe CronJob, :type => :model do
     it "should have a cron_structure attribute" do
       expect(build(:cron_job)).to respond_to(:cron_structure)
     end
+
+
+    it "should have an enabled attribute defaulting to true" do
+      expect(create(:cron_job).enabled).to be true
+    end
+
+    it "should have name attribute" do
+      expect(create(:cron_job).name).to eq ""
+    end
+
+    it "should have a description attribute" do
+      expect(create(:cron_job).description).to eq ""
+    end
   end
 
 
@@ -181,38 +203,132 @@ describe CronJob, :type => :model do
   end
 
 
-  it "process_queue should be a class method" do
-    expect(CronJob).to respond_to :process_queue
+  describe "process_queue" do
+
+    it "should be a class method" do
+      expect(CronJob).to respond_to :process_queue
+    end
+
+    it "should try to acquire the table lock" do
+      expect(CronJob).to respond_to :acquire_table_lock
+      CronJob.process_queue
+    end
+
+
+    describe "if the lock was acquired" do
+
+      before :each do
+        expect(CronJob).to receive(:acquire_table_lock).and_return(true)
+      end
+
+      it "should call process_queue_entry on each job" do
+        create :cron_job
+        expect(CronJob.count).to eq 1
+        expect_any_instance_of(CronJob).to receive(:process_job)
+        expect(CronJob).to receive(:release_table_lock)
+        CronJob.process_queue
+      end
+
+      it "should relinquish the table lock upon completion" do
+        create :cron_job
+        expect(CronJob.count).to eq 1
+        expect_any_instance_of(CronJob).to receive(:process_job)
+        expect(CronJob).to receive(:release_table_lock)
+        CronJob.process_queue
+      end
+
+      it "should relinquish the table lock on an exception" do
+        create :cron_job
+        expect(CronJob.count).to eq 1
+        expect_any_instance_of(CronJob).to receive(:process_job).and_raise("BROKEN")
+        expect(CronJob).to receive(:release_table_lock)
+        expect { CronJob.process_queue }.to raise_error
+      end
+    end
+
+
+    describe "if the lock wasn't acquired" do
+
+      it "shouldn't call process_queue_entry on each job" do
+        expect(CronJob).to receive(:acquire_table_lock).and_return(false)
+        create :cron_job
+        expect(CronJob.count).to eq 1
+        expect_any_instance_of(CronJob).to_not receive(:process_job)
+        CronJob.process_queue
+      end
+
+      it "should not relinquish the table lock upon completion" do
+        expect(CronJob).to receive(:acquire_table_lock).and_return(false)
+        create :cron_job
+        expect(CronJob.count).to eq 1
+        expect_any_instance_of(CronJob).to_not receive(:process_job)
+        expect(CronJob).to_not receive(:release_table_lock)
+        CronJob.process_queue
+      end
+
+      it "should not relinquish the table lock on an exception" do
+        expect(CronJob).to receive(:acquire_table_lock).and_raise("BROKEN")
+        create :cron_job
+        expect(CronJob.count).to eq 1
+        expect_any_instance_of(CronJob).to_not receive(:process_job)
+        expect(CronJob).to_not receive(:release_table_lock)
+        expect { CronJob.process_queue }.to raise_error
+      end
+    end
   end
 
-  it "process_queue should call process_queue_entry on each job" do
-    CronJob.delete_all
-    create :cron_job
-    expect(CronJob.count).to eq 1
-    expect_any_instance_of(CronJob).to receive(:process_job)
-    CronJob.process_queue
-    CronJob.delete_all
+
+  describe "acquire_table_lock" do
+
+    it "should not succeed twice in a row" do
+      expect(CronJob.acquire_table_lock).to eq true
+      expect(CronJob.acquire_table_lock).to eq false
+    end
+
+    it "should succeed again only if previously released" do
+      expect(CronJob.acquire_table_lock).to eq true
+      expect(CronJob.acquire_table_lock).to eq false
+      CronJob.release_table_lock
+      expect(CronJob.acquire_table_lock).to eq true
+    end
   end
 
-  it "process_job should do nothing unless the time is due" do
-    CronJob.delete_all
-    job = create :cron_job
-    expect(CronJob.count).to eq 1
-    expect(job).to receive(:due?).and_return(false)
-    expect(job).to_not receive(:post_async_job)
-    job.process_job
-    CronJob.delete_all
+
+  describe "process_job" do 
+
+    it "process_job should do nothing if the job is the lock record" do
+      job = create :cron_job, id: CronJob::TABLE_LOCK_RECORD_ID
+      expect(CronJob.count).to eq 1
+      expect(job).to_not receive(:due?)
+      expect(job).to_not receive(:post_async_job)
+      job.process_job
+    end
+
+    it "process_job should do nothing unless the job is enabled" do
+      job = create :cron_job, enabled: false
+      expect(CronJob.count).to eq 1
+      expect(job).to_not receive(:due?)
+      expect(job).to_not receive(:post_async_job)
+      job.process_job
+    end
+
+    it "process_job should do nothing unless the time is due" do
+      job = create :cron_job
+      expect(CronJob.count).to eq 1
+      expect(job).to receive(:due?).and_return(false)
+      expect(job).to_not receive(:post_async_job)
+      job.process_job
+    end
+
+    it "process_job should call post_async_job if the time is due" do
+      job = create :cron_job
+      expect(CronJob.count).to eq 1
+      expect(job).to receive(:due?).and_return(true)
+      expect(job).to receive(:post_async_job)
+      job.process_job
+    end
   end
 
-  it "process_job should call post_async_job if the time is due" do
-    CronJob.delete_all
-    job = create :cron_job
-    expect(CronJob.count).to eq 1
-    expect(job).to receive(:due?).and_return(true)
-    expect(job).to receive(:post_async_job)
-    job.process_job
-    CronJob.delete_all
-  end
 
   describe "post_async_job" do
     

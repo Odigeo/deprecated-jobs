@@ -6,15 +6,18 @@ class CronJob < OceanDynamo::Table
   dynamo_schema(:id, table_name_suffix: Api.basename_suffix, 
                      create: Rails.env != "production") do
     # Input attributes
+    attribute :name
+    attribute :description
     attribute :credentials
     attribute :token
-    attribute :steps,                :serialized, default: []
+    attribute :steps,          :serialized, default: []
     attribute :cron
+    attribute :enabled,        :boolean,    default: true
 
     # Output only
     attribute :created_by
     attribute :updated_by
-    attribute :cron_structure,       :serialized, default: [nil, nil, nil, nil, nil]
+    attribute :cron_structure, :serialized, default: [nil, nil, nil, nil, nil]
   end
 
 
@@ -25,6 +28,9 @@ class CronJob < OceanDynamo::Table
     {name: "month",        range: [1, 12], list: %w(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC), list_base: 1},
     {name: "day_of_week",  range: [0, 6], list: %w(SUN MON TUE WED THU FRI SAT), list_base: 0}
   ]
+
+
+  TABLE_LOCK_RECORD_ID = "__TABLE_LOCK__"
   
 
   # Validations
@@ -163,11 +169,44 @@ class CronJob < OceanDynamo::Table
   
 
   def self.process_queue
-    all.each(&:process_job)
+    if acquire_table_lock
+      begin
+        all.each(&:process_job)
+      ensure
+        release_table_lock
+      end
+    end
   end
 
+
+  def self.acquire_table_lock
+    # If there already is a lock record, fail
+    return false if CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
+    # No record exists, create one.
+    begin
+      cs = CronJob.create!(id: TABLE_LOCK_RECORD_ID, 
+                           credentials: Api.encode_credentials("fake", "fake"),
+                           cron: "* * * * *")
+      # In case someone has overwritten and already claimed the lock, modify the record
+      cs.save!
+    rescue OceanDynamo::StaleObjectError
+      # If the save resulted in an exception, someone else has claimed the lock. Fail.
+      return false
+    end
+    # We claimed it. Succeed!
+    true
+  end
+
+  def self.release_table_lock
+    CronJob.find(TABLE_LOCK_RECORD_ID).destroy
+  end
+
+
   def process_job
-    post_async_job if due?
+    return if id == TABLE_LOCK_RECORD_ID
+    return unless enabled
+    return unless due?
+    post_async_job
   end
 
   def post_async_job
