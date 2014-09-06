@@ -183,11 +183,11 @@ class CronJob < OceanDynamo::Table
     # If there already is a lock record, fail
     return false if CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
     # No record exists, create one.
+    cs = CronJob.create!(id: TABLE_LOCK_RECORD_ID, 
+                         credentials: Api.encode_credentials("fake", "fake"),
+                         cron: "* * * * *")
+    # In case someone has overwritten and already claimed the lock, modify the record
     begin
-      cs = CronJob.create!(id: TABLE_LOCK_RECORD_ID, 
-                           credentials: Api.encode_credentials("fake", "fake"),
-                           cron: "* * * * *")
-      # In case someone has overwritten and already claimed the lock, modify the record
       cs.save!
     rescue OceanDynamo::StaleObjectError
       # If the save resulted in an exception, someone else has claimed the lock. Fail.
