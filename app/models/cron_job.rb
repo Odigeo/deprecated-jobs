@@ -198,7 +198,7 @@ class CronJob < OceanDynamo::Table
   end
 
   def self.release_table_lock
-    CronJob.find(TABLE_LOCK_RECORD_ID).destroy
+    CronJob.find(TABLE_LOCK_RECORD_ID).delete
   end
 
 
