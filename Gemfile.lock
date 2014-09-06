@@ -117,9 +117,6 @@ GEM
     rspec-expectations (3.1.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.1.0)
-    rspec-legacy_formatters (1.0.0)
-      rspec-core (>= 3.0.0.beta2)
-      rspec-support (>= 3.0.0.beta2)
     rspec-mocks (3.1.0)
       rspec-support (~> 3.1.0)
     rspec-rails (3.1.0)
@@ -137,7 +134,7 @@ GEM
       multi_json
       simplecov-html (~> 0.8.0)
     simplecov-html (0.8.0)
-    sprockets (2.12.1)
+    sprockets (2.12.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
@@ -171,7 +168,6 @@ DEPENDENCIES
   ocean-rails
   oj
   rails (~> 4.0)
-  rspec-legacy_formatters
   rspec-rails
   simplecov
   webmock
