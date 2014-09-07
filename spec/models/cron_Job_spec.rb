@@ -116,6 +116,18 @@ describe CronJob, :type => :model do
     it "should have a description attribute" do
       expect(create(:cron_job).description).to eq ""
     end
+
+    it "should have a max_seconds_in_queue attribute" do
+      expect(create(:cron_job).max_seconds_in_queue).to eq 1.day
+    end
+
+    it "should have a default_poison_limit attribute" do
+      expect(create(:cron_job).default_poison_limit).to eq 5
+    end
+
+    it "should have a default_step_time attribute" do
+      expect(create(:cron_job).default_step_time).to eq 30
+    end
   end
 
 
@@ -332,7 +344,11 @@ describe CronJob, :type => :model do
 
   describe "post_async_job" do
     
-    
+    it "should create an AsyncJob from the CronJob" do
+      expect_any_instance_of(AsyncJob).to receive(:enqueue)
+      job = create :cron_job, steps: [{}, {}]
+      job.post_async_job
+    end
 
   end
 end

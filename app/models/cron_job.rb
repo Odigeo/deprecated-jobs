@@ -10,9 +10,12 @@ class CronJob < OceanDynamo::Table
     attribute :description
     attribute :credentials
     attribute :token
-    attribute :steps,          :serialized, default: []
+    attribute :steps,                :serialized, default: []
+    attribute :max_seconds_in_queue, :integer,    default: 1.day
+    attribute :default_poison_limit, :integer,    default: 5
+    attribute :default_step_time,    :integer,    default: 30
     attribute :cron
-    attribute :enabled,        :boolean,    default: true
+    attribute :enabled,              :boolean,    default: true
 
     # Output only
     attribute :created_by
@@ -186,7 +189,7 @@ class CronJob < OceanDynamo::Table
     cs = CronJob.create!(id: TABLE_LOCK_RECORD_ID, 
                          credentials: Api.encode_credentials("fake", "fake"),
                          cron: "* * * * *")
-    # In case someone has overwritten and already claimed the lock, modify the record
+    # The above might have overwritten an existing record. Try to claim it.
     begin
       cs.save!
     rescue OceanDynamo::StaleObjectError
@@ -209,8 +212,11 @@ class CronJob < OceanDynamo::Table
     post_async_job
   end
 
-  def post_async_job
 
+  def post_async_job
+    aj = AsyncJob.create credentials: credentials, token: token,
+           steps: steps, max_seconds_in_queue: max_seconds_in_queue,
+           default_poison_limit: default_poison_limit, default_step_time: default_step_time
   end
 
 end
