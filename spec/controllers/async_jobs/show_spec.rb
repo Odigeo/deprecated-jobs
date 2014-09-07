@@ -51,8 +51,6 @@ describe AsyncJobsController, :type => :controller do
       expect(response.body).not_to eq bod
       expect(response.headers['ETag']).not_to eq etag
     end
-
-
   end
   
 end

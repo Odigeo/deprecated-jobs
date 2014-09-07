@@ -20,26 +20,59 @@ class CronJobsController < ApplicationController
 
   # GET /cron_jobs
   def index
+    @cron_jobs = CronJob.all.reject { |job| job.id == CronJob::TABLE_LOCK_RECORD_ID }
+    api_render @cron_jobs
   end
 
 
   # POST /cron_jobs
   def create
+    ActionController::Parameters.permit_all_parameters = true
+    @cron_job = CronJob.new(params)
+    set_updater(@cron_job)
+    @cron_job.save!
+    api_render @cron_job, new: true
   end
 
 
   # GET /cron_jobs/1
   def show
+    expires_in 0, 's-maxage' => 30.minutes
+    if stale?(etag: @cron_job.lock_version,          # NB: DynamoDB tables dont have cache_key - FIX!
+              last_modified: @cron_job.updated_at)
+      api_render @cron_job
+    end
   end
 
 
   # PUT /cron_jobs/1
   def update
+    if missing_attributes?
+      render_api_error 422, "Missing resource attributes"
+      return
+    end
+    @cron_job.assign_attributes(steps: params[:steps], 
+                                name: params[:name],
+                                description: params[:description],
+                                credentials: params[:credentials],
+                                token: params[:token],
+                                max_seconds_in_queue: params[:max_seconds_in_queue],
+                                default_poison_limit: params[:default_poison_limit],
+                                default_step_time: params[:default_step_time],
+                                cron: params[:cron],
+                                enabled: params[:enabled],
+                                lock_version: params[:lock_version]
+                               )
+    set_updater(@cron_job)
+    @cron_job.save!
+    api_render @cron_job
   end
 
 
   # DELETE /cron_jobs/1
   def destroy
+    @cron_job.destroy
+    render_head_204
   end
 
 
@@ -52,7 +85,7 @@ class CronJobsController < ApplicationController
   
   private
      
-  def find_async_job
+  def find_cron_job
     ActionController::Parameters.permit_all_parameters = true
     the_id = params['uuid'] || params['id']  # 'id' when received from the Rails router, uuid othw
     @cron_job = CronJob.find_by_key(the_id, consistent: true)
