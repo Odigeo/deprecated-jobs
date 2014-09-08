@@ -211,6 +211,7 @@ class CronJob < OceanDynamo::Table
     return unless enabled
     return unless due?
     post_async_job
+    Rails.logger.info "CronJob #{name} (#{cron}) run."
     self.last_run_at = Time.now.utc
     save!
   end
