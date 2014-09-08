@@ -212,17 +212,22 @@ class CronJob < OceanDynamo::Table
     return unless enabled
     return unless due?
     self.last_async_job_id = post_async_job
-    Rails.logger.info "CronJob #{name} (#{cron}) run [async_job #{last_async_job_id}]."
+    Rails.logger.info "CronJob \"#{name}\" (#{cron}) run [Job #{last_async_job_id}]."
     self.last_run_at = Time.now.utc
     save!
   end
 
 
   def post_async_job
-    aj = AsyncJob.create! credentials: credentials, token: token,
-           steps: steps, max_seconds_in_queue: max_seconds_in_queue,
-           default_poison_limit: default_poison_limit, default_step_time: default_step_time
-    aj.uuid
+    begin
+      aj = AsyncJob.create! credentials: credentials, token: token,
+             steps: steps, max_seconds_in_queue: max_seconds_in_queue,
+             default_poison_limit: default_poison_limit, default_step_time: default_step_time
+      aj.uuid
+    rescue StandardError => e
+      Rails.logger.info "CronJob \"#{name}\" (#{cron}) failed to create an AsyncJob: #{e.message}."
+      nil
+    end
   end
 
 end
