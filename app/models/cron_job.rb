@@ -83,20 +83,20 @@ class CronJob < OceanDynamo::Table
     return if cs == true
     name = cron_data[:name]
     min, max = cron_data[:range]
-    cj.errors.add(:cron, "#{name} value '#{component}' is unrecognized") and return if cs[:unrecognized]
-    if cs[:exactly] && (cs[:exactly] < min || cs[:exactly] > max)
+    cj.errors.add(:cron, "#{name} value '#{component}' is unrecognized") and return if cs["unrecognized"]
+    if cs["exactly"] && (cs["exactly"] < min || cs["exactly"] > max)
       cj.errors.add(:cron, "#{name} value '#{component}' is out of range")
     end
-    if cs[:range] && cs[:range][0] < min
+    if cs["range"] && cs["range"][0] < min
       cj.errors.add(:cron, "#{name} range value '#{component}' starts out of range")
     end
-    if cs[:range] && cs[:range][1] > max
+    if cs["range"] && cs["range"][1] > max
       cj.errors.add(:cron, "#{name} range value '#{component}' ends out of range")
     end
-    if cs[:range] && cs[:range][0] > cs[:range][1]
+    if cs["range"] && cs["range"][0] > cs["range"][1]
       cj.errors.add(:cron, "#{name} range value '#{component}' ends before it starts")
     end
-    if cs[:member] && cs[:member].any? { |v| v < min || v > max }
+    if cs["member"] && cs["member"].any? { |v| v < min || v > max }
       cj.errors.add(:cron, "#{name} list '#{component}' contains out of range element(s)")
     end
   end
@@ -112,15 +112,15 @@ class CronJob < OceanDynamo::Table
     end
     str = str.gsub '*', "#{data[:range][0]}-#{data[:range][1]}"
     if m = str.match("^[0-9]+$")
-      { exactly: m[0].to_i }
+      { "exactly" => m[0].to_i }
     elsif m = str.match("^([0-9]+)-([0-9]+)$")
-      { range: [m[1].to_i, m[2].to_i] }
+      { "range" => [m[1].to_i, m[2].to_i] }
     elsif m = str.match("^([0-9]+)-([0-9]+)/([0-9]+)$")
-      { range: [m[1].to_i, m[2].to_i], interval: m[3].to_i }
+      { "range" => [m[1].to_i, m[2].to_i], "interval" => m[3].to_i }
     elsif str =~ /^([0-9]+,)+[0-9]+$/
-      { member: str.split(',').map(&:to_i) }
+      { "member" => str.split(',').map(&:to_i) }
     else
-      { unrecognized: str }
+      { "unrecognized" => str }
     end
   end
 
@@ -141,13 +141,13 @@ class CronJob < OceanDynamo::Table
 
   def match_component(c, v)
     return true if c == true
-    return true if c[:exactly] && v == c[:exactly]
-    if c[:range]
-      return false if c[:range] && v < c[:range][0] || v > c[:range][1]
-      return true unless c[:interval]
-      return true if ((v - c[:range][0]) % c[:interval]) == 0
+    return true if c["exactly"] && v == c["exactly"]
+    if c["range"]
+      return false if c["range"] && v < c["range"][0] || v > c["range"][1]
+      return true unless c["interval"]
+      return true if ((v - c["range"][0]) % c["interval"]) == 0
     end
-    return true if c[:member] && c[:member].include?(v)
+    return true if c["member"] && c["member"].include?(v)
     false
   end
 

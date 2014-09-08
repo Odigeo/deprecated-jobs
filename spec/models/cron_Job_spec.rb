@@ -187,40 +187,40 @@ describe CronJob, :type => :model do
 
     it "should handle exact matches" do
       cj = create :cron_job, cron: "* * * * *"
-      expect(cj.match_component({exactly: 5}, 5)).to eq true
-      expect(cj.match_component({exactly: 5}, -5)).to eq false
+      expect(cj.match_component({"exactly" => 5}, 5)).to eq true
+      expect(cj.match_component({"exactly" => 5}, -5)).to eq false
     end
 
     it "should handle ranges" do
       cj = create :cron_job, cron: "* * * * *"
-      expect(cj.match_component({range: [0, 59]}, 0)).to eq true
-      expect(cj.match_component({range: [0, 59]}, 5)).to eq true
-      expect(cj.match_component({range: [0, 59]}, 59)).to eq true
-      expect(cj.match_component({range: [0, 59]}, -5)).to eq false
-      expect(cj.match_component({range: [0, 59]}, 500)).to eq false
+      expect(cj.match_component({"range" => [0, 59]}, 0)).to eq true
+      expect(cj.match_component({"range" => [0, 59]}, 5)).to eq true
+      expect(cj.match_component({"range" => [0, 59]}, 59)).to eq true
+      expect(cj.match_component({"range" => [0, 59]}, -5)).to eq false
+      expect(cj.match_component({"range" => [0, 59]}, 500)).to eq false
     end
 
     it "should handle ranges with intervals" do
       cj = create :cron_job, cron: "* * * * *"
-      expect(cj.match_component({range: [1, 59], interval: 3}, 0)).to eq false
-      expect(cj.match_component({range: [1, 59], interval: 3}, 1)).to eq true
-      expect(cj.match_component({range: [1, 59], interval: 3}, 2)).to eq false
-      expect(cj.match_component({range: [1, 59], interval: 3}, 3)).to eq false
-      expect(cj.match_component({range: [1, 59], interval: 3}, 4)).to eq true
-      expect(cj.match_component({range: [1, 59], interval: 3}, 5)).to eq false
-      expect(cj.match_component({range: [1, 59], interval: 3}, 6)).to eq false
-      expect(cj.match_component({range: [1, 59], interval: 3}, 7)).to eq true
-      expect(cj.match_component({range: [1, 59], interval: 3}, 8)).to eq false
+      expect(cj.match_component({"range" => [1, 59], "interval" => 3}, 0)).to eq false
+      expect(cj.match_component({"range" => [1, 59], "interval" => 3}, 1)).to eq true
+      expect(cj.match_component({"range" => [1, 59], "interval" => 3}, 2)).to eq false
+      expect(cj.match_component({"range" => [1, 59], "interval" => 3}, 3)).to eq false
+      expect(cj.match_component({"range" => [1, 59], "interval" => 3}, 4)).to eq true
+      expect(cj.match_component({"range" => [1, 59], "interval" => 3}, 5)).to eq false
+      expect(cj.match_component({"range" => [1, 59], "interval" => 3}, 6)).to eq false
+      expect(cj.match_component({"range" => [1, 59], "interval" => 3}, 7)).to eq true
+      expect(cj.match_component({"range" => [1, 59], "interval" => 3}, 8)).to eq false
     end
 
     it "should handle lists" do
       cj = create :cron_job, cron: "* * * * *"
-      expect(cj.match_component({member: [0, 95, 59]}, 0)).to eq true
-      expect(cj.match_component({member: [0, 95, 59]}, 95)).to eq true
-      expect(cj.match_component({member: [0, 95, 59]}, 59)).to eq true
-      expect(cj.match_component({member: [0, 95, 59]}, 4)).to eq false
-      expect(cj.match_component({member: [0, 95, 59]}, -5)).to eq false
-      expect(cj.match_component({member: [0, 95, 59]}, 500)).to eq false
+      expect(cj.match_component({"member" => [0, 95, 59]}, 0)).to eq true
+      expect(cj.match_component({"member" => [0, 95, 59]}, 95)).to eq true
+      expect(cj.match_component({"member" => [0, 95, 59]}, 59)).to eq true
+      expect(cj.match_component({"member" => [0, 95, 59]}, 4)).to eq false
+      expect(cj.match_component({"member" => [0, 95, 59]}, -5)).to eq false
+      expect(cj.match_component({"member" => [0, 95, 59]}, 500)).to eq false
     end
   end
 
