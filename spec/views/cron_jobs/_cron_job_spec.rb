@@ -7,7 +7,8 @@ describe "cron_jobs/_cron_job", :type => :view do
                 name: "The name", 
                 description: "The description",
                 cron: "@hourly",
-                last_run_at: 1.hour.ago.utc
+                last_run_at: 1.hour.ago.utc,
+                last_async_job_id: "obladi-oblada"
     render partial: "cron_jobs/cron_job", locals: {cron_job: job}
     @json = JSON.parse(rendered)
     @u = @json['cron_job']
@@ -20,8 +21,8 @@ describe "cron_jobs/_cron_job", :type => :view do
   end
 
 
-  it "should have three hyperlinks" do
-    expect(@links.size).to eq 3
+  it "should have four hyperlinks" do
+    expect(@links.size).to eq 4
   end
 
   it "should have a self hyperlink" do
@@ -34,6 +35,10 @@ describe "cron_jobs/_cron_job", :type => :view do
 
   it "should have an updater hyperlink" do
     expect(@links).to be_hyperlinked('updater', /api_users/)
+  end
+
+  it "should have an last_async_job hyperlink" do
+    expect(@links).to be_hyperlinked('last_async_job', /async_jobs/)
   end
 
 

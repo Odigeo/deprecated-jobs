@@ -129,8 +129,12 @@ describe CronJob, :type => :model do
       expect(create(:cron_job).default_step_time).to eq 30
     end
 
-    it "should have a last_run_at" do
+    it "should have a last_run_at time" do
       expect(build(:cron_job)).to respond_to(:last_run_at)
+    end
+
+    it "should have a last_async_job_id attribute" do
+      expect(build(:cron_job)).to respond_to(:last_async_job_id)
     end
   end
 
@@ -336,22 +340,35 @@ describe CronJob, :type => :model do
       job.process_job
     end
 
-    it "should call post_async_job if the time is due" do
-      job = create :cron_job
-      expect(CronJob.count).to eq 1
-      expect(job).to receive(:due?).and_return(true)
-      expect(job).to receive(:post_async_job)
-      job.process_job
-    end
+    describe "when it runs a cron job" do
 
-    it "should set the last_run_at attribute if the time is due" do
-      job = create :cron_job
-      expect(CronJob.count).to eq 1
-      expect(job).to receive(:due?).and_return(true)
-      expect(job).to receive(:post_async_job)
-      expect(job).to receive(:last_run_at=).with(an_instance_of Time)
-      expect(job).to receive(:save!)
-      job.process_job
+      it "should call post_async_job" do
+        job = create :cron_job
+        expect(CronJob.count).to eq 1
+        expect(job).to receive(:due?).and_return(true)
+        expect(job).to receive(:post_async_job).and_return "the-async-job-uuid"
+        job.process_job
+      end
+
+      it "should set the last_run_at attribute" do
+        job = create :cron_job
+        expect(CronJob.count).to eq 1
+        expect(job).to receive(:due?).and_return(true)
+        expect(job).to receive(:post_async_job).and_return "the-async-job-uuid"
+        expect(job).to receive(:last_run_at=).with(an_instance_of Time)
+        expect(job).to receive(:save!)
+        job.process_job
+      end
+
+      it "should set the last_async_job_id attribute" do
+        job = create :cron_job
+        expect(CronJob.count).to eq 1
+        expect(job).to receive(:due?).and_return(true)
+        expect(job).to receive(:post_async_job).and_return "the-async-job-uuid"
+        expect(job).to receive(:last_async_job_id=).with("the-async-job-uuid")
+        expect(job).to receive(:save!)
+        job.process_job
+      end
     end
   end
 
