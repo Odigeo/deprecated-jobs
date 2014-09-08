@@ -5,6 +5,7 @@ json.cron_job do |json|
 	json.(cron_job, :name,
 	                :description,
 	                :enabled,
+	                :cron,
 	                :steps,
 	                :default_step_time,
 	                :default_poison_limit,
