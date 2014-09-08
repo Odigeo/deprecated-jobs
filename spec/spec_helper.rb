@@ -48,6 +48,7 @@ RSpec.configure do |config|
   config.before(:suite) do 
     `curl -s -X DELETE http://localhost:4567`
     WebMock.allow_net_connect!
+    #WebMock.disable_net_connect!(:allow_localhost => true)
   end
 
   config.after(:suite) do

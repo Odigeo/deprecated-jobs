@@ -20,8 +20,11 @@ class CronJobsController < ApplicationController
 
   # GET /cron_jobs
   def index
-    @cron_jobs = CronJob.all.reject { |job| job.id == CronJob::TABLE_LOCK_RECORD_ID }
-    api_render @cron_jobs
+    # expires_in 0, 's-maxage' => 30.minutes
+    # if stale?(collection_etag(CronJob))   # collection_etag is still ActiveRecord only!
+      @cron_jobs = CronJob.all.reject { |job| job.id == CronJob::TABLE_LOCK_RECORD_ID }
+      api_render @cron_jobs
+    # end
   end
 
 

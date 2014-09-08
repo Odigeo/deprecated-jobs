@@ -21,6 +21,7 @@ class CronJob < OceanDynamo::Table
     attribute :created_by
     attribute :updated_by
     attribute :cron_structure, :serialized, default: [nil, nil, nil, nil, nil]
+    attribute :last_run_at,          :datetime
   end
 
 
@@ -210,6 +211,8 @@ class CronJob < OceanDynamo::Table
     return unless enabled
     return unless due?
     post_async_job
+    self.last_run_at = Time.now.utc
+    save!
   end
 
 

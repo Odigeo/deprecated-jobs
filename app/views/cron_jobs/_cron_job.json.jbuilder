@@ -13,4 +13,5 @@ json.cron_job do |json|
 	                :lock_version) 
 	json.created_at           cron_job.created_at.utc.iso8601
 	json.updated_at           cron_job.updated_at.utc.iso8601
+	json.last_run_at          cron_job.last_run_at.utc.iso8601 if cron_job.last_run_at
 end
