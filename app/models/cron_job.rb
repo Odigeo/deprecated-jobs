@@ -22,6 +22,7 @@ class CronJob < OceanDynamo::Table
     attribute :updated_by
     attribute :cron_structure, :serialized, default: [nil, nil, nil, nil, nil]
     attribute :last_run_at,          :datetime
+    attribute :last_async_job_id
   end
 
 
@@ -210,7 +211,7 @@ class CronJob < OceanDynamo::Table
     return if id == TABLE_LOCK_RECORD_ID
     return unless enabled
     return unless due?
-    post_async_job
+    self.last_async_job_id = post_async_job
     Rails.logger.info "CronJob #{name} (#{cron}) run."
     self.last_run_at = Time.now.utc
     save!
@@ -218,9 +219,10 @@ class CronJob < OceanDynamo::Table
 
 
   def post_async_job
-    aj = AsyncJob.create credentials: credentials, token: token,
+    aj = AsyncJob.create! credentials: credentials, token: token,
            steps: steps, max_seconds_in_queue: max_seconds_in_queue,
            default_poison_limit: default_poison_limit, default_step_time: default_step_time
+    aj.uuid
   end
 
 end

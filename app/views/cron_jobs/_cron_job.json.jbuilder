@@ -1,7 +1,10 @@
 json.cron_job do |json|
 	json._links       hyperlinks(self:    cron_job_url(cron_job.id),
 	                             creator: api_user_url(cron_job.created_by),
-	                             updater: api_user_url(cron_job.updated_by))
+	                             updater: api_user_url(cron_job.updated_by),
+	                             last_async_job: cron_job.last_async_job_id.present? &&  
+	                                             async_job_url(cron_job.last_async_job_id)
+	                            )
 	json.(cron_job, :name,
 	                :description,
 	                :enabled,
