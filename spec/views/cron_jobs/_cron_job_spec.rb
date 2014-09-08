@@ -48,6 +48,10 @@ describe "cron_jobs/_cron_job", :type => :view do
     expect(@u['enabled']).to eq true
   end
 
+  it "should have a CRON string" do
+    expect(@u['cron']).to eq "@hourly"
+  end
+
 
   it "should have a steps array" do
     expect(@u['steps']).to eq []
