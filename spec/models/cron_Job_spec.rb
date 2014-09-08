@@ -4,10 +4,12 @@ describe CronJob, :type => :model do
 
   before :each do
     CronJob.delete_all
+    AsyncJob.delete_all
   end
 
   after :each do
     CronJob.delete_all
+    AsyncJob.delete_all
   end
 
 
@@ -379,6 +381,12 @@ describe CronJob, :type => :model do
       expect_any_instance_of(AsyncJob).to receive(:enqueue)
       job = create :cron_job, steps: [{}, {}]
       job.post_async_job
+    end
+
+    it "should return the AsyncJob uuid" do
+      expect_any_instance_of(AsyncJob).to receive(:enqueue)
+      job = create :cron_job, steps: [{}, {}]
+      expect(job.post_async_job).to be_a String
     end
 
   end
