@@ -145,7 +145,7 @@ class QueueMessage
     http_method = (step['method'] || "GET").to_s.upcase
     body = step['body'] && step['body'].to_json
 
-    Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] started."
+    Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method} #{url}] started."
 
     return if async_job.token.blank? && !authenticate
 
@@ -186,10 +186,10 @@ class QueueMessage
     rescue Exception => e
       self.visibility_timeout = retry_seconds
       logmsg = async_job.log "#{e.class.name}: #{e.message}"
-      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] crashed: '#{logmsg}'."
+      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method} #{url}] crashed: '#{logmsg}'."
       raise e
     ensure
-      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method}] finished."
+      Rails.logger.info "[Job #{uuid}] step #{i}:#{nsteps} '#{name}' [#{http_method} #{url}] finished."
     end
   end
 
