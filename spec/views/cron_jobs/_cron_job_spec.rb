@@ -6,7 +6,8 @@ describe "cron_jobs/_cron_job", :type => :view do
     job = create :cron_job, 
                 name: "The name", 
                 description: "The description",
-                cron: "@hourly"
+                cron: "@hourly",
+                last_run_at: 1.hour.ago.utc
     render partial: "cron_jobs/cron_job", locals: {cron_job: job}
     @json = JSON.parse(rendered)
     @u = @json['cron_job']
@@ -57,6 +58,7 @@ describe "cron_jobs/_cron_job", :type => :view do
     expect(@u['steps']).to eq []
   end
 
+
   it "should have a created_at time" do
     expect(@u['created_at']).to be_a String
   end
@@ -64,6 +66,11 @@ describe "cron_jobs/_cron_job", :type => :view do
   it "should have an updated_at time" do
     expect(@u['updated_at']).to be_a String
   end
+
+  it "should have a last_run_at time" do
+    expect(@u['last_run_at']).to be_a String
+  end
+
 
   it "should have a lock_version field" do
     expect(@u['lock_version']).to be_an Integer

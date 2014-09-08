@@ -128,6 +128,10 @@ describe CronJob, :type => :model do
     it "should have a default_step_time attribute" do
       expect(create(:cron_job).default_step_time).to eq 30
     end
+
+    it "should have a last_run_at" do
+      expect(build(:cron_job)).to respond_to(:last_run_at)
+    end
   end
 
 
@@ -308,7 +312,7 @@ describe CronJob, :type => :model do
 
   describe "process_job" do 
 
-    it "process_job should do nothing if the job is the lock record" do
+    it "should do nothing if the job is the lock record" do
       job = create :cron_job, id: CronJob::TABLE_LOCK_RECORD_ID
       expect(CronJob.count).to eq 1
       expect(job).to_not receive(:due?)
@@ -316,7 +320,7 @@ describe CronJob, :type => :model do
       job.process_job
     end
 
-    it "process_job should do nothing unless the job is enabled" do
+    it "should do nothing unless the job is enabled" do
       job = create :cron_job, enabled: false
       expect(CronJob.count).to eq 1
       expect(job).to_not receive(:due?)
@@ -324,7 +328,7 @@ describe CronJob, :type => :model do
       job.process_job
     end
 
-    it "process_job should do nothing unless the time is due" do
+    it "should do nothing unless the time is due" do
       job = create :cron_job
       expect(CronJob.count).to eq 1
       expect(job).to receive(:due?).and_return(false)
@@ -332,11 +336,21 @@ describe CronJob, :type => :model do
       job.process_job
     end
 
-    it "process_job should call post_async_job if the time is due" do
+    it "should call post_async_job if the time is due" do
       job = create :cron_job
       expect(CronJob.count).to eq 1
       expect(job).to receive(:due?).and_return(true)
       expect(job).to receive(:post_async_job)
+      job.process_job
+    end
+
+    it "should set the last_run_at attribute if the time is due" do
+      job = create :cron_job
+      expect(CronJob.count).to eq 1
+      expect(job).to receive(:due?).and_return(true)
+      expect(job).to receive(:post_async_job)
+      expect(job).to receive(:last_run_at=).with(an_instance_of Time)
+      expect(job).to receive(:save!)
       job.process_job
     end
   end
