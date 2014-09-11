@@ -50,7 +50,7 @@ Daemons.run_proc("async_job_purger", options) do
     AsyncJob.find_each do |j|
       j.destroy if j.destroy_at <= t
       killed += 1
-      sleep 0.1
+      #sleep 0.01
     end
     logger.info "Cleaned up #{killed} old AsyncJobs"
   end
