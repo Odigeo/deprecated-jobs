@@ -39,19 +39,3 @@ options = {
     end
   end
 end
-
-# A daemon to purge jobs (one per machine instance)
-Daemons.run_proc("async_job_purger", options) do
-  require ENV_PATH
-  while true do
-    sleep(15.minutes + rand(7.minutes))
-    killed = 0
-    t = Time.now.utc
-    AsyncJob.find_each do |j|
-      j.destroy if j.destroy_at <= t
-      killed += 1
-      #sleep 0.01
-    end
-    logger.info "Cleaned up #{killed} old AsyncJobs"
-  end
-end

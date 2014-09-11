@@ -5,7 +5,11 @@ Jobs::Application.routes.draw do
 
   scope "v1" do
     resources :async_jobs, only: [:create, :show, :destroy], 
-                           constraints: {id: /.+/}
+                           constraints: {id: /.+/} do
+      collection do
+      	put "cleanup"
+      end
+    end
 
     resources :cron_jobs, only: [:index, :create, :show, :update, :destroy], 
                            constraints: {id: /.+/}

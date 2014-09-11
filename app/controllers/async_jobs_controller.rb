@@ -1,6 +1,7 @@
 class AsyncJobsController < ApplicationController
 
-  ocean_resource_controller required_attributes: []  # PUT isn't used: no required args
+  ocean_resource_controller required_attributes: [],  # PUT isn't used: no required args
+                            extra_actions: { 'cleanup' => ['cleanup', "PUT"]}
 
   # The following params are required:
   #   :credentials
@@ -40,6 +41,13 @@ class AsyncJobsController < ApplicationController
   # DELETE /async_jobs/1
   def destroy
     @async_job.destroy
+    render_head_204
+  end
+
+
+  # PUT /async_jobs/cleanup
+  def cleanup
+    AsyncJob.cleanup
     render_head_204
   end
   
