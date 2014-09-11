@@ -192,7 +192,7 @@ class CronJob < OceanDynamo::Table
                          credentials: Api.encode_credentials("fake", "fake"),
                          cron: "* * * * *")
     # The above might have overwritten an existing record. Try to claim it.
-    sleep 2
+    sleep 5
     cs.reload
     begin
       cs.save!
