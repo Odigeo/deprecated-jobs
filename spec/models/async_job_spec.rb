@@ -264,7 +264,24 @@ describe AsyncJob, :type => :model do
       expect(Api).to receive(:ban).with("/v[0-9]+/async_jobs/#{j.uuid}($|/|\\?)")
       j.destroy
     end
+  end
 
+
+  describe "cleanup" do
+
+    it "should purge all AsyncJobs past their expiry time" do
+      AsyncJob.delete_all
+      create :async_job, destroy_at: Time.now.utc + 1.year
+      create :async_job, destroy_at: 2.days.ago
+      create :async_job, destroy_at: Time.now.utc + 1.year
+      create :async_job, destroy_at: 1.minute.ago
+      create :async_job, destroy_at: Time.now.utc + 1.year
+      expect(AsyncJob.count).to eq 5
+      expect(Rails.logger).to receive(:info).with("Cleaned up 2 old AsyncJobs")
+      AsyncJob.cleanup
+      expect(AsyncJob.count).to eq 3
+      AsyncJob.delete_all
+    end
   end
 
 end

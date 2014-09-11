@@ -116,4 +116,23 @@ describe AsyncJob, :type => :request do
     end
   end
 
+
+  describe "cleanup" do
+
+    it "should purge expired AsyncJobs" do
+      AsyncJob.delete_all
+      create :async_job, destroy_at: Time.now.utc + 1.year
+      create :async_job, destroy_at: 2.days.ago
+      create :async_job, destroy_at: Time.now.utc + 1.year
+      create :async_job, destroy_at: 1.minute.ago
+      create :async_job, destroy_at: Time.now.utc + 1.year
+      expect(AsyncJob.count).to eq 5
+      put "/v1/async_jobs/cleanup", 
+            {}, 
+            {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
+      expect(AsyncJob.count).to eq 3
+    end
+
+  end
+
 end 

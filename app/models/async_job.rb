@@ -184,4 +184,19 @@ class AsyncJob < OceanDynamo::Table
   end
 
 
+  #
+  # Purge AsyncJobs
+  #
+  def self.cleanup
+    killed = 0
+    t = Time.now.utc
+    AsyncJob.find_each do |j|
+      if j.destroy_at <= t
+        j.destroy 
+        killed += 1
+      end
+    end
+    Rails.logger.info "Cleaned up #{killed} old AsyncJobs"
+  end
+
 end

@@ -23,5 +23,8 @@ describe AsyncJobsController, :type => :routing do
       expect(delete("/v1/async_jobs/1")).to route_to("async_jobs#destroy", :id => "1")
     end
 
+    it "routes to #cleanup" do
+      expect(put("/v1/async_jobs/cleanup")).to route_to("async_jobs#cleanup")
+    end
   end
 end
