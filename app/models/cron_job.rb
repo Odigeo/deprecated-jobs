@@ -232,4 +232,31 @@ class CronJob < OceanDynamo::Table
     end
   end
 
+
+  def self.maintain_all(descriptions)
+    cron_jobs = CronJob.all
+    descriptions.each do |data|
+      if cron_job = already_exists_in(cron_jobs, data)
+        # Found the job matching the description
+        if %w(name description credentials steps max_seconds_in_queue
+              default_poison_limit default_step_time cron enabled).any? do |attr|
+              data[attr] != cron_job.send(attr)
+            end
+          cron_job.update_attributes! data
+        end
+        # Remove the job from the list of CronJobs as we've processed it
+        cron_jobs -= [cron_job]
+      else
+        # The job doesn't exist, create it
+        CronJob.create!(data)
+      end
+    end
+    # Destroy any CronJobs not mentioned in the list of descriptions
+    cron_jobs.each(&:destroy)
+  end
+
+  def self.already_exists_in(coll, data)
+    coll.find { |cron_job| cron_job.name == data['name'] }
+  end
+
 end

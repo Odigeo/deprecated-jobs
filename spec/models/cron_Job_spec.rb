@@ -5,6 +5,7 @@ describe CronJob, :type => :model do
   before :each do
     CronJob.delete_all
     AsyncJob.delete_all
+    allow(Object).to receive(:sleep)
   end
 
   after :each do
@@ -387,6 +388,72 @@ describe CronJob, :type => :model do
       expect_any_instance_of(AsyncJob).to receive(:enqueue)
       job = create :cron_job, steps: [{}, {}]
       expect(job.post_async_job).to be_a String
+    end
+  end
+
+
+  describe "maintain_all" do
+
+    before :each do
+      @jobs = [{"name"=>"Purge old Authentications", 
+                "description"=>"Remove Authentications past their removal time.", 
+                "cron"=>"@hourly", "steps"=>[{"method"=>"PUT", "url"=>"/v1/authentications/cleanup"}], 
+                "enabled"=>true, "credentials"=>"emFsYWdhZG9vbGE6bWVuY2hpa2Fib29sYQ==", 
+                "default_step_time"=>60, "max_seconds_in_queue"=>3600, "default_poison_limit"=>5}, 
+               {"name"=>"Refresh Instance DB", 
+                "description"=>"Reads live status information about Ocean instances and stores it in the local database.", 
+                "cron"=>"* * * * *", "steps"=>[{"method"=>"PUT", "url"=>"/v1/instances/refresh"}], 
+                "enabled"=>true, "credentials"=>"emFsYWdhZG9vbGE6bWVuY2hpa2Fib29sYQ==", 
+                "default_step_time"=>10, "max_seconds_in_queue"=>3600, "default_poison_limit"=>5}, 
+               {"name"=>"Purge AsyncJobs", "description"=>"Removes AsyncJobs past their destroy_at time.", 
+                "cron"=>"*/10 * * * *", "steps"=>[{"method"=>"PUT", "url"=>"/v1/async_jobs/cleanup"}], 
+                "enabled"=>true, "credentials"=>"emFsYWdhZG9vbGE6bWVuY2hpa2Fib29sYQ==", 
+                "default_step_time"=>60, "max_seconds_in_queue"=>3600, "default_poison_limit"=>5}, 
+               {"name"=>"Purge test DynamoDB tables", 
+                "description"=>"Removes all DynamoDB tables used for automated tests in this environment.", 
+                "cron"=>"@daily", "steps"=>[{"method"=>"DELETE", "url"=>"/v1/dynamo_tables/test_tables"}], 
+                "enabled"=>true, "credentials"=>"emFsYWdhZG9vbGE6bWVuY2hpa2Fib29sYQ==", 
+                "default_step_time"=>30, "max_seconds_in_queue"=>86400, "default_poison_limit"=>5}
+              ]
+    end
+
+    it "should be a class method" do
+      expect(CronJob).to respond_to(:maintain_all)
+    end
+
+    it "should result in the same number of CronJobs as there are elements in the input array" do
+      CronJob.maintain_all @jobs
+      expect(CronJob.count).to eq 4
+    end
+
+    it "should do nothing when run twice with the same data" do
+      CronJob.maintain_all @jobs
+      expect(CronJob.count).to eq 4
+      CronJob.maintain_all @jobs
+      expect(CronJob.count).to eq 4
+    end
+
+    it "should keep only the jobs described by the data" do
+      CronJob.maintain_all @jobs
+      expect(CronJob.count).to eq 4
+      @jobs = [@jobs[0], @jobs[2], @jobs[3]]
+      CronJob.maintain_all @jobs
+      expect(CronJob.count).to eq 3
+    end
+
+    it "should update a job if its attributes change" do
+      CronJob.maintain_all @jobs
+      expect(CronJob.count).to eq 4
+      @jobs[0]['default_step_time'] = 10
+      expect_any_instance_of(CronJob).to receive(:update)
+      CronJob.maintain_all @jobs
+    end
+
+    it "should not update a job if its attributes are unchanged" do
+      CronJob.maintain_all @jobs
+      expect(CronJob.count).to eq 4
+      expect_any_instance_of(CronJob).to_not receive(:update)
+      CronJob.maintain_all @jobs
     end
 
   end
