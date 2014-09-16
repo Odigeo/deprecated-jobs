@@ -456,5 +456,11 @@ describe CronJob, :type => :model do
       CronJob.maintain_all @jobs
     end
 
+    it "should add the INTERNAL_OCEAN_API_URL to all URLs in the steps list" do
+      @jobs = [@jobs.first]
+      CronJob.maintain_all @jobs
+      expect(CronJob.all.first.steps.first['url'].index(INTERNAL_OCEAN_API_URL)).to eq 0
+    end
+
   end
 end

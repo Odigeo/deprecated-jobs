@@ -236,6 +236,11 @@ class CronJob < OceanDynamo::Table
   def self.maintain_all(descriptions)
     cron_jobs = CronJob.all
     descriptions.each do |data|
+      data['steps'].each do |step|
+        unless step['url'].include?("http")
+          step['url'] = INTERNAL_OCEAN_API_URL + step['url'] 
+        end
+      end
       if cron_job = already_exists_in(cron_jobs, data)
         # Found the job matching the description
         if %w(name description credentials steps max_seconds_in_queue
