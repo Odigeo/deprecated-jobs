@@ -193,7 +193,7 @@ class CronJob < OceanDynamo::Table
                          cron: "* * * * *")
     # The above might have overwritten an existing record. Try to claim it.
     sleep 5
-    cs.reload
+    cs.reload(consistent: true)
     begin
       cs.save!
     rescue OceanDynamo::StaleObjectError
@@ -205,7 +205,12 @@ class CronJob < OceanDynamo::Table
   end
 
   def self.release_table_lock
-    CronJob.find(TABLE_LOCK_RECORD_ID).delete
+    lock = CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
+    if lock
+      lock.destroy
+    else
+      Rails.logger.error "CronJob queue lock ineffectual. This will be remedied soon."
+    end
   end
 
 
