@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 4.0'
-gem "ocean-rails"
+gem "ocean-rails", ">= 3.0.3"
 gem "ocean-dynamo", ">= 0.6.5"
 
 gem "jbuilder"
