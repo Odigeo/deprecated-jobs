@@ -9,7 +9,6 @@ class CronJob < OceanDynamo::Table
     attribute :name
     attribute :description
     attribute :credentials
-    attribute :token
     attribute :steps,                :serialized, default: []
     attribute :max_seconds_in_queue, :integer,    default: 1.day
     attribute :default_poison_limit, :integer,    default: 5
@@ -227,7 +226,7 @@ class CronJob < OceanDynamo::Table
 
   def post_async_job
     begin
-      aj = AsyncJob.create! credentials: credentials, token: token,
+      aj = AsyncJob.create! credentials: credentials,
              steps: steps, max_seconds_in_queue: max_seconds_in_queue,
              default_poison_limit: default_poison_limit, default_step_time: default_step_time
       aj.uuid

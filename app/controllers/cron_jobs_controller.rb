@@ -59,7 +59,6 @@ class CronJobsController < ApplicationController
                                 name: params[:name],
                                 description: params[:description],
                                 credentials: params[:credentials],
-                                token: params[:token],
                                 max_seconds_in_queue: params[:max_seconds_in_queue],
                                 default_poison_limit: params[:default_poison_limit],
                                 default_step_time: params[:default_step_time],
