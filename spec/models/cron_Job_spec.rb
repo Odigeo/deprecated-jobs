@@ -61,9 +61,8 @@ describe CronJob, :type => :model do
       j.save!
     end
 
-    it "should have an optional token attribute" do
-      expect(create(:cron_job).token).to be_a String
-      expect(create(:cron_job, token: nil).token).to eq nil
+    it "should not have a token attribute" do
+      expect(create(:cron_job)).to_not respond_to :token
     end
 
 
