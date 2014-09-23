@@ -8,7 +8,7 @@ describe AsyncJobsController, :type => :routing do
     end
 
     it "routes to #show" do
-      expect(get("/v1/async_jobs/1")).to route_to("async_jobs#show", :id => "1")
+      expect(get("/v1/async_jobs/a-b-c-d-e")).to route_to("async_jobs#show", :id => "a-b-c-d-e")
     end
 
     it "routes to #create" do
@@ -16,11 +16,11 @@ describe AsyncJobsController, :type => :routing do
     end
 
     it "routes to #update" do
-      expect(put("/v1/async_jobs/1")).not_to be_routable
+      expect(put("/v1/async_jobs/a-b-c-d-e")).not_to be_routable
     end
 
     it "routes to #destroy" do
-      expect(delete("/v1/async_jobs/1")).to route_to("async_jobs#destroy", :id => "1")
+      expect(delete("/v1/async_jobs/a-b-c-d-e")).to route_to("async_jobs#destroy", :id => "a-b-c-d-e")
     end
 
     it "routes to #cleanup" do

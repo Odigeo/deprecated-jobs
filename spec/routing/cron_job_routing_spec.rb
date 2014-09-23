@@ -12,20 +12,23 @@ describe CronJobsController, :type => :routing do
     end
 
     it "routes to #show" do
-      expect(get("/v1/cron_jobs/1")).to route_to("cron_jobs#show", :id => "1")
+      expect(get("/v1/cron_jobs/a-b-c-d-e")).to route_to("cron_jobs#show", :id => "a-b-c-d-e")
     end
 
     it "routes to #update" do
-      expect(put("/v1/cron_jobs/1")).to route_to("cron_jobs#update", :id => "1")
+      expect(put("/v1/cron_jobs/a-b-c-d-e")).to route_to("cron_jobs#update", :id => "a-b-c-d-e")
     end
 
     it "routes to #destroy" do
-      expect(delete("/v1/cron_jobs/1")).to route_to("cron_jobs#destroy", :id => "1")
+      expect(delete("/v1/cron_jobs/a-b-c-d-e")).to route_to("cron_jobs#destroy", :id => "a-b-c-d-e")
+    end
+
+    it "routes to #run" do
+      expect(put("/v1/cron_jobs/a-b-c-d-e/run")).to route_to("cron_jobs#run", :id => "a-b-c-d-e")
     end
 
     it "routes to #execute" do
       expect(put("/execute_cron_jobs")).to route_to("cron_jobs#execute")
     end
-
   end
 end

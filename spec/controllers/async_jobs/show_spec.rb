@@ -29,7 +29,7 @@ describe AsyncJobsController, :type => :controller do
     end
     
     it "should return a 404 when the user can't be found" do
-      get :show, id: -1
+      get :show, id: 'a-a-a-a-a'
       expect(response.status).to eq 404
       expect(response.content_type).to eq "application/json"
     end

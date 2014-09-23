@@ -1,7 +1,8 @@
 class CronJobsController < ApplicationController
 
   ocean_resource_controller required_attributes: [:lock_version, :steps, :cron],
-                            extra_actions: { 'execute' => ['execute', "PUT"]}
+                            extra_actions: { 'execute' => ['execute', "PUT"],
+                                             'run'     => ['run',     "PUT"]}
 
   # The following params are required:
   #   :credentials
@@ -15,7 +16,7 @@ class CronJobsController < ApplicationController
   skip_before_filter :authorize_action, only: :execute
 
   
-  before_action :find_cron_job, :only => [:show, :update, :destroy]
+  before_action :find_cron_job, :only => [:show, :update, :destroy, :run]
     
 
   # GET /cron_jobs
@@ -39,7 +40,7 @@ class CronJobsController < ApplicationController
   end
 
 
-  # GET /cron_jobs/1
+  # GET /cron_jobs/a-b-c-d-e
   def show
     expires_in 0, 's-maxage' => 30.minutes
     if stale?(etag: @cron_job.lock_version,          # NB: DynamoDB tables dont have cache_key - FIX!
@@ -49,7 +50,7 @@ class CronJobsController < ApplicationController
   end
 
 
-  # PUT /cron_jobs/1
+  # PUT /cron_jobs/a-b-c-d-e
   def update
     if missing_attributes?
       render_api_error 422, "Missing resource attributes"
@@ -72,9 +73,16 @@ class CronJobsController < ApplicationController
   end
 
 
-  # DELETE /cron_jobs/1
+  # DELETE /cron_jobs/a-b-c-d-e
   def destroy
     @cron_job.destroy
+    render_head_204
+  end
+
+
+  # PUT /cron_jobs/a-b-c-d-e/run
+  def run
+    @cron_job.post_async_job
     render_head_204
   end
 

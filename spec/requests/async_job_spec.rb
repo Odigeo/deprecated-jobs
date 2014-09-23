@@ -85,9 +85,9 @@ describe AsyncJob, :type => :request do
     end
 
     it "should return a 404 if the UUID isn't found" do
-      get "/v1/async_jobs/totallynonexistent", {}, {'HTTP_ACCEPT' => "application/json",
-                                                    'X-API-TOKEN' => "incredibly-fake",
-                                                    'If-None-Match' => 'e65ae6734803fa'}
+      get "/v1/async_jobs/a-b-c-d-e", {}, {'HTTP_ACCEPT' => "application/json",
+                                           'X-API-TOKEN' => "incredibly-fake",
+                                           'If-None-Match' => 'e65ae6734803fa'}
       expect(response.status).to be(404)
       j = JSON.parse(response.body)
       expect(j['async_job']).to eq nil
@@ -107,7 +107,7 @@ describe AsyncJob, :type => :request do
     end 
 
     it "should return a 404 if the UUID isn't found" do
-      delete "/v1/async_jobs/totallynonexistent", {}, 
+      delete "/v1/async_jobs/a-b-c-d-e", {}, 
              {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}
       expect(response.status).to be(404)
       j = JSON.parse(response.body)

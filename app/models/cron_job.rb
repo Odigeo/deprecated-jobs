@@ -34,7 +34,7 @@ class CronJob < OceanDynamo::Table
   ]
 
 
-  TABLE_LOCK_RECORD_ID = "__TABLE_LOCK__"
+  TABLE_LOCK_RECORD_ID = "ff-ff-ff-ff-ff"
   
 
   # Validations

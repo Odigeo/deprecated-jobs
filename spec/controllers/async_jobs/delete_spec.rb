@@ -33,7 +33,7 @@ describe AsyncJobsController, :type => :controller do
     end
 
     it "should return a 404 when the AsyncJob can't be found" do
-      delete :destroy, id: -1
+      delete :destroy, id: 'a-a-a-a-a'
       expect(response.status).to eq 404
     end
     
