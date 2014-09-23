@@ -185,6 +185,7 @@ describe QueueMessage, :type => :model do
     end
 
     it "should handle poison messages" do
+      expect(Api).to receive(:send_mail)
       msg = double(AWS::SQS::ReceivedMessage,
                body: @async_job.uuid,
                receive_count: 6,

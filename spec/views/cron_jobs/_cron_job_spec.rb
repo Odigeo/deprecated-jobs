@@ -8,7 +8,7 @@ describe "cron_jobs/_cron_job", :type => :view do
                 description: "The description",
                 cron: "@hourly",
                 last_run_at: 1.hour.ago.utc,
-                last_async_job_id: "obladi-oblada"
+                last_async_job_id: "a-b-c-d-e"
     render partial: "cron_jobs/cron_job", locals: {cron_job: job}
     @json = JSON.parse(rendered)
     @u = @json['cron_job']

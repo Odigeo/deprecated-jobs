@@ -118,6 +118,7 @@ describe AsyncJob, :type => :model do
     end
 
     it "should have a finished? predicate" do
+      expect(Api).to receive(:send_mail)
       expect(@j.finished?).to eq false
       @j.job_is_poison
       @j.reload(consistent: true)
@@ -139,6 +140,7 @@ describe AsyncJob, :type => :model do
     end
 
     it "should have a poison? predicate" do
+      expect(Api).to receive(:send_mail)
       expect(@j.finished?).to eq false
       @j.job_is_poison
       @j.reload(consistent: true)
@@ -169,12 +171,18 @@ describe AsyncJob, :type => :model do
     end
 
     it "should have a job_is_poison method to finish a job" do
+      expect(Api).to receive(:send_mail)
       @j.job_is_poison
       @j.reload(consistent: true)
       expect(@j.finished?).to eq true
       expect(@j.failed?).to eq true
       expect(@j.succeeded?).to eq false
       expect(@j.poison?).to eq true
+    end
+
+    it "should send mail to the originating ApiUser whenever a job becomes poison" do
+      expect(Api).to receive(:send_mail)
+      @j.job_is_poison
     end
 
 
