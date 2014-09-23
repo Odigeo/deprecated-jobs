@@ -24,7 +24,7 @@ describe CronJob, :type => :request do
 
     it "should create an AsyncJob" do
       expect(AsyncJob).to receive(:create!)
-      job = create :cron_job, id: 'a-b-c-d-e', cron: "@daily"
+      job = create :cron_job, id: 'a-b-c-d-e'
       permit_with 200
       put "/v1/cron_jobs/a-b-c-d-e/run", 
           {}, 
