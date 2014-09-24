@@ -138,6 +138,22 @@ describe CronJob, :type => :model do
     it "should have a last_async_job_id attribute" do
       expect(build(:cron_job)).to respond_to(:last_async_job_id)
     end
+
+    it "should have a poison_email attribute" do
+      expect(create(:cron_job)).to respond_to :poison_email
+    end
+
+    it "should allow blank poison_email addresses" do
+      expect(build(:cron_job, poison_email: "")).to be_valid
+    end
+
+    it "should require a valid poison_email address" do
+      expect(build(:cron_job, poison_email: "john@@doe")).not_to be_valid
+    end
+
+    it "should not consider poison_email addresses with names valid" do
+      expect(build(:cron_job, poison_email: "John Doe <john@doe.com>")).not_to be_valid
+    end
   end
 
 

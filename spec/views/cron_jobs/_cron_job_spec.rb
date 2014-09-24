@@ -8,7 +8,8 @@ describe "cron_jobs/_cron_job", :type => :view do
                 description: "The description",
                 cron: "@hourly",
                 last_run_at: 1.hour.ago.utc,
-                last_async_job_id: "a-b-c-d-e"
+                last_async_job_id: "a-b-c-d-e",
+                poison_email: "someone@example.com"
     render partial: "cron_jobs/cron_job", locals: {cron_job: job}
     @json = JSON.parse(rendered)
     @u = @json['cron_job']
@@ -101,4 +102,7 @@ describe "cron_jobs/_cron_job", :type => :view do
     expect(@u['default_step_time']).to eq 30
   end
 
+  it "should have a poison_email" do
+    expect(@u['poison_email']).to eq "someone@example.com"
+  end
 end

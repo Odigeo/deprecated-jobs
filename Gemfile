@@ -10,6 +10,7 @@ gem 'oj'
 gem 'daemons'
 
 gem "dalli"
+gem 'email_validator'
 
 
 group :test, :development do
