@@ -46,6 +46,10 @@ ASYNCJOBQ_AWS_BASENAME: AsyncJobs
 # THe Chef environment we're running under: "dev", "master", "ci", "staging", "prod"
 CHEF_ENV: dev
 
+# If present, memcached will be used for distributed locking. 
+# If not, DynamoDB record locking is used.
+MEMCACHED_SERVERS: []
+
 
 ##########################################################################################
 # This section allows you to specify values specific for a particular Rails

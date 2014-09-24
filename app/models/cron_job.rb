@@ -189,10 +189,11 @@ class CronJob < OceanDynamo::Table
     # No record exists, create one.
     cs = CronJob.create!(id: TABLE_LOCK_RECORD_ID, 
                          credentials: Api.encode_credentials("fake", "fake"),
-                         cron: "* * * * *")
-    # The above might have overwritten an existing record. Try to claim it.
-    sleep 5
-    cs.reload(consistent: true)
+                         cron: "@annually", enabled: false)
+    # The above might have overwritten an existing record. Get whatever lock record
+    # there is and attempt to update it.
+    #sleep 5
+    cs = CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
     begin
       cs.save!
     rescue OceanDynamo::StaleObjectError
@@ -202,6 +203,7 @@ class CronJob < OceanDynamo::Table
     # We claimed it. Succeed!
     true
   end
+
 
   def self.release_table_lock
     lock = CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
