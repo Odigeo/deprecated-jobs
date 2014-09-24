@@ -92,9 +92,12 @@ class AsyncJob < OceanDynamo::Table
     self.failed = true
     save!
     Rails.logger.error "[Job #{uuid}] is poison (#{steps.length} steps)."
+    job = attributes.except("credentials")
+    job['api_user'] = Api.decode_credentials(credentials).first
+    pretty_json = JSON.pretty_generate(job)
     Api.send_mail to: "peter.bengtson@odigeo.com", 
                   subject: "Poison AsyncJob",
-                  html: "<pre>#{JSON.pretty_generate(attributes)}</pre>"
+                  html: "<pre>#{pretty_json}</pre>"
     true
   end
 

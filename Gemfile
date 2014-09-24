@@ -9,6 +9,8 @@ gem 'oj'
 
 gem 'daemons'
 
+gem "dalli"
+
 
 group :test, :development do
   gem "simplecov", require: false
