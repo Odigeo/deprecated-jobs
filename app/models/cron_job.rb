@@ -195,7 +195,7 @@ class CronJob < OceanDynamo::Table
                          cron: "@annually", enabled: false)
     # The above might have overwritten an existing record. Get whatever lock record
     # there is and attempt to update it.
-    #sleep 5
+    sleep 5 + rand(-2.0..2.0)
     cs = CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
     begin
       cs.save!
