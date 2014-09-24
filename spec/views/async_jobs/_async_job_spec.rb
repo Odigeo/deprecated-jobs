@@ -9,7 +9,8 @@ describe "async_jobs/_async_job", :type => :view do
            last_completed_step: 2,
            last_status: 200,
            last_headers: {},
-           last_body: ["foo"]
+           last_body: ["foo"],
+           poison_email: "someone@example.com"
     render partial: "async_jobs/async_job", locals: {async_job: aj}
     @json = JSON.parse(rendered)
     @u = @json['async_job']
@@ -114,6 +115,10 @@ describe "async_jobs/_async_job", :type => :view do
 
   it "should have a last_body" do
     expect(@u['last_body']).to eq ["foo"]
+  end
+
+  it "should have a poison_email" do
+    expect(@u['poison_email']).to eq "someone@example.com"
   end
 
 end

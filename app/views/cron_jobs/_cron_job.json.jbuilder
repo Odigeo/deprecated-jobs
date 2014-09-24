@@ -14,6 +14,7 @@ json.cron_job do |json|
 	                :default_step_time,
 	                :default_poison_limit,
 	                :max_seconds_in_queue,
+	                :poison_email,
 	                :lock_version) 
 	json.created_at           cron_job.created_at.utc.iso8601
 	json.updated_at           cron_job.updated_at.utc.iso8601

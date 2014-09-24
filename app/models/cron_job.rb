@@ -15,6 +15,7 @@ class CronJob < OceanDynamo::Table
     attribute :default_step_time,    :integer,    default: 30
     attribute :cron
     attribute :enabled,              :boolean,    default: true
+    attribute :poison_email
 
     # Output only
     attribute :created_by
@@ -65,6 +66,8 @@ class CronJob < OceanDynamo::Table
       end
     end
   end
+
+  validates :poison_email, email: { message: "is an invalid email address" }, allow_blank: true
 
 
   def resolve_aliases (str)
@@ -230,7 +233,8 @@ class CronJob < OceanDynamo::Table
     begin
       aj = AsyncJob.create! credentials: credentials,
              steps: steps, max_seconds_in_queue: max_seconds_in_queue,
-             default_poison_limit: default_poison_limit, default_step_time: default_step_time
+             default_poison_limit: default_poison_limit, default_step_time: default_step_time,
+             poison_email: poison_email
       aj.uuid
     rescue StandardError => e
       Rails.logger.info "Running CronJob \"#{name}\" (#{cron}) failed to create an AsyncJob: #{e.message}."

@@ -14,6 +14,7 @@ class AsyncJob < OceanDynamo::Table
     attribute :max_seconds_in_queue, :integer,    default: 1.day
     attribute :default_poison_limit, :integer,    default: 5
     attribute :default_step_time,    :integer,    default: 30
+    attribute :poison_email
 
     # Output only
     attribute :started_at,           :datetime
@@ -45,6 +46,8 @@ class AsyncJob < OceanDynamo::Table
     username, password = Api.decode_credentials val
     job.errors.add(attr, "are malformed") if username.blank? || password.blank?
   end
+
+  validates :poison_email, email: { message: "is an invalid email address" }, allow_blank: true
 
 
   # Callbacks
@@ -92,12 +95,14 @@ class AsyncJob < OceanDynamo::Table
     self.failed = true
     save!
     Rails.logger.error "[Job #{uuid}] is poison (#{steps.length} steps)."
-    job = attributes.except("credentials")
-    job['api_user'] = Api.decode_credentials(credentials).first
-    pretty_json = JSON.pretty_generate(job)
-    Api.send_mail to: "peter.bengtson@odigeo.com", 
-                  subject: "Poison AsyncJob",
-                  html: "<pre>#{pretty_json}</pre>"
+    if poison_email.present?
+      job = attributes.except("credentials")
+      job['api_user'] = Api.decode_credentials(credentials).first
+      pretty_json = JSON.pretty_generate(job)
+      Api.send_mail to: poison_email, 
+                    subject: "Poison AsyncJob",
+                    html: "<pre>#{pretty_json}</pre>"
+    end
     true
   end
 

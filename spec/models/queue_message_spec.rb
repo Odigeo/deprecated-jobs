@@ -6,8 +6,7 @@ describe QueueMessage, :type => :model do
     allow_any_instance_of(AsyncJob).to receive(:enqueue)
     @async_job = create(:async_job, steps: [{'name' => "Step 1", 'url' => 'http://127.0.0.1/something'}, 
                                             {'name' => "Step 2", 'poison_limit' => 50}, 
-                                            {'name' => "Step 3", 'step_time' => 2.minutes}
-                                           ])
+                                            {'name' => "Step 3", 'step_time' => 2.minutes}])
     @msg = double(AWS::SQS::ReceivedMessage,
              body: @async_job.uuid,
              receive_count: 2,
@@ -185,7 +184,7 @@ describe QueueMessage, :type => :model do
     end
 
     it "should handle poison messages" do
-      expect(Api).to receive(:send_mail)
+      expect(Api).not_to receive(:send_mail)
       msg = double(AWS::SQS::ReceivedMessage,
                body: @async_job.uuid,
                receive_count: 6,

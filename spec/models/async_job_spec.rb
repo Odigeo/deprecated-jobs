@@ -104,6 +104,22 @@ describe AsyncJob, :type => :model do
     it "should have a last_body attribute" do
       expect(create(:async_job)).to respond_to :last_body
     end
+
+    it "should have a poison_email attribute" do
+      expect(create(:async_job)).to respond_to :poison_email
+    end
+
+    it "should allow blank poison_email addresses" do
+      expect(build(:async_job, poison_email: "")).to be_valid
+    end
+
+    it "should require a valid poison_email address" do
+      expect(build(:async_job, poison_email: "john@@doe")).not_to be_valid
+    end
+
+    it "should not consider poison_email addresses with names valid" do
+      expect(build(:async_job, poison_email: "John Doe <john@doe.com>")).not_to be_valid
+    end
   end
 
 
@@ -113,8 +129,8 @@ describe AsyncJob, :type => :model do
       expect_any_instance_of(AsyncJob).to receive(:enqueue)
       @j = create(:async_job, steps: [{'name' => "Step 1"}, 
                                       {'name' => "Step 2", 'poison_limit' => 50}, 
-                                      {'name' => "Step 3", 'step_time' => 2.minutes}
-                                     ])
+                                      {'name' => "Step 3", 'step_time' => 2.minutes}],
+                              poison_email: "someone@example.com")
     end
 
     it "should have a finished? predicate" do
@@ -180,8 +196,14 @@ describe AsyncJob, :type => :model do
       expect(@j.poison?).to eq true
     end
 
-    it "should send mail to the originating ApiUser whenever a job becomes poison" do
+    it "should send mail to poison_email whenever a job becomes poison and poison_email is present" do
       expect(Api).to receive(:send_mail)
+      @j.job_is_poison
+    end
+
+    it "should not send mail to poison_email whenever a job becomes poison and poison_email is blank" do
+      expect(Api).not_to receive(:send_mail)
+      @j.poison_email = ""
       @j.job_is_poison
     end
 
