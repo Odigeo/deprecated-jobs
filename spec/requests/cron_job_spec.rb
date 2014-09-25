@@ -12,6 +12,8 @@ describe CronJob, :type => :request do
       expect(OceanApplicationController).to_not receive :require_x_api_token
       expect(OceanApplicationController).to_not receive :authorize_action
       expect_any_instance_of(CronJob).to receive(:post_async_job)
+      expect(CronJob).to receive(:acquire_table_lock).and_return(true)
+      expect(CronJob).to receive(:release_table_lock).and_return(true)
       put "/execute_cron_jobs", 
           {}, 
           {'HTTP_ACCEPT' => "application/json", 'X-API-TOKEN' => "incredibly-fake"}

@@ -186,35 +186,44 @@ class CronJob < OceanDynamo::Table
   end
 
 
+  # def self.acquire_table_lock
+  #   # If there already is a lock record, fail
+  #   return false if CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
+  #   # No record exists, create one.
+  #   cs = CronJob.create!(id: TABLE_LOCK_RECORD_ID, 
+  #                        credentials: Api.encode_credentials("fake", "fake"),
+  #                        cron: "@annually", enabled: false)
+  #   # The above might have overwritten an existing record. Get whatever lock record
+  #   # there is and attempt to update it.
+  #   sleep 5 + rand(-2.0..2.0)
+  #   cs = CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
+  #   begin
+  #     cs.save!
+  #   rescue OceanDynamo::StaleObjectError
+  #     # If the save resulted in an exception, someone else has claimed the lock. Fail.
+  #     return false
+  #   end
+  #   # We claimed it. Succeed!
+  #   true
+  # end
+
+
+  # def self.release_table_lock
+  #   lock = CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
+  #   if lock
+  #     lock.destroy
+  #   else
+  #     Rails.logger.error "CronJob queue lock ineffectual. This will be remedied soon."
+  #   end
+  # end
+
   def self.acquire_table_lock
-    # If there already is a lock record, fail
-    return false if CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
-    # No record exists, create one.
-    cs = CronJob.create!(id: TABLE_LOCK_RECORD_ID, 
-                         credentials: Api.encode_credentials("fake", "fake"),
-                         cron: "@annually", enabled: false)
-    # The above might have overwritten an existing record. Get whatever lock record
-    # there is and attempt to update it.
-    sleep 5 + rand(-2.0..2.0)
-    cs = CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
-    begin
-      cs.save!
-    rescue OceanDynamo::StaleObjectError
-      # If the save resulted in an exception, someone else has claimed the lock. Fail.
-      return false
-    end
-    # We claimed it. Succeed!
-    true
+    @memcache ||= Dalli::Client.new(MEMCACHED_SERVERS, namespace: APP_NAME)
+    return false unless @memcache.add "CronJob_lock", :locked, 1.minute
   end
 
-
   def self.release_table_lock
-    lock = CronJob.find_by_id(TABLE_LOCK_RECORD_ID)
-    if lock
-      lock.destroy
-    else
-      Rails.logger.error "CronJob queue lock ineffectual. This will be remedied soon."
-    end
+    @memcache.delete "CronJob_lock"
   end
 
 
