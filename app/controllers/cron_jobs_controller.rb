@@ -82,7 +82,8 @@ class CronJobsController < ApplicationController
 
   # PUT /cron_jobs/a-b-c-d-e/run
   def run
-    @cron_job.post_async_job
+    @cron_job.last_async_job_id = @cron_job.post_async_job
+    @cron_job.save!
     render_head_204
   end
 
