@@ -185,11 +185,15 @@ class CronJob < OceanDynamo::Table
 
   def self.acquire_table_lock
     @memcache ||= Dalli::Client.new(MEMCACHED_SERVERS, namespace: APP_NAME)
-    !!@memcache.add("CronJob_lock", :locked, 1.minute)
+    !!@memcache.add("CronJob_lock", :locked, 30.seconds)
   end
 
   def self.release_table_lock
-    @memcache.delete "CronJob_lock"
+    # We don't release the table lock at all, since the time required to process
+    # the queue often is less than the distance in time between the individual
+    # servers' process_queue times, which leads to multiple executions. Therefore,
+    # we just let the lock expire after 30 seconds, which is plenty of time.
+    #@memcache.delete "CronJob_lock"
   end
 
 
