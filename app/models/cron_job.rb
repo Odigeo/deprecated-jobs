@@ -220,6 +220,7 @@ class CronJob < OceanDynamo::Table
   def self.acquire_table_lock
     @memcache ||= Dalli::Client.new(MEMCACHED_SERVERS, namespace: APP_NAME)
     return false unless @memcache.add "CronJob_lock", :locked, 1.minute
+    true
   end
 
   def self.release_table_lock
