@@ -35,13 +35,6 @@ describe CronJobsController, :type => :controller do
       expect(JSON.parse(response.body)).to eq({"credentials"=>["are malformed"]})
     end
                 
-    it "should return a 422 if the CronJob ID is the lock record" do
-      post :create, @args.merge('id' => CronJob::TABLE_LOCK_RECORD_ID)
-      expect(response.status).to eq 422
-      expect(response.content_type).to eq "application/json"
-      expect(JSON.parse(response.body)).to eq({"_api_error"=>["ID is illegal"]})
-    end
-
     it "should return a 201 when successful" do
       post :create, @args
       expect(response).to render_template(partial: "_cron_job", count: 1)

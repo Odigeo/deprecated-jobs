@@ -12,7 +12,6 @@ describe CronJobsController, :type => :controller do
       permit_with 200
       create :cron_job
       create :cron_job
-      create :cron_job, id: CronJob::TABLE_LOCK_RECORD_ID
       create :cron_job
       request.headers['HTTP_ACCEPT'] = "application/json"
       request.headers['X-API-Token'] = "boy-is-this-fake"
@@ -50,7 +49,7 @@ describe CronJobsController, :type => :controller do
       expect(response.status).to eq 200
     end
     
-    it "should render the object partial when successful, suppressing the lock record" do
+    it "should render the object partial when successful" do
       get :index
       expect(response).to render_template(partial: '_cron_job', count: 3)
     end
