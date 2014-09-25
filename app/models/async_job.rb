@@ -95,14 +95,13 @@ class AsyncJob < OceanDynamo::Table
     self.failed = true
     save!
     Rails.logger.error "[Job #{uuid}] is poison (#{steps.length} steps)."
-    if poison_email.present?
-      job = attributes.except("credentials")
-      job['api_user'] = Api.decode_credentials(credentials).first
-      pretty_json = JSON.pretty_generate(job)
-      Api.send_mail to: poison_email, 
-                    subject: "Poison AsyncJob",
-                    html: "<pre>#{pretty_json}</pre>"
-    end
+    # Mail someone. TODO: parametrise the fallback email
+    job = attributes.except("credentials")
+    job['api_user'] = Api.decode_credentials(credentials).first
+    pretty_json = JSON.pretty_generate(job)
+    Api.send_mail to: poison_email.present? ? poison_email : "peter.bengtson@odigeo.com", 
+                  subject: "Poison AsyncJob",
+                  html: "<pre>#{pretty_json}</pre>"
     true
   end
 

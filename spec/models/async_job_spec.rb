@@ -196,17 +196,10 @@ describe AsyncJob, :type => :model do
       expect(@j.poison?).to eq true
     end
 
-    it "should send mail to poison_email whenever a job becomes poison and poison_email is present" do
+    it "should send mail to poison_email whenever a job becomes poison" do
       expect(Api).to receive(:send_mail)
       @j.job_is_poison
     end
-
-    it "should not send mail to poison_email whenever a job becomes poison and poison_email is blank" do
-      expect(Api).not_to receive(:send_mail)
-      @j.poison_email = ""
-      @j.job_is_poison
-    end
-
 
 
     it "#current_step should obtain the current step" do
