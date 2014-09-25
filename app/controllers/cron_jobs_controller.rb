@@ -64,7 +64,8 @@ class CronJobsController < ApplicationController
                                 default_step_time: params[:default_step_time],
                                 cron: params[:cron],
                                 enabled: params[:enabled],
-                                lock_version: params[:lock_version]
+                                lock_version: params[:lock_version],
+                                poison_email: params[:poison_email]
                                )
     set_updater(@cron_job)
     @cron_job.save!
