@@ -21,11 +21,16 @@ class CronJobsController < ApplicationController
 
   # GET /cron_jobs
   def index
-    # expires_in 0, 's-maxage' => 30.minutes
+    expires_in 0, 's-maxage' => 3.hours
     # if stale?(collection_etag(CronJob))   # collection_etag is still ActiveRecord only!
-      @cron_jobs = CronJob.all
+    # Instead, we get all the CronJobs (they are few) and compute the ETag manually:
+    @cron_jobs = CronJob.all    
+    latest = @cron_jobs.max_by(&:updated_at)
+    last_updated = latest && latest.updated_at 
+    if stale?(etag: "CronJob:#{CronJob.count}:#{last_updated}")
+      #@cron_jobs = CronJob.all
       api_render @cron_jobs
-    # end
+    end
   end
 
 
@@ -41,7 +46,7 @@ class CronJobsController < ApplicationController
 
   # GET /cron_jobs/a-b-c-d-e
   def show
-    expires_in 0, 's-maxage' => 30.minutes
+    expires_in 0, 's-maxage' => 3.hours
     if stale?(etag: @cron_job.lock_version,          # NB: DynamoDB tables dont have cache_key - FIX!
               last_modified: @cron_job.updated_at)
       api_render @cron_job
