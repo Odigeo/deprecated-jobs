@@ -334,14 +334,6 @@ describe CronJob, :type => :model do
 
   describe "process_job" do 
 
-    it "should do nothing if the job is the lock record" do
-      job = create :cron_job, id: CronJob::TABLE_LOCK_RECORD_ID
-      expect(CronJob.count).to eq 1
-      expect(job).to_not receive(:due?)
-      expect(job).to_not receive(:post_async_job)
-      job.process_job
-    end
-
     it "should do nothing unless the job is enabled" do
       job = create :cron_job, enabled: false
       expect(CronJob.count).to eq 1

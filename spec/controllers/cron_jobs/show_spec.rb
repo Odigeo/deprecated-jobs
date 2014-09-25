@@ -35,13 +35,6 @@ describe CronJobsController, :type => :controller do
       expect(response.content_type).to eq "application/json"
     end
     
-    it "should return a 404 if the CronJob is the lock record" do
-      create :cron_job, id: CronJob::TABLE_LOCK_RECORD_ID
-      get :show, id: CronJob::TABLE_LOCK_RECORD_ID
-      expect(response.status).to eq 404
-      expect(response.content_type).to eq "application/json"
-    end
-    
     it "should return a 200 when successful" do
       get :show, id: @cron_job.id
       expect(response.status).to eq 200

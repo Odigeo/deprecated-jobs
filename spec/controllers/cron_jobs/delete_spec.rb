@@ -38,13 +38,6 @@ describe CronJobsController, :type => :controller do
       expect(response.status).to eq 404
     end
     
-    it "should return a 404 if the CronJob is the lock record" do
-      create :cron_job, id: CronJob::TABLE_LOCK_RECORD_ID
-      delete :destroy, id: CronJob::TABLE_LOCK_RECORD_ID
-      expect(response.status).to eq 404
-      expect(response.content_type).to eq "application/json"
-    end
-
     it "should destroy the CronJob when successful" do
       delete :destroy, id: @cron_job.id
       expect(response.status).to eq 204

@@ -23,7 +23,7 @@ class CronJobsController < ApplicationController
   def index
     # expires_in 0, 's-maxage' => 30.minutes
     # if stale?(collection_etag(CronJob))   # collection_etag is still ActiveRecord only!
-      @cron_jobs = CronJob.all.reject { |job| job.id == CronJob::TABLE_LOCK_RECORD_ID }
+      @cron_jobs = CronJob.all
       api_render @cron_jobs
     # end
   end
@@ -31,7 +31,6 @@ class CronJobsController < ApplicationController
 
   # POST /cron_jobs
   def create
-    render_api_error 422, "ID is illegal" and return if params[:id] == CronJob::TABLE_LOCK_RECORD_ID
     ActionController::Parameters.permit_all_parameters = true
     @cron_job = CronJob.new(params)
     set_updater(@cron_job)
@@ -100,8 +99,7 @@ class CronJobsController < ApplicationController
   def find_cron_job
     ActionController::Parameters.permit_all_parameters = true
     the_id = params['uuid'] || params['id']  # 'id' when received from the Rails router, uuid othw
-    @cron_job = the_id != CronJob::TABLE_LOCK_RECORD_ID &&
-                CronJob.find_by_key(the_id, consistent: true)
+    @cron_job = CronJob.find_by_key(the_id, consistent: true)
     return true if @cron_job
     render_api_error 404, "CronJob not found"
     false

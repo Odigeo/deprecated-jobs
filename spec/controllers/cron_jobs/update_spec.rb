@@ -34,13 +34,6 @@ describe CronJobsController, :type => :controller do
       expect(response.content_type).to eq "application/json"
     end
 
-    it "should return a 404 if the CronJob is the lock record" do
-      create :cron_job, id: CronJob::TABLE_LOCK_RECORD_ID
-      put :update, id: CronJob::TABLE_LOCK_RECORD_ID
-      expect(response.status).to eq 404
-      expect(response.content_type).to eq "application/json"
-    end
-
     it "should return a 422 when resource properties are missing (all must be set simultaneously)" do
       put :update, id: @u.id
       expect(response.status).to eq 422
