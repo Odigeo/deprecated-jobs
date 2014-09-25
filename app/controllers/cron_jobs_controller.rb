@@ -7,7 +7,8 @@ class CronJobsController < ApplicationController
   # The following params are required:
   #   :credentials
   # The following params are permitted:
-  #   :token, :steps, :max_seconds_in_queue, :default_poison_limit, default_step_time
+  #   :token, :steps, :max_seconds_in_queue, :default_poison_limit, default_step_time,
+  #   :poison_email, :enabled
 
 
   respond_to :json
