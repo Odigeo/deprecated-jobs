@@ -50,6 +50,11 @@ CHEF_ENV: dev
 # If not, DynamoDB record locking is used.
 MEMCACHED_SERVERS: []
 
+# The email address where poison AsyncJobs should be sent, if no other email address
+# is given in the AsyncJob itself.
+POISON_EMAIL_DEFAULT: "someone@example.com"
+
+
 
 ##########################################################################################
 # This section allows you to specify values specific for a particular Rails
