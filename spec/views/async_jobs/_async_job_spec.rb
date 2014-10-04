@@ -10,7 +10,8 @@ describe "async_jobs/_async_job", :type => :view do
            last_status: 200,
            last_headers: {},
            last_body: ["foo"],
-           poison_email: "someone@example.com"
+           poison_email: "someone@example.com",
+           x_metadata: "ze-meta"
     render partial: "async_jobs/async_job", locals: {async_job: aj}
     @json = JSON.parse(rendered)
     @u = @json['async_job']
@@ -119,6 +120,10 @@ describe "async_jobs/_async_job", :type => :view do
 
   it "should have a poison_email" do
     expect(@u['poison_email']).to eq "someone@example.com"
+  end
+
+  it "should have an x_metadata attribute" do
+    expect(@u['x_metadata']).to eq "ze-meta"
   end
 
 end

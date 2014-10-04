@@ -150,6 +150,7 @@ class QueueMessage
     return if async_job.token.blank? && !authenticate
 
     headers = {"X-API-Token" => async_job.token}.merge(step['headers'] || {})
+    headers['X-Metadata'] = async_job.x_metadata if async_job.x_metadata
     begin
       response = nil
       loop do

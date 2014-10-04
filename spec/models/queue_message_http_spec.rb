@@ -182,6 +182,15 @@ describe QueueMessage, :type => :model do
       expect(@async_job.failed?).to eq false
       expect(@async_job.finished?).to eq true
     end
+
+    it "should add x_metadata, if present, to the headers" do
+      @async_job.x_metadata = "contagious-metadata"
+      @async_job.save!
+      stub_request(:get, "http://127.0.0.1/something").
+        with(headers: {'X-Api-Token' => 'an-api-token', 
+                       "X-Metadata" => "contagious-metadata"})
+      QueueMessage.new(@msg).execute_current_step
+   end
   end
 
 
