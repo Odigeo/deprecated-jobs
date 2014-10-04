@@ -28,6 +28,7 @@ class AsyncJobsController < ApplicationController
   def create
     ActionController::Parameters.permit_all_parameters = true
     @async_job = AsyncJob.new(params)
+    @async_job.x_metadata = @x_metadata
     if @async_job.steps == []
       @async_job.started_at = Time.now.utc
       @async_job.finished_at = @async_job.started_at

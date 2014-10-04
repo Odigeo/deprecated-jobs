@@ -29,6 +29,7 @@ class AsyncJob < OceanDynamo::Table
     attribute :last_status,          :integer
     attribute :last_headers,         :serialized
     attribute :last_body,            :serialized
+    attribute :x_metadata
   end
   
 

@@ -120,6 +120,10 @@ describe AsyncJob, :type => :model do
     it "should not consider poison_email addresses with names valid" do
       expect(build(:async_job, poison_email: "John Doe <john@doe.com>")).not_to be_valid
     end
+
+    it "should have an x_metadata attribute" do
+      expect(create(:async_job)).to respond_to :x_metadata
+    end
   end
 
 

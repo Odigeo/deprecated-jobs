@@ -15,7 +15,8 @@ json.async_job do |json|
 	                 :last_headers,
 	                 :last_body,
 	                 :poison_email,
-	                 :lock_version) 
+	                 :lock_version)
+	json.x_metadata           async_job.x_metadata if async_job.x_metadata
 	json.created_at           async_job.created_at.utc.iso8601
 	json.updated_at           async_job.updated_at.utc.iso8601
 	json.destroy_at           async_job.destroy_at.utc.iso8601

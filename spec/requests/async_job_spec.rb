@@ -68,6 +68,19 @@ describe AsyncJob, :type => :request do
       expect(j['async_job']).to eq nil
       expect(j['credentials']).to eq ["are malformed"]
     end
+
+    it "should set the x_metadata attribute in the AsyncJob" do
+      post "/v1/async_jobs", 
+          {'steps' => [],
+           'credentials' => 'bWFnbmV0bzp4YXZpZXI='}, 
+          {'HTTP_ACCEPT' => "application/json", 
+           'X-API-TOKEN' => "incredibly-fake",
+           "X-Metadata" => "some-metadata"}
+      expect(response.status).to eq 201
+      j = JSON.parse(response.body)['async_job']
+      expect(j).to be_a Hash
+      expect(j['x_metadata']).to eq "some-metadata"
+    end
   end
   
 
