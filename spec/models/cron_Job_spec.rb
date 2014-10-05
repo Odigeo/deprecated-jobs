@@ -167,7 +167,7 @@ describe CronJob, :type => :model do
       expect(create(:cron_job, cron: "* * * * *").due?(Time.now)).to be true
     end
 
-    it "should call match_component once for each component" do
+    it "should call match_component once for each component" do      # HALTS HERE?
       cj = create :cron_job, cron: "* * * * *"
       expect(cj).to receive(:match_component).exactly(5).times.and_return(true)
       expect(cj.due?(Time.now.utc)).to eq true
@@ -385,13 +385,13 @@ describe CronJob, :type => :model do
 
   describe "post_async_job" do
     
-    it "should create an AsyncJob from the CronJob" do
+    it "should create an AsyncJob from the CronJob" do                
       expect_any_instance_of(AsyncJob).to receive(:enqueue)
       job = create :cron_job, steps: [{}, {}]
       job.post_async_job
     end
 
-    it "should return the AsyncJob uuid" do
+    it "should return the AsyncJob uuid" do                      # HALTS HERE
       expect_any_instance_of(AsyncJob).to receive(:enqueue)
       job = create :cron_job, steps: [{}, {}]
       expect(job.post_async_job).to be_a String
