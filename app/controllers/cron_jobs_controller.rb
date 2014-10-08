@@ -29,7 +29,6 @@ class CronJobsController < ApplicationController
     latest = @cron_jobs.max_by(&:updated_at)
     last_updated = latest && latest.updated_at 
     if stale?(etag: "CronJob:#{CronJob.count}:#{last_updated}")
-      #@cron_jobs = CronJob.all
       api_render @cron_jobs
     end
   end
