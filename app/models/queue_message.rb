@@ -172,6 +172,8 @@ class QueueMessage
         if [400, 419].include?(response.status)
           return if !authenticate
           headers["X-API-Token"] = async_job.token
+        elsif (100..199).include?(response.status)
+          next # Retry
         elsif !(300..399).include?(response.status)
           break
         else
@@ -181,7 +183,7 @@ class QueueMessage
           end
           url = response.headers['Location']
           async_job.log "Redirect: #{response.status} to #{url}"
-        end
+        end # loop
       end
       handle_response(step, response.status, response.headers, response.body) if response
     rescue Exception => e
