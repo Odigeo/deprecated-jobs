@@ -2,6 +2,10 @@ require 'spec_helper'
 
 describe AsyncJob, :type => :model do
 
+  before :each do
+    allow(Api).to receive :sleep
+  end
+
   describe "attributes" do
     
     it "should have an UUID" do
