@@ -3,7 +3,7 @@ require 'spec_helper'
 describe AsyncJob, :type => :model do
 
   before :each do
-    allow(Api).to receive :sleep
+    #allow_any_instance_of(Object).to receive(:sleep)
   end
 
   describe "attributes" do
@@ -311,6 +311,15 @@ describe AsyncJob, :type => :model do
       expect(Rails.logger).to receive(:info).with("Cleaned up 2 old AsyncJobs")
       AsyncJob.cleanup
       expect(AsyncJob.count).to eq 3
+      AsyncJob.delete_all
+    end
+
+    it "should handle an empty AsyncJob table gracefully" do
+      AsyncJob.delete_all
+      expect(AsyncJob.count).to eq 0
+      expect(Rails.logger).to receive(:info).with("Cleaned up 0 old AsyncJobs")
+      AsyncJob.cleanup
+      expect(AsyncJob.count).to eq 0
       AsyncJob.delete_all
     end
   end
