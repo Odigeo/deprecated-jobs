@@ -201,10 +201,12 @@ class AsyncJob < OceanDynamo::Table
   def self.cleanup
     killed = 0
     t = Time.now.utc
-    AsyncJob.find_each do |j|
-      if j.destroy_at <= t
-        j.destroy 
-        killed += 1
+    if AsyncJob.count > 0
+      AsyncJob.find_each do |j|
+        if j.destroy_at <= t
+          j.destroy 
+          killed += 1
+        end
       end
     end
     Rails.logger.info "Cleaned up #{killed} old AsyncJobs"
