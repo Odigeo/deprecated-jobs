@@ -1,11 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.0'
-gem "ocean-rails", ">= 3.0.3"
-gem "ocean-dynamo", ">= 0.6.5"
+gem 'rails', '4.1.9'
+gem "ocean-rails"
+gem "ocean-dynamo"
 
 gem "jbuilder"
-gem 'oj'
 
 gem 'daemons'
 
