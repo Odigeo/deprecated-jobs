@@ -9,8 +9,6 @@ class AsyncJobsController < ApplicationController
   #   :token, :steps, :max_seconds_in_queue, :default_poison_limit, default_step_time,
   #   :poison_email
 
-
-  respond_to :json
   
   before_action :find_async_job, :only => [:show, :destroy]
     

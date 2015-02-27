@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.9'
+gem 'rails', '4.2.1.rc2'
 gem "ocean-rails"
 gem "ocean-dynamo"
 

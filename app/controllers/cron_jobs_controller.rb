@@ -11,8 +11,6 @@ class CronJobsController < ApplicationController
   #   :poison_email, :enabled
 
 
-  respond_to :json
-
   skip_before_filter :require_x_api_token, only: :execute
   skip_before_filter :authorize_action, only: :execute
 
