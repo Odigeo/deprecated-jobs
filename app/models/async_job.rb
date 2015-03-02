@@ -100,7 +100,8 @@ class AsyncJob < OceanDynamo::Table
     job = attributes.except("credentials")
     job['api_user'] = Api.decode_credentials(credentials).first
     pretty_json = JSON.pretty_generate(job)
-    Api.send_mail to: (poison_email.present? ? poison_email : POISON_EMAIL_DEFAULT), 
+    Api.send_mail from: "peter.bengtson@odigeo.com",    # This is only until we have production SES access
+                  to: (poison_email.present? ? poison_email : POISON_EMAIL_DEFAULT), 
                   subject: "Poison AsyncJob",
                   html: "<pre>#{pretty_json}</pre>"
     true
